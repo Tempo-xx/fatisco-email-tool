@@ -667,6 +667,7 @@ jane@startup.io,Jane Smith,Startup Inc"></textarea>
       
       <button class="btn-secondary" onclick="cleanList()">🧹 Clean & Validate</button>
       <button class="btn-secondary" onclick="saveTemplate()">💾 Save as Template</button>
+      <button class="btn-secondary" onclick="manualSave()">💾 Force Save Now</button>
       <button class="btn-secondary" onclick="clearAllData()" style="background: var(--error); color: white; border: none;">🗑️ Clear All Data</button>
     </div>
 
@@ -817,46 +818,66 @@ function loadSavedData() {
     const savedList = localStorage.getItem('fatisco_email_list');
     if (savedList) {
       document.getElementById('list').value = savedList;
+      console.log('Loaded email list:', savedList.substring(0, 50) + '...');
     }
     
     const savedSubject = localStorage.getItem('fatisco_subject');
     if (savedSubject) {
       document.getElementById('subject').value = savedSubject;
+      console.log('Loaded subject:', savedSubject);
     }
     
     const savedBody = localStorage.getItem('fatisco_body');
     if (savedBody) {
       document.getElementById('body').value = savedBody;
+      console.log('Loaded body');
     }
     
     const savedSignature = localStorage.getItem('fatisco_signature');
     if (savedSignature) {
       document.getElementById('signature').value = savedSignature;
+      console.log('Loaded signature');
     }
     
     const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
     if (savedSentEmails) {
       sentEmails = JSON.parse(savedSentEmails);
+      console.log('Loaded sent emails:', Object.keys(sentEmails).length);
     }
     
-    if (savedList) {
-      cleanList();
-      showToast('📂 Previous session restored!');
+    if (savedList && savedList.trim().length > 0) {
+      const lines = savedList.trim().split('\n').filter(function(l) { return l.trim(); });
+      stats.total = lines.length;
+      stats.valid = lines.length;
+      updateStats();
+      
+      setTimeout(function() {
+        showToast('📂 Session restored! ' + lines.length + ' emails loaded');
+      }, 500);
     }
   } catch(e) {
-    console.log('Could not load saved data');
+    console.error('Error loading saved data:', e);
+    showToast('⚠️ Could not restore previous session');
   }
 }
 
 function saveData() {
   try {
-    localStorage.setItem('fatisco_email_list', document.getElementById('list').value);
-    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
-    localStorage.setItem('fatisco_body', document.getElementById('body').value);
-    localStorage.setItem('fatisco_signature', document.getElementById('signature').value);
+    const emailList = document.getElementById('list').value;
+    const subject = document.getElementById('subject').value;
+    const body = document.getElementById('body').value;
+    const signature = document.getElementById('signature').value;
+    
+    localStorage.setItem('fatisco_email_list', emailList);
+    localStorage.setItem('fatisco_subject', subject);
+    localStorage.setItem('fatisco_body', body);
+    localStorage.setItem('fatisco_signature', signature);
     localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    
+    console.log('Data saved successfully');
   } catch(e) {
-    console.log('Could not save data');
+    console.error('Error saving data:', e);
+    showToast('⚠️ Could not save data - storage may be full');
   }
 }
 
@@ -976,11 +997,17 @@ function generateLinks() {
         link.classList.add('sent');
       }
       
-      link.addEventListener('click', function() {
-        this.classList.add('sent');
-        sentEmails[parsed.email] = true;
-        saveData();
-        updateSentCount();
+      link.addEventListener('click', function(e) {
+        setTimeout(function() {
+          link.classList.add('sent');
+          sentEmails[parsed.email] = {
+            sentAt: new Date().toISOString(),
+            name: parsed.name,
+            company: parsed.company
+          };
+          saveData();
+          updateSentCount();
+        }, 100);
       });
       
       const avatar = parsed.name.charAt(0).toUpperCase();
@@ -1126,6 +1153,13 @@ function saveTemplate() {
   }
 }
 
+function manualSave() {
+  saveData();
+  const emailCount = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); }).length;
+  const sentCount = Object.keys(sentEmails).length;
+  showToast('💾 Saved! ' + emailCount + ' emails, ' + sentCount + ' sent');
+}
+
 function switchTab(event, tab) {
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.tab-content');
@@ -1218,6 +1252,11 @@ document.getElementById('subject').addEventListener('input', saveData);
 document.getElementById('body').addEventListener('input', saveData);
 document.getElementById('signature').addEventListener('input', saveData);
 
+document.getElementById('list').addEventListener('blur', function() {
+  saveData();
+  console.log('Email list saved on blur');
+});
+
 function clearAllData() {
   if (!confirm('⚠️ This will delete ALL saved data including email list and sent status. Continue?')) {
     return;
@@ -1241,14 +1280,30 @@ function clearAllData() {
     updateStats();
     
     showToast('🗑️ All data cleared successfully!');
+    console.log('All data cleared');
   } catch(e) {
+    console.error('Error clearing data:', e);
     showToast('⚠️ Could not clear data');
   }
 }
 
-loadSavedTheme();
-loadSavedData();
-updateStats();
+window.addEventListener('beforeunload', function() {
+  saveData();
+  console.log('Data saved before page unload');
+});
+
+window.addEventListener('load', function() {
+  console.log('Page loaded, restoring data...');
+  loadSavedTheme();
+  loadSavedData();
+  updateStats();
+  
+  setTimeout(function() {
+    if (document.getElementById('list').value.trim().length > 0) {
+      console.log('Auto-generating links from saved data');
+    }
+  }, 1000);
+});
 </script>
 </body>
 </html>
