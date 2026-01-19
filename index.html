@@ -331,6 +331,7 @@ button:active {
   transition: all 0.3s;
   text-decoration: none;
   color: var(--text-light);
+  border-left: 4px solid var(--border-light);
 }
 
 .dark .email-link {
@@ -343,6 +344,39 @@ button:active {
   transform: translateX(5px);
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.email-link.sent {
+  background: rgba(16, 185, 129, 0.05);
+  border-left-color: var(--success);
+}
+
+.dark .email-link.sent {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.email-number {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: var(--border-light);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 15px;
+}
+
+.dark .email-number {
+  background: var(--border-dark);
+  color: var(--text-dark);
+}
+
+.email-link.sent .email-number {
+  background: var(--success);
+  color: white;
 }
 
 .email-info {
@@ -603,8 +637,8 @@ footer {
       <div class="stat-value" id="validEmails">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Templates Used</div>
-      <div class="stat-value" id="templatesUsed">1</div>
+      <div class="stat-label">Emails Sent</div>
+      <div class="stat-value" id="emailsSent">0</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Spam Score</div>
@@ -722,7 +756,7 @@ contact@fatisco.com</textarea>
 </div>
 
 <footer>
-  Built by Fatai Ajani | FATISCO © 2026 | Unlimited Email Automation
+  Built by Fatai | FATISCO © 2026 | Unlimited Email Automation
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -884,10 +918,16 @@ function generateLinks() {
       const link = document.createElement('a');
       link.href = href;
       link.className = 'email-link';
+      link.setAttribute('data-email-id', index);
+      
+      link.addEventListener('click', function() {
+        this.classList.add('sent');
+        updateSentCount();
+      });
       
       const avatar = parsed.name.charAt(0).toUpperCase();
       
-      link.innerHTML = '<div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send Email →</div>';
+      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send Email →</div>';
       
       output.appendChild(link);
       
@@ -906,6 +946,17 @@ function generateLinks() {
   stats.total = lines.length;
   stats.valid = validCount;
   updateStats();
+}
+
+function updateSentCount() {
+  const sentLinks = document.querySelectorAll('.email-link.sent');
+  const totalLinks = document.querySelectorAll('.email-link');
+  
+  document.getElementById('emailsSent').textContent = sentLinks.length;
+  
+  if (totalLinks.length > 0) {
+    showToast('✅ Sent ' + sentLinks.length + ' of ' + totalLinks.length + ' emails');
+  }
 }
 
 function downloadCSV() {
