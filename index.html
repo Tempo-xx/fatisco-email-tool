@@ -847,12 +847,18 @@ function loadSavedData() {
     
     if (savedList && savedList.trim().length > 0) {
       const lines = savedList.trim().split('\n').filter(function(l) { return l.trim(); });
+      
+      let validCount = 0;
+      lines.forEach(function(line) {
+        if (parseLine(line)) validCount++;
+      });
+      
       stats.total = lines.length;
-      stats.valid = lines.length;
+      stats.valid = validCount;
       updateStats();
       
       setTimeout(function() {
-        showToast('📂 Session restored! ' + lines.length + ' emails loaded');
+        showToast('📂 Session restored! ' + validCount + ' valid emails loaded');
       }, 500);
     }
   } catch(e) {
@@ -894,7 +900,11 @@ function showToast(message, duration) {
 function updateStats() {
   document.getElementById('totalEmails').textContent = stats.total;
   document.getElementById('validEmails').textContent = stats.valid;
-  document.getElementById('templatesUsed').textContent = stats.templatesUsed;
+  
+  const sentCount = Object.keys(sentEmails).length;
+  document.getElementById('emailsSent').textContent = sentCount;
+  
+  console.log('Stats updated - Total:', stats.total, 'Valid:', stats.valid, 'Sent:', sentCount);
 }
 
 function parseLine(line) {
@@ -968,7 +978,10 @@ function generateLinks() {
   lines.forEach(function(line, index) {
     setTimeout(function() {
       const parsed = parseLine(line);
-      if (!parsed) return;
+      if (!parsed) {
+        console.log('Invalid line:', line);
+        return;
+      }
       
       validCount++;
       
@@ -1022,26 +1035,28 @@ function generateLinks() {
       if (index === lines.length - 1) {
         setTimeout(function() {
           progressBar.style.display = 'none';
+          stats.total = lines.length;
+          stats.valid = validCount;
+          updateStats();
+          updateSentCount();
           showToast('✅ ' + validCount + ' emails ready to send!');
         }, 300);
       }
     }, index * 50);
   });
-
-  stats.total = lines.length;
-  stats.valid = validCount;
-  updateStats();
 }
 
 function updateSentCount() {
-  const sentLinks = document.querySelectorAll('.email-link.sent');
+  const sentCount = Object.keys(sentEmails).length;
+  document.getElementById('emailsSent').textContent = sentCount;
+  
   const totalLinks = document.querySelectorAll('.email-link');
   
-  document.getElementById('emailsSent').textContent = sentLinks.length;
-  
   if (totalLinks.length > 0) {
-    showToast('✅ Sent ' + sentLinks.length + ' of ' + totalLinks.length + ' emails');
+    showToast('✅ Sent ' + sentCount + ' of ' + totalLinks.length + ' emails');
   }
+  
+  console.log('Sent count updated:', sentCount);
 }
 
 function downloadCSV() {
@@ -1098,8 +1113,10 @@ function analyzeSpam() {
   });
   
   if (subject.includes('!')) score += 10;
-  if (subject.toUpperCase() === subject) score += 20;
+  if (subject.toUpperCase() === subject && subject.length > 3) score += 20;
   if (body.length < 50) score += 10;
+  
+  if (score > 100) score = 100;
   
   const spamScoreEl = document.getElementById('spamScore');
   const badgeEl = document.getElementById('spamScoreBadge');
@@ -1119,6 +1136,8 @@ function analyzeSpam() {
     badgeEl.innerHTML = '✗ High Spam Risk (' + score + '%)';
     showToast('❌ Alert: High spam score: ' + score + '%');
   }
+  
+  console.log('Spam score calculated:', score);
 }
 
 function scheduleEmails() {
