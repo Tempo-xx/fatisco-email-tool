@@ -667,6 +667,7 @@ jane@startup.io,Jane Smith,Startup Inc"></textarea>
       
       <button class="btn-secondary" onclick="cleanList()">🧹 Clean & Validate</button>
       <button class="btn-secondary" onclick="saveTemplate()">💾 Save as Template</button>
+      <button class="btn-secondary" onclick="clearAllData()" style="background: var(--error); color: white; border: none;">🗑️ Clear All Data</button>
     </div>
 
     <div class="card">
@@ -786,6 +787,7 @@ const templates = [
 ];
 
 let stats = {total: 0, valid: 0, templatesUsed: 1};
+let sentEmails = {};
 
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -807,6 +809,54 @@ function loadSavedTheme() {
     }
   } catch(e) {
     console.log('LocalStorage not available');
+  }
+}
+
+function loadSavedData() {
+  try {
+    const savedList = localStorage.getItem('fatisco_email_list');
+    if (savedList) {
+      document.getElementById('list').value = savedList;
+    }
+    
+    const savedSubject = localStorage.getItem('fatisco_subject');
+    if (savedSubject) {
+      document.getElementById('subject').value = savedSubject;
+    }
+    
+    const savedBody = localStorage.getItem('fatisco_body');
+    if (savedBody) {
+      document.getElementById('body').value = savedBody;
+    }
+    
+    const savedSignature = localStorage.getItem('fatisco_signature');
+    if (savedSignature) {
+      document.getElementById('signature').value = savedSignature;
+    }
+    
+    const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
+    if (savedSentEmails) {
+      sentEmails = JSON.parse(savedSentEmails);
+    }
+    
+    if (savedList) {
+      cleanList();
+      showToast('📂 Previous session restored!');
+    }
+  } catch(e) {
+    console.log('Could not load saved data');
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem('fatisco_email_list', document.getElementById('list').value);
+    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
+    localStorage.setItem('fatisco_body', document.getElementById('body').value);
+    localStorage.setItem('fatisco_signature', document.getElementById('signature').value);
+    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+  } catch(e) {
+    console.log('Could not save data');
   }
 }
 
@@ -853,6 +903,7 @@ function loadTemplate() {
   document.getElementById('body').value = templates[idx].body;
   stats.templatesUsed = parseInt(idx) + 1;
   updateStats();
+  saveData();
   showToast('Template loaded successfully!');
 }
 
@@ -873,6 +924,7 @@ function cleanList() {
   stats.total = original;
   stats.valid = lines.length;
   updateStats();
+  saveData();
   
   showToast('Cleaned! ' + lines.length + ' valid emails from ' + original + ' entries.');
 }
@@ -918,10 +970,16 @@ function generateLinks() {
       const link = document.createElement('a');
       link.href = href;
       link.className = 'email-link';
-      link.setAttribute('data-email-id', index);
+      link.setAttribute('data-email-id', parsed.email);
+      
+      if (sentEmails[parsed.email]) {
+        link.classList.add('sent');
+      }
       
       link.addEventListener('click', function() {
         this.classList.add('sent');
+        sentEmails[parsed.email] = true;
+        saveData();
         updateSentCount();
       });
       
@@ -1155,7 +1213,41 @@ document.getElementById('fileInput').addEventListener('change', function() {
   reader.readAsText(file);
 });
 
+document.getElementById('list').addEventListener('input', saveData);
+document.getElementById('subject').addEventListener('input', saveData);
+document.getElementById('body').addEventListener('input', saveData);
+document.getElementById('signature').addEventListener('input', saveData);
+
+function clearAllData() {
+  if (!confirm('⚠️ This will delete ALL saved data including email list and sent status. Continue?')) {
+    return;
+  }
+  
+  try {
+    localStorage.removeItem('fatisco_email_list');
+    localStorage.removeItem('fatisco_subject');
+    localStorage.removeItem('fatisco_body');
+    localStorage.removeItem('fatisco_signature');
+    localStorage.removeItem('fatisco_sent_emails');
+    
+    document.getElementById('list').value = '';
+    document.getElementById('subject').value = 'Opportunity for {company}';
+    document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work in your industry. I\'d love to discuss how we can collaborate.\n\nLooking forward to connecting!';
+    document.getElementById('signature').value = '--\nFatai\nFATISCO Team\ncontact@fatisco.com';
+    document.getElementById('output').innerHTML = '';
+    
+    sentEmails = {};
+    stats = {total: 0, valid: 0, templatesUsed: 1};
+    updateStats();
+    
+    showToast('🗑️ All data cleared successfully!');
+  } catch(e) {
+    showToast('⚠️ Could not clear data');
+  }
+}
+
 loadSavedTheme();
+loadSavedData();
 updateStats();
 </script>
 </body>
