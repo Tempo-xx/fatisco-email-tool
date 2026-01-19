@@ -642,9 +642,9 @@ jane@startup.io,Jane Smith,Startup Inc"></textarea>
       </div>
       
       <div class="tabs">
-        <button class="tab active" onclick="switchTab('compose')">Compose</button>
-        <button class="tab" onclick="switchTab('preview')">Preview</button>
-        <button class="tab" onclick="switchTab('test')">A/B Test</button>
+        <button class="tab active" onclick="switchTab(event, 'compose')">Compose</button>
+        <button class="tab" onclick="switchTab(event, 'preview')">Preview</button>
+        <button class="tab" onclick="switchTab(event, 'test')">A/B Test</button>
       </div>
 
       <div class="tab-content active" id="compose-tab">
@@ -722,7 +722,7 @@ contact@fatisco.com</textarea>
 </div>
 
 <footer>
-  Built by Fatai | FATISCO © 2026 | Unlimited Email Automation
+  Built by Fatai Ajani | FATISCO © 2026 | Unlimited Email Automation
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -757,22 +757,33 @@ function toggleTheme() {
   document.body.classList.toggle('dark');
   document.body.classList.toggle('light');
   const isDark = document.body.classList.contains('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-}
-
-function loadSavedTheme() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') {
-    document.body.classList.remove('light');
-    document.body.classList.add('dark');
+  try {
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  } catch(e) {
+    console.log('LocalStorage not available');
   }
 }
 
-function showToast(message, duration = 3000) {
+function loadSavedTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      document.body.classList.remove('light');
+      document.body.classList.add('dark');
+    }
+  } catch(e) {
+    console.log('LocalStorage not available');
+  }
+}
+
+function showToast(message, duration) {
+  duration = duration || 3000;
   const toast = document.getElementById('toast');
   toast.textContent = message;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
+  setTimeout(function() {
+    toast.classList.remove('show');
+  }, duration);
 }
 
 function updateStats() {
@@ -782,21 +793,21 @@ function updateStats() {
 }
 
 function parseLine(line) {
-  const parts = line.split(',').map(p => p.trim());
+  const parts = line.split(',').map(function(p) { return p.trim(); });
   const email = parts[0];
   if (!email || !email.includes('@')) return null;
   
-  let name = parts[1] || email.split('@')[0].split(/[\._-]/).map(p => 
-    p.charAt(0).toUpperCase() + p.slice(1)
-  ).join(' ');
+  let name = parts[1] || email.split('@')[0].split(/[\._-]/).map(function(p) {
+    return p.charAt(0).toUpperCase() + p.slice(1);
+  }).join(' ');
   
-  let company = parts[2] || email.split('@')[1]?.split('.')[0] || 'your company';
+  let company = parts[2] || (email.split('@')[1] ? email.split('@')[1].split('.')[0] : 'your company');
   company = company.charAt(0).toUpperCase() + company.slice(1);
   
   return {
-    email,
+    email: email,
     name: name.trim() || 'there',
-    company,
+    company: company,
     custom1: parts[3] || '',
     custom2: parts[4] || ''
   };
@@ -812,11 +823,14 @@ function loadTemplate() {
 }
 
 function cleanList() {
-  let lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
+  let lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   const original = lines.length;
   
-  lines = [...new Set(lines)];
-  lines = lines.filter(l => {
+  lines = lines.filter(function(item, pos, self) {
+    return self.indexOf(item) === pos;
+  });
+  
+  lines = lines.filter(function(l) {
     const email = l.split(',')[0].trim();
     return /^[\w\.-]+@[\w\.-]+\.\w+$/.test(email);
   });
@@ -826,11 +840,11 @@ function cleanList() {
   stats.valid = lines.length;
   updateStats();
   
-  showToast(`Cleaned! ${lines.length} valid emails from ${original} entries.`);
+  showToast('Cleaned! ' + lines.length + ' valid emails from ' + original + ' entries.');
 }
 
 function generateLinks() {
-  const lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
   const sig = document.getElementById('signature').value;
@@ -844,8 +858,8 @@ function generateLinks() {
   const progressFill = document.getElementById('progressFill');
   progressBar.style.display = 'block';
 
-  lines.forEach((line, index) => {
-    setTimeout(() => {
+  lines.forEach(function(line, index) {
+    setTimeout(function() {
       const parsed = parseLine(line);
       if (!parsed) return;
       
@@ -865,7 +879,7 @@ function generateLinks() {
         .replace(/{custom1}/g, parsed.custom1)
         .replace(/{custom2}/g, parsed.custom2);
       
-      const href = `mailto:${parsed.email}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(msg)}`;
+      const href = 'mailto:' + parsed.email + '?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(msg);
       
       const link = document.createElement('a');
       link.href = href;
@@ -873,16 +887,7 @@ function generateLinks() {
       
       const avatar = parsed.name.charAt(0).toUpperCase();
       
-      link.innerHTML = `
-        <div class="email-info">
-          <div class="email-avatar">${avatar}</div>
-          <div class="email-details">
-            <div class="email-name">${parsed.name} @ ${parsed.company}</div>
-            <div class="email-address">${parsed.email}</div>
-          </div>
-        </div>
-        <div class="email-action">Send Email →</div>
-      `;
+      link.innerHTML = '<div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send Email →</div>';
       
       output.appendChild(link);
       
@@ -890,9 +895,9 @@ function generateLinks() {
       progressFill.style.width = progress + '%';
       
       if (index === lines.length - 1) {
-        setTimeout(() => {
+        setTimeout(function() {
           progressBar.style.display = 'none';
-          showToast(`✅ ${validCount} emails ready to send!`);
+          showToast('✅ ' + validCount + ' emails ready to send!');
         }, 300);
       }
     }, index * 50);
@@ -904,7 +909,7 @@ function generateLinks() {
 }
 
 function downloadCSV() {
-  const lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
   const sig = document.getElementById('signature').value;
@@ -912,7 +917,7 @@ function downloadCSV() {
   
   let csv = 'Email,Name,Company,Subject,Body\n';
 
-  lines.forEach(line => {
+  lines.forEach(function(line) {
     const parsed = parseLine(line);
     if (!parsed) return;
     
@@ -930,7 +935,7 @@ function downloadCSV() {
       .replace(/{custom1}/g, parsed.custom1)
       .replace(/{custom2}/g, parsed.custom2);
     
-    csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${sub.replace(/"/g, '""')}","${msg.replace(/"/g, '""')}"\n`;
+    csv += '"' + parsed.email + '","' + parsed.name + '","' + parsed.company + '","' + sub.replace(/"/g, '""') + '","' + msg.replace(/"/g, '""') + '"\n';
   });
 
   const blob = new Blob([csv], {type: 'text/csv'});
@@ -952,7 +957,7 @@ function analyzeSpam() {
   const text = (subject + ' ' + body).toLowerCase();
   
   let score = 0;
-  spamWords.forEach(word => {
+  spamWords.forEach(function(word) {
     if (text.includes(word)) score += 15;
   });
   
@@ -981,14 +986,14 @@ function analyzeSpam() {
 }
 
 function scheduleEmails() {
-  const lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
-  const count = lines.filter(l => parseLine(l)).length;
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  const count = lines.filter(function(l) { return parseLine(l); }).length;
   
-  const hours = prompt(`Schedule ${count} emails. How many hours from now?`, '2');
+  const hours = prompt('Schedule ' + count + ' emails. How many hours from now?', '2');
   if (!hours) return;
   
   const sendTime = new Date(Date.now() + parseInt(hours) * 60 * 60 * 1000);
-  showToast(`📅 Campaign scheduled for ${sendTime.toLocaleString()}`);
+  showToast('📅 Campaign scheduled for ' + sendTime.toLocaleString());
 }
 
 function saveTemplate() {
@@ -996,22 +1001,33 @@ function saveTemplate() {
   if (!name) return;
   
   const template = {
-    name,
+    name: name,
     subject: document.getElementById('subject').value,
     body: document.getElementById('body').value,
     signature: document.getElementById('signature').value
   };
   
-  const saved = JSON.parse(localStorage.getItem('fatisco_templates') || '[]');
-  saved.push(template);
-  localStorage.setItem('fatisco_templates', JSON.stringify(saved));
-  
-  showToast('💾 Template saved: ' + name);
+  try {
+    const saved = JSON.parse(localStorage.getItem('fatisco_templates') || '[]');
+    saved.push(template);
+    localStorage.setItem('fatisco_templates', JSON.stringify(saved));
+    showToast('💾 Template saved: ' + name);
+  } catch(e) {
+    showToast('⚠️ Could not save template - storage not available');
+  }
 }
 
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+function switchTab(event, tab) {
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+  
+  tabs.forEach(function(t) {
+    t.classList.remove('active');
+  });
+  
+  contents.forEach(function(t) {
+    t.classList.remove('active');
+  });
   
   event.target.classList.add('active');
   document.getElementById(tab + '-tab').classList.add('active');
@@ -1022,11 +1038,17 @@ function switchTab(tab) {
 }
 
 function updatePreview() {
-  const lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
-  if (lines.length === 0) return;
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  if (lines.length === 0) {
+    document.getElementById('previewBody').textContent = 'Add some emails to preview';
+    return;
+  }
   
   const parsed = parseLine(lines[0]);
-  if (!parsed) return;
+  if (!parsed) {
+    document.getElementById('previewBody').textContent = 'Invalid email format';
+    return;
+  }
   
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
@@ -1062,20 +1084,9 @@ function compareSubjects() {
   const scoreB = Math.floor(Math.random() * 30) + 50;
   
   const results = document.getElementById('abResults');
-  results.innerHTML = `
-    <div class="preview-card" style="margin-top: 20px;">
-      <h4>A/B Test Results (Predicted)</h4>
-      <p><strong>Subject A:</strong> ${subjA}</p>
-      <p>Expected Open Rate: ${scoreA}%</p>
-      <br>
-      <p><strong>Subject B:</strong> ${subjB}</p>
-      <p>Expected Open Rate: ${scoreB}%</p>
-      <br>
-      <p><strong>Winner:</strong> ${scoreA > scoreB ? 'Subject A' : 'Subject B'} (${Math.max(scoreA, scoreB)}%)</p>
-    </div>
-  `;
+  results.innerHTML = '<div class="preview-card" style="margin-top: 20px;"><h4>A/B Test Results (Predicted)</h4><p><strong>Subject A:</strong> ' + subjA + '</p><p>Expected Open Rate: ' + scoreA + '%</p><br><p><strong>Subject B:</strong> ' + subjB + '</p><p>Expected Open Rate: ' + scoreB + '%</p><br><p><strong>Winner:</strong> ' + (scoreA > scoreB ? 'Subject A' : 'Subject B') + ' (' + Math.max(scoreA, scoreB) + '%)</p></div>';
   
-  showToast(`Winner: Subject ${scoreA > scoreB ? 'A' : 'B'} with ${Math.max(scoreA, scoreB)}% open rate`);
+  showToast('Winner: Subject ' + (scoreA > scoreB ? 'A' : 'B') + ' with ' + Math.max(scoreA, scoreB) + '% open rate');
 }
 
 document.getElementById('fileInput').addEventListener('change', function() {
@@ -1083,9 +1094,9 @@ document.getElementById('fileInput').addEventListener('change', function() {
   if (!file) return;
   
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = function(e) {
     const content = e.target.result;
-    const lines = content.split(/\r?\n/).filter(l => l.trim());
+    const lines = content.split(/\r?\n/).filter(function(l) { return l.trim(); });
     document.getElementById('list').value = lines.join('\n');
     showToast('📁 File loaded: ' + lines.length + ' lines');
     cleanList();
@@ -1095,3 +1106,6 @@ document.getElementById('fileInput').addEventListener('change', function() {
 
 loadSavedTheme();
 updateStats();
+</script>
+</body>
+</html>
