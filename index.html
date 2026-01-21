@@ -992,6 +992,22 @@ bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
       <label>Subject Line</label>
       <input id="subject" value="Opportunity for {company}">
 
+      <label>Email Options</label>
+      <div class="button-grid" style="margin-bottom: 15px;">
+        <button class="btn-secondary" id="ccToggle" onclick="toggleCC()">📧 Add CC</button>
+        <button class="btn-secondary" id="bccToggle" onclick="toggleBCC()">📨 Add BCC</button>
+      </div>
+
+      <div id="ccField" style="display: none; margin-bottom: 15px;">
+        <label>CC Email (same for all)</label>
+        <input id="ccEmail" type="email" placeholder="cc@example.com">
+      </div>
+
+      <div id="bccField" style="display: none; margin-bottom: 15px;">
+        <label>BCC Email (same for all)</label>
+        <input id="bccEmail" type="email" placeholder="bcc@example.com">
+      </div>
+
       <label>Email Format</label>
       <div class="format-selector">
         <button class="format-btn active" onclick="setFormat('plain')">📝 Plain Text</button>
@@ -1126,6 +1142,8 @@ const templates = [
 let stats = {total: 0, valid: 0};
 let sentEmails = {};
 let emailFormat = 'plain';
+let ccEnabled = false;
+let bccEnabled = false;
 
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -1196,6 +1214,44 @@ function parseLine(line) {
     custom1: parts[3] || '',
     custom2: parts[4] || ''
   };
+}
+
+function toggleCC() {
+  ccEnabled = !ccEnabled;
+  const field = document.getElementById('ccField');
+  const btn = document.getElementById('ccToggle');
+  
+  if (ccEnabled) {
+    field.style.display = 'block';
+    btn.style.background = 'linear-gradient(135deg, var(--success), #00cc88)';
+    btn.style.color = 'white';
+    btn.style.borderColor = 'var(--success)';
+  } else {
+    field.style.display = 'none';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }
+  saveData();
+}
+
+function toggleBCC() {
+  bccEnabled = !bccEnabled;
+  const field = document.getElementById('bccField');
+  const btn = document.getElementById('bccToggle');
+  
+  if (bccEnabled) {
+    field.style.display = 'block';
+    btn.style.background = 'linear-gradient(135deg, var(--success), #00cc88)';
+    btn.style.color = 'white';
+    btn.style.borderColor = 'var(--success)';
+  } else {
+    field.style.display = 'none';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }
+  saveData();
 }
 
 function setFormat(format) {
@@ -1292,6 +1348,8 @@ function updateHTMLPreview() {
     .replace(/{custom1}/g, parsed.custom1)
     .replace(/{custom2}/g, parsed.custom2);
   
+  html = html.replace(/\n/g, '<br>');
+  
   document.getElementById('htmlPreview').innerHTML = html;
 }
 
@@ -1333,7 +1391,22 @@ function generateLinks() {
   
   if (emailFormat === 'html') {
     const htmlCode = document.getElementById('htmlCode').value.trim();
-    if (htmlCode) body = htmlCode;
+    if (htmlCode) {
+      body = htmlCode;
+    }
+  }
+  
+  const ccEmail = ccEnabled ? document.getElementById('ccEmail').value.trim() : '';
+  const bccEmail = bccEnabled ? document.getElementById('bccEmail').value.trim() : '';
+  
+  if (ccEnabled && !ccEmail) {
+    showToast('⚠️ Please enter a CC email address or disable CC');
+    return;
+  }
+  
+  if (bccEnabled && !bccEmail) {
+    showToast('⚠️ Please enter a BCC email address or disable BCC');
+    return;
   }
   
   const outputContainer = document.getElementById('outputContainer');
@@ -1374,7 +1447,21 @@ function generateLinks() {
         .replace(/{custom1}/g, parsed.custom1)
         .replace(/{custom2}/g, parsed.custom2);
       
-      const href = 'mailto:' + parsed.email + '?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(msg);
+      let href = 'mailto:' + parsed.email;
+      let params = [];
+      
+      if (ccEmail) {
+        params.push('cc=' + encodeURIComponent(ccEmail));
+      }
+      
+      if (bccEmail) {
+        params.push('bcc=' + encodeURIComponent(bccEmail));
+      }
+      
+      params.push('subject=' + encodeURIComponent(sub));
+      params.push('body=' + encodeURIComponent(msg));
+      
+      href += '?' + params.join('&');
       
       const link = document.createElement('a');
       link.href = href;
@@ -1405,7 +1492,11 @@ function generateLinks() {
       
       const avatar = parsed.name.charAt(0).toUpperCase();
       
-      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send →</div>';
+      let badges = '';
+      if (ccEmail) badges += '<span style="background: rgba(0,212,255,0.2); color: var(--primary); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 5px;">CC</span>';
+      if (bccEmail) badges += '<span style="background: rgba(255,0,110,0.2); color: var(--secondary); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 5px;">BCC</span>';
+      
+      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + badges + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send →</div>';
       
       output.appendChild(link);
       
@@ -1663,6 +1754,22 @@ function loadSavedData() {
       }
     }
     
+    const savedCC = localStorage.getItem('fatisco_cc_enabled');
+    const savedCCEmail = localStorage.getItem('fatisco_cc_email');
+    if (savedCC === 'true') {
+      ccEnabled = true;
+      toggleCC();
+      if (savedCCEmail) document.getElementById('ccEmail').value = savedCCEmail;
+    }
+    
+    const savedBCC = localStorage.getItem('fatisco_bcc_enabled');
+    const savedBCCEmail = localStorage.getItem('fatisco_bcc_email');
+    if (savedBCC === 'true') {
+      bccEnabled = true;
+      toggleBCC();
+      if (savedBCCEmail) document.getElementById('bccEmail').value = savedBCCEmail;
+    }
+    
     const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
     if (savedSentEmails) {
       sentEmails = JSON.parse(savedSentEmails);
@@ -1699,6 +1806,17 @@ function saveData() {
     localStorage.setItem('fatisco_subject', subject);
     localStorage.setItem('fatisco_body', body);
     localStorage.setItem('fatisco_format', emailFormat);
+    localStorage.setItem('fatisco_cc_enabled', ccEnabled);
+    localStorage.setItem('fatisco_bcc_enabled', bccEnabled);
+    
+    if (ccEnabled) {
+      localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
+    }
+    
+    if (bccEnabled) {
+      localStorage.setItem('fatisco_bcc_email', document.getElementById('bccEmail').value);
+    }
+    
     localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
   } catch(e) {
     console.error('Error saving data:', e);
@@ -1775,6 +1893,9 @@ document.getElementById('body').addEventListener('input', function() {
     updateHTMLPreview();
   }
 });
+
+document.getElementById('ccEmail').addEventListener('input', saveData);
+document.getElementById('bccEmail').addEventListener('input', saveData);
 
 document.getElementById('htmlCode').addEventListener('input', function() {
   saveData();
