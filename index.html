@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FATISCO - Advanced Cold Email Tool</title>
+<title>FATISCO - Premium Cold Email Tool</title>
 <style>
 :root {
   --primary: #00d4ff;
@@ -53,11 +53,12 @@ header {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   padding: 20px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   margin-bottom: 25px;
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(10px);
 }
 
 .header-content {
@@ -78,74 +79,89 @@ header {
 }
 
 .logo {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 22px;
   color: var(--primary);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .logo-text {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 900;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .tagline {
   font-size: 12px;
-  opacity: 0.9;
+  opacity: 0.95;
   margin-top: 3px;
 }
 
 .theme-toggle {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.25);
   border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
   color: white;
   cursor: pointer;
   font-size: 13px;
+  font-weight: 600;
   transition: all 0.3s;
   backdrop-filter: blur(10px);
   white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .theme-toggle:hover {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.35);
   transform: scale(1.05);
 }
 
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
   margin-bottom: 25px;
 }
 
 .stat-card {
   background: var(--card-light);
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   transition: all 0.3s;
   border: 2px solid transparent;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
 }
 
 .dark .stat-card {
   background: var(--card-dark);
-  border-color: var(--border-dark);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   border-color: var(--primary);
 }
 
@@ -153,14 +169,14 @@ header {
   font-size: 11px;
   text-transform: uppercase;
   opacity: 0.7;
-  margin-bottom: 6px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .stat-value {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 900;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -169,45 +185,51 @@ header {
 
 .card {
   background: var(--card-light);
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   border: 1px solid var(--border-light);
   margin-bottom: 20px;
+  transition: all 0.3s;
 }
 
 .dark .card {
   background: var(--card-dark);
   border-color: var(--border-dark);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+  box-shadow: 0 6px 30px rgba(0,0,0,0.12);
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--primary);
 }
 
 .card-icon {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 label {
   display: block;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 13px;
   opacity: 0.85;
 }
 
 input, textarea, select {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: 2px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s;
@@ -225,7 +247,8 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+  transform: translateY(-1px);
 }
 
 .file-upload {
@@ -240,56 +263,125 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px;
-  background: var(--bg-light);
-  border: 2px dashed var(--border-light);
-  border-radius: 10px;
+  gap: 10px;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,0,110,0.1));
+  border: 2px dashed var(--primary);
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 14px;
-  font-weight: 500;
-}
-
-.dark .file-upload-label {
-  background: var(--bg-dark);
-  border-color: var(--border-dark);
+  font-weight: 600;
 }
 
 .file-upload-label:hover {
+  background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(255,0,110,0.2));
+  transform: scale(1.02);
+}
+
+.format-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  background: var(--bg-light);
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.dark .format-selector {
+  background: var(--bg-dark);
+}
+
+.format-btn {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin: 0;
+}
+
+.format-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border-color: transparent;
+}
+
+.html-toolbar {
+  display: none;
+  gap: 5px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  padding: 10px;
+  background: var(--bg-light);
+  border-radius: 10px;
+}
+
+.dark .html-toolbar {
+  background: var(--bg-dark);
+}
+
+.html-toolbar.show {
+  display: flex;
+}
+
+.toolbar-btn {
+  padding: 8px 12px;
+  background: var(--card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin: 0;
+}
+
+.dark .toolbar-btn {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+}
+
+.toolbar-btn:hover {
+  background: var(--primary);
+  color: white;
   border-color: var(--primary);
-  background: rgba(0, 212, 255, 0.05);
+  transform: scale(1.05);
 }
 
 button {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border: none;
-  padding: 11px 20px;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 3px 10px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
   margin: 4px;
   white-space: nowrap;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
 }
 
 button:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: var(--card-light);
   color: var(--text-light);
   border: 2px solid var(--border-light);
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .dark .btn-secondary {
@@ -305,35 +397,35 @@ button:active {
 }
 
 .btn-danger {
-  background: var(--error);
-  box-shadow: 0 3px 10px rgba(255, 59, 109, 0.3);
+  background: linear-gradient(135deg, var(--error), #ff1744);
+  box-shadow: 0 4px 15px rgba(255, 59, 109, 0.4);
 }
 
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
   margin-top: 15px;
 }
 
 .email-output-container {
   background: var(--card-light);
-  border: 2px solid var(--primary);
-  border-radius: 14px;
-  padding: 20px;
-  margin-top: 25px;
-  max-height: 600px;
+  border: 3px solid var(--primary);
+  border-radius: 16px;
+  padding: 25px;
+  margin-top: 30px;
+  max-height: 650px;
   overflow-y: auto;
-  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.15);
+  box-shadow: 0 6px 30px rgba(0, 212, 255, 0.2);
 }
 
 .dark .email-output-container {
   background: var(--card-dark);
-  border-color: var(--primary);
+  box-shadow: 0 6px 30px rgba(0, 212, 255, 0.3);
 }
 
 .email-output-container::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .email-output-container::-webkit-scrollbar-track {
@@ -346,34 +438,33 @@ button:active {
 }
 
 .email-output-container::-webkit-scrollbar-thumb {
-  background: var(--primary);
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
   border-radius: 10px;
 }
 
-.email-output-container::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
-}
-
 #output h2 {
-  margin-bottom: 15px;
-  font-size: 20px;
-  color: var(--primary);
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .email-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
+  gap: 12px;
+  padding: 14px;
   background: var(--card-light);
   border: 2px solid var(--border-light);
-  border-radius: 10px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
   transition: all 0.3s;
   text-decoration: none;
   color: var(--text-light);
-  border-left: 4px solid var(--border-light);
-  min-height: 70px;
+  border-left: 5px solid var(--border-light);
+  min-height: 75px;
 }
 
 .dark .email-link {
@@ -383,64 +474,67 @@ button:active {
 }
 
 .email-link:hover {
-  transform: translateX(4px);
+  transform: translateX(6px);
   border-left-color: var(--primary);
-  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .email-link.sent {
-  background: rgba(6, 255, 165, 0.08);
+  background: linear-gradient(90deg, rgba(6, 255, 165, 0.1), rgba(6, 255, 165, 0.05));
   border-left-color: var(--success);
 }
 
 .dark .email-link.sent {
-  background: rgba(6, 255, 165, 0.12);
+  background: linear-gradient(90deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.08));
 }
 
 .email-number {
-  min-width: 32px;
-  height: 32px;
+  min-width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--border-light);
+  background: linear-gradient(135deg, var(--border-light), var(--bg-light));
   color: var(--text-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 13px;
+  font-weight: 800;
+  font-size: 14px;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .dark .email-number {
-  background: var(--border-dark);
+  background: linear-gradient(135deg, var(--border-dark), var(--bg-dark));
   color: var(--text-dark);
 }
 
 .email-link.sent .email-number {
-  background: var(--success);
+  background: linear-gradient(135deg, var(--success), #00cc88);
   color: #0a0e27;
+  box-shadow: 0 3px 12px rgba(6, 255, 165, 0.4);
 }
 
 .email-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
 
 .email-avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 16px;
   flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
 }
 
 .email-details {
@@ -449,11 +543,12 @@ button:active {
 }
 
 .email-name {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 2px;
 }
 
 .email-address {
@@ -465,27 +560,28 @@ button:active {
 }
 
 .email-action {
-  padding: 6px 14px;
-  background: var(--primary);
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .scroll-btn {
   position: fixed;
   right: 20px;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border: none;
-  font-size: 24px;
+  font-size: 26px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
   z-index: 1000;
   transition: all 0.3s;
   display: flex;
@@ -496,12 +592,12 @@ button:active {
 }
 
 .scroll-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+  transform: scale(1.15);
+  box-shadow: 0 8px 30px rgba(0, 212, 255, 0.7);
 }
 
 .scroll-top {
-  bottom: 90px;
+  bottom: 95px;
 }
 
 .scroll-bottom {
@@ -510,20 +606,21 @@ button:active {
 
 .toast {
   position: fixed;
-  bottom: 20px;
+  bottom: 25px;
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  transform: translateX(-50%) translateY(120px);
   background: var(--card-light);
   color: var(--text-light);
-  padding: 14px 24px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  padding: 16px 28px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
   opacity: 0;
-  transition: all 0.3s;
+  transition: all 0.4s;
   z-index: 2000;
-  border-left: 4px solid var(--primary);
+  border-left: 5px solid var(--primary);
   max-width: 90%;
   text-align: center;
+  font-weight: 600;
 }
 
 .dark .toast {
@@ -542,12 +639,13 @@ button:active {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.75);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 3000;
   padding: 20px;
+  backdrop-filter: blur(5px);
 }
 
 .modal.show {
@@ -556,13 +654,13 @@ button:active {
 
 .modal-content {
   background: var(--card-light);
-  padding: 30px;
-  border-radius: 16px;
-  max-width: 400px;
+  padding: 35px;
+  border-radius: 20px;
+  max-width: 450px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-  animation: modalPop 0.3s ease;
+  box-shadow: 0 15px 60px rgba(0,0,0,0.5);
+  animation: modalPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .dark .modal-content {
@@ -570,42 +668,67 @@ button:active {
 }
 
 @keyframes modalPop {
-  0% { transform: scale(0.8); opacity: 0; }
+  0% { transform: scale(0.7); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 .modal-icon {
-  font-size: 60px;
-  margin-bottom: 15px;
+  font-size: 70px;
+  margin-bottom: 20px;
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: var(--primary);
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .modal-text {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 20px;
-  line-height: 1.6;
+  font-size: 15px;
+  opacity: 0.85;
+  margin-bottom: 25px;
+  line-height: 1.7;
 }
 
 .modal-close {
-  background: var(--primary);
-  padding: 10px 30px;
+  background: linear-gradient(135deg, var(--success), #00cc88);
+  padding: 12px 40px;
   margin: 0;
+  font-size: 14px;
+}
+
+.html-preview {
+  background: var(--bg-light);
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 15px;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dark .html-preview {
+  background: var(--bg-dark);
+  border-color: var(--border-dark);
 }
 
 .progress-bar {
   width: 100%;
-  height: 6px;
+  height: 8px;
   background: var(--border-light);
   border-radius: 10px;
   overflow: hidden;
-  margin: 15px 0;
+  margin: 20px 0;
 }
 
 .dark .progress-bar {
@@ -617,13 +740,14 @@ button:active {
   background: linear-gradient(90deg, var(--primary), var(--secondary));
   width: 0%;
   transition: width 0.3s;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 .tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 15px;
-  border-bottom: 2px solid var(--border-light);
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--border-light);
   overflow-x: auto;
 }
 
@@ -632,22 +756,23 @@ button:active {
 }
 
 .tab {
-  padding: 10px 18px;
+  padding: 12px 22px;
   background: none;
   border: none;
   border-radius: 0;
   box-shadow: none;
   opacity: 0.6;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
-  border-bottom: 3px solid transparent;
-  font-size: 13px;
+  border-bottom: 4px solid transparent;
+  font-size: 14px;
   white-space: nowrap;
+  transition: all 0.3s;
 }
 
 .tab:hover {
   opacity: 1;
-  transform: none;
+  transform: translateY(-2px);
 }
 
 .tab.active {
@@ -667,8 +792,8 @@ button:active {
 .preview-card {
   background: var(--bg-light);
   border: 2px solid var(--border-light);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 20px;
   margin-top: 15px;
 }
 
@@ -679,8 +804,8 @@ button:active {
 
 .preview-header {
   border-bottom: 2px solid var(--border-light);
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .dark .preview-header {
@@ -691,52 +816,55 @@ button:active {
   font-size: 11px;
   text-transform: uppercase;
   opacity: 0.6;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .preview-value {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .preview-body {
   white-space: pre-wrap;
-  line-height: 1.7;
-  font-size: 13px;
+  line-height: 1.8;
+  font-size: 14px;
 }
 
 .score-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 10px;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 12px;
 }
 
 .score-good {
-  background: rgba(6, 255, 165, 0.15);
+  background: rgba(6, 255, 165, 0.2);
   color: var(--success);
 }
 
 .score-warning {
-  background: rgba(255, 149, 0, 0.15);
+  background: rgba(255, 149, 0, 0.2);
   color: var(--warning);
 }
 
 .score-bad {
-  background: rgba(255, 59, 109, 0.15);
+  background: rgba(255, 59, 109, 0.2);
   color: var(--error);
 }
 
 footer {
   text-align: center;
-  padding: 30px 15px;
-  margin-top: 40px;
+  padding: 40px 15px;
+  margin-top: 50px;
   opacity: 0.7;
   font-size: 13px;
+  font-weight: 500;
 }
 
 @media (max-width: 640px) {
@@ -745,7 +873,7 @@ footer {
   }
   
   .logo-text {
-    font-size: 20px;
+    font-size: 22px;
   }
   
   .tagline {
@@ -757,7 +885,7 @@ footer {
   }
   
   .stat-value {
-    font-size: 22px;
+    font-size: 26px;
   }
   
   .button-grid {
@@ -765,13 +893,13 @@ footer {
   }
   
   .scroll-btn {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     right: 15px;
   }
   
   .scroll-top {
-    bottom: 80px;
+    bottom: 85px;
   }
 }
 </style>
@@ -784,7 +912,7 @@ footer {
       <div class="logo">F</div>
       <div>
         <div class="logo-text">FATISCO</div>
-        <div class="tagline">Cold Email Automation</div>
+        <div class="tagline">Premium Email Automation</div>
       </div>
     </div>
     <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
@@ -794,19 +922,19 @@ footer {
 <div class="container">
   <div class="dashboard">
     <div class="stat-card">
-      <div class="stat-label">Total</div>
+      <div class="stat-label">TOTAL</div>
       <div class="stat-value" id="totalEmails">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Valid</div>
+      <div class="stat-label">VALID</div>
       <div class="stat-value" id="validEmails">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Sent</div>
+      <div class="stat-label">SENT</div>
       <div class="stat-value" id="emailsSent">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Spam</div>
+      <div class="stat-label">SPAM</div>
       <div class="stat-value" id="spamScore">-</div>
     </div>
   </div>
@@ -821,16 +949,17 @@ footer {
       <input type="file" id="fileInput" accept=".csv,.txt">
       <label for="fileInput" class="file-upload-label">
         <span>📁</span>
-        <span>Upload CSV/TXT</span>
+        <span>Upload CSV/TXT File</span>
       </label>
     </div>
     
     <label>Paste Emails (email,name,company)</label>
     <textarea id="list" rows="6" placeholder="john@acme.com,John Doe,Acme Corp
-jane@startup.io,Jane Smith,Startup Inc"></textarea>
+jane@startup.io,Jane Smith,Startup Inc
+bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
     
     <div class="button-grid">
-      <button class="btn-secondary" onclick="cleanList()">🧹 Clean</button>
+      <button class="btn-secondary" onclick="cleanList()">🧹 Clean List</button>
       <button class="btn-secondary" onclick="saveTemplate()">💾 Save Template</button>
       <button class="btn-secondary" onclick="manualSave()">💾 Force Save</button>
       <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All</button>
@@ -840,12 +969,13 @@ jane@startup.io,Jane Smith,Startup Inc"></textarea>
   <div class="card">
     <div class="card-title">
       <span class="card-icon">✉️</span>
-      Composer
+      Email Composer
     </div>
     
     <div class="tabs">
       <button class="tab active" onclick="switchTab(event, 'compose')">Compose</button>
       <button class="tab" onclick="switchTab(event, 'preview')">Preview</button>
+      <button class="tab" onclick="switchTab(event, 'html-preview')">HTML Preview</button>
       <button class="tab" onclick="switchTab(event, 'test')">A/B Test</button>
     </div>
 
@@ -862,28 +992,56 @@ jane@startup.io,Jane Smith,Startup Inc"></textarea>
       <label>Subject Line</label>
       <input id="subject" value="Opportunity for {company}">
 
+      <label>Email Format</label>
+      <div class="format-selector">
+        <button class="format-btn active" onclick="setFormat('plain')">📝 Plain Text</button>
+        <button class="format-btn" onclick="setFormat('html')">🎨 HTML</button>
+      </div>
+
+      <div id="htmlToolbar" class="html-toolbar">
+        <button class="toolbar-btn" onclick="insertHTML('bold')"><b>B</b></button>
+        <button class="toolbar-btn" onclick="insertHTML('italic')"><i>I</i></button>
+        <button class="toolbar-btn" onclick="insertHTML('underline')"><u>U</u></button>
+        <button class="toolbar-btn" onclick="insertHTML('h1')">H1</button>
+        <button class="toolbar-btn" onclick="insertHTML('h2')">H2</button>
+        <button class="toolbar-btn" onclick="insertHTML('link')">🔗 Link</button>
+        <button class="toolbar-btn" onclick="insertHTML('ul')">• List</button>
+        <button class="toolbar-btn" onclick="insertHTML('color')">🎨 Color</button>
+      </div>
+
       <label>Message Body</label>
-      <textarea id="body" rows="6">Hi {name},
+      <textarea id="body" rows="8">Hi {name},
 
 I noticed {company} is doing great work. I'd love to discuss collaboration opportunities.
 
 Looking forward to connecting!</textarea>
 
-      <label>Signature</label>
-      <textarea id="signature" rows="2">--
-Fatai | FATISCO
-contact@fatisco.com</textarea>
+      <div id="htmlCodeEditor" style="display: none;">
+        <label>HTML Code (Advanced)</label>
+        <textarea id="htmlCode" rows="8" placeholder="<p>Your HTML code here...</p>"></textarea>
+      </div>
     </div>
 
     <div class="tab-content" id="preview-tab">
       <div class="preview-card">
         <div class="preview-header">
-          <div class="preview-label">Subject</div>
+          <div class="preview-label">SUBJECT</div>
           <div class="preview-value" id="previewSubject">-</div>
         </div>
         <div class="preview-body" id="previewBody">Add emails to preview</div>
         <div class="score-badge score-good" id="spamScoreBadge">
           ✓ Low Spam Risk
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="html-preview-tab">
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-label">HTML RENDERED PREVIEW</div>
+        </div>
+        <div class="html-preview" id="htmlPreview">
+          <p style="color: #666;">Add content and switch to HTML format to see preview...</p>
         </div>
       </div>
     </div>
@@ -895,7 +1053,7 @@ contact@fatisco.com</textarea>
       <label>Subject Line B</label>
       <input id="subjectB" placeholder="Second variant">
       
-      <button onclick="compareSubjects()">Compare</button>
+      <button onclick="compareSubjects()">⚡ Compare Performance</button>
       <div id="abResults"></div>
     </div>
   </div>
@@ -927,7 +1085,7 @@ contact@fatisco.com</textarea>
 <button class="scroll-btn scroll-bottom" onclick="scrollToBottom()" style="display: none;">↓</button>
 
 <footer>
-  Built by Fatai Ajani | FATISCO © 2026 | Unlimited Automation
+  Built by Fatai | FATISCO © 2026 | Premium Email Automation
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -936,7 +1094,7 @@ contact@fatisco.com</textarea>
   <div class="modal-content">
     <div class="modal-icon">✅</div>
     <div class="modal-title">Already Sent!</div>
-    <div class="modal-text" id="modalText">You already sent this email on <strong id="sentDate"></strong></div>
+    <div class="modal-text">You already sent this email on <strong id="sentDate"></strong></div>
     <button class="modal-close" onclick="closeModal()">Got It!</button>
   </div>
 </div>
@@ -967,6 +1125,7 @@ const templates = [
 
 let stats = {total: 0, valid: 0};
 let sentEmails = {};
+let emailFormat = 'plain';
 
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -1039,12 +1198,109 @@ function parseLine(line) {
   };
 }
 
+function setFormat(format) {
+  emailFormat = format;
+  const buttons = document.querySelectorAll('.format-btn');
+  buttons.forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  
+  if (format === 'html') {
+    buttons[1].classList.add('active');
+    document.getElementById('htmlToolbar').classList.add('show');
+    document.getElementById('htmlCodeEditor').style.display = 'block';
+    updateHTMLPreview();
+  } else {
+    buttons[0].classList.add('active');
+    document.getElementById('htmlToolbar').classList.remove('show');
+    document.getElementById('htmlCodeEditor').style.display = 'none';
+  }
+  
+  saveData();
+  showToast(format === 'html' ? '🎨 HTML Mode Enabled' : '📝 Plain Text Mode');
+}
+
+function insertHTML(type) {
+  const body = document.getElementById('body');
+  const start = body.selectionStart;
+  const end = body.selectionEnd;
+  const selectedText = body.value.substring(start, end) || 'text';
+  let insertion = '';
+  
+  switch(type) {
+    case 'bold':
+      insertion = '<strong>' + selectedText + '</strong>';
+      break;
+    case 'italic':
+      insertion = '<em>' + selectedText + '</em>';
+      break;
+    case 'underline':
+      insertion = '<u>' + selectedText + '</u>';
+      break;
+    case 'h1':
+      insertion = '<h1>' + selectedText + '</h1>';
+      break;
+    case 'h2':
+      insertion = '<h2>' + selectedText + '</h2>';
+      break;
+    case 'link':
+      const url = prompt('Enter URL:', 'https://');
+      if (url) insertion = '<a href="' + url + '">' + selectedText + '</a>';
+      break;
+    case 'ul':
+      insertion = '<ul>\n  <li>' + selectedText + '</li>\n  <li>Item 2</li>\n</ul>';
+      break;
+    case 'color':
+      const color = prompt('Enter color (e.g., #ff0000 or red):', '#00d4ff');
+      if (color) insertion = '<span style="color:' + color + '">' + selectedText + '</span>';
+      break;
+  }
+  
+  if (insertion) {
+    body.value = body.value.substring(0, start) + insertion + body.value.substring(end);
+    body.focus();
+    updateHTMLPreview();
+  }
+}
+
+function updateHTMLPreview() {
+  if (emailFormat !== 'html') return;
+  
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  if (lines.length === 0) {
+    document.getElementById('htmlPreview').innerHTML = '<p style="color: #666;">Add emails to see HTML preview...</p>';
+    return;
+  }
+  
+  const parsed = parseLine(lines[0]);
+  if (!parsed) {
+    document.getElementById('htmlPreview').innerHTML = '<p style="color: #666;">Invalid email format</p>';
+    return;
+  }
+  
+  let body = document.getElementById('body').value;
+  const htmlCode = document.getElementById('htmlCode').value.trim();
+  
+  if (htmlCode) {
+    body = htmlCode;
+  }
+  
+  let html = body
+    .replace(/{name}/g, parsed.name)
+    .replace(/{company}/g, parsed.company)
+    .replace(/{email}/g, parsed.email)
+    .replace(/{custom1}/g, parsed.custom1)
+    .replace(/{custom2}/g, parsed.custom2);
+  
+  document.getElementById('htmlPreview').innerHTML = html;
+}
+
 function loadTemplate() {
   const idx = document.getElementById('template').value;
   document.getElementById('subject').value = templates[idx].subj;
   document.getElementById('body').value = templates[idx].body;
   saveData();
-  showToast('Template loaded!');
+  showToast('✅ Template loaded!');
 }
 
 function cleanList() {
@@ -1055,26 +1311,30 @@ function cleanList() {
     return self.indexOf(item) === pos;
   });
   
-  lines = lines.filter(function(l) {
-    const email = l.split(',')[0].trim();
-    return /^[\w\.-]+@[\w\.-]+\.\w+$/.test(email);
-  });
-  
   document.getElementById('list').value = lines.join('\n');
-  stats.total = original;
-  stats.valid = lines.length;
+  stats.total = lines.length;
+  stats.valid = lines.filter(function(l) { return l.includes('@'); }).length;
   updateStats();
   saveData();
   
-  showToast('Cleaned! ' + lines.length + ' valid from ' + original);
+  showToast('✨ Cleaned! ' + lines.length + ' emails (' + (original - lines.length) + ' duplicates removed)');
 }
 
 function generateLinks() {
   const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  
+  if (lines.length === 0) {
+    showToast('⚠️ Please add some emails first!');
+    return;
+  }
+  
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
-  const sig = document.getElementById('signature').value;
-  body += '\n\n' + sig;
+  
+  if (emailFormat === 'html') {
+    const htmlCode = document.getElementById('htmlCode').value.trim();
+    if (htmlCode) body = htmlCode;
+  }
   
   const outputContainer = document.getElementById('outputContainer');
   const output = document.getElementById('output');
@@ -1095,7 +1355,6 @@ function generateLinks() {
     setTimeout(function() {
       const parsed = parseLine(line);
       if (!parsed) {
-        console.log('Invalid line:', line);
         return;
       }
       
@@ -1133,17 +1392,15 @@ function generateLinks() {
           return false;
         }
         
-        setTimeout(function() {
-          link.classList.add('sent');
-          sentEmails[parsed.email] = {
-            sentAt: new Date().toISOString(),
-            name: parsed.name,
-            company: parsed.company
-          };
-          saveData();
-          updateStats();
-          showToast('✅ Sent to ' + parsed.name);
-        }, 100);
+        link.classList.add('sent');
+        sentEmails[parsed.email] = {
+          sentAt: new Date().toISOString(),
+          name: parsed.name,
+          company: parsed.company
+        };
+        saveData();
+        updateStats();
+        showToast('✅ Email sent to ' + parsed.name);
       });
       
       const avatar = parsed.name.charAt(0).toUpperCase();
@@ -1161,7 +1418,7 @@ function generateLinks() {
           stats.total = lines.length;
           stats.valid = validCount;
           updateStats();
-          showToast('✅ ' + validCount + ' emails ready!');
+          showToast('🎉 ' + validCount + ' emails ready to send!');
         }, 300);
       }
     }, index * 50);
@@ -1170,12 +1427,21 @@ function generateLinks() {
 
 function downloadCSV() {
   const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  
+  if (lines.length === 0) {
+    showToast('⚠️ No emails to download!');
+    return;
+  }
+  
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
-  const sig = document.getElementById('signature').value;
-  body += '\n\n' + sig;
   
-  let csv = 'Email,Name,Company,Subject,Body\n';
+  if (emailFormat === 'html') {
+    const htmlCode = document.getElementById('htmlCode').value.trim();
+    if (htmlCode) body = htmlCode;
+  }
+  
+  let csv = 'Email,Name,Company,Subject,Body,Format\n';
 
   lines.forEach(function(line) {
     const parsed = parseLine(line);
@@ -1195,7 +1461,7 @@ function downloadCSV() {
       .replace(/{custom1}/g, parsed.custom1)
       .replace(/{custom2}/g, parsed.custom2);
     
-    csv += '"' + parsed.email + '","' + parsed.name + '","' + parsed.company + '","' + sub.replace(/"/g, '""') + '","' + msg.replace(/"/g, '""') + '"\n';
+    csv += '"' + parsed.email + '","' + parsed.name + '","' + parsed.company + '","' + sub.replace(/"/g, '""') + '","' + msg.replace(/"/g, '""') + '","' + emailFormat + '"\n';
   });
 
   const blob = new Blob([csv], {type: 'text/csv'});
@@ -1206,24 +1472,25 @@ function downloadCSV() {
   a.click();
   URL.revokeObjectURL(url);
   
-  showToast('📥 CSV downloaded!');
+  showToast('📥 CSV downloaded successfully!');
 }
 
 function analyzeSpam() {
   const subject = document.getElementById('subject').value;
   const body = document.getElementById('body').value;
   
-  const spamWords = ['free', 'buy now', 'click here', 'limited time', 'act now', 'guarantee', 'winner', 'cash', 'earn money', 'congratulations'];
+  const spamWords = ['free', 'buy now', 'click here', 'limited time', 'act now', 'guarantee', 'winner', 'cash', 'earn money', 'congratulations', 'urgent', 'exclusive'];
   const text = (subject + ' ' + body).toLowerCase();
   
   let score = 0;
   spamWords.forEach(function(word) {
-    if (text.includes(word)) score += 15;
+    if (text.includes(word)) score += 12;
   });
   
-  if (subject.includes('!')) score += 10;
-  if (subject.toUpperCase() === subject && subject.length > 3) score += 20;
+  if (subject.includes('!')) score += 8;
+  if (subject.toUpperCase() === subject && subject.length > 3) score += 15;
   if (body.length < 50) score += 10;
+  if (subject.length > 100) score += 10;
   
   if (score > 100) score = 100;
   
@@ -1235,15 +1502,15 @@ function analyzeSpam() {
   if (score < 30) {
     badgeEl.className = 'score-badge score-good';
     badgeEl.innerHTML = '✓ Low Risk (' + score + '%)';
-    showToast('✅ Low spam score: ' + score + '%');
+    showToast('✅ Excellent! Low spam score: ' + score + '%');
   } else if (score < 60) {
     badgeEl.className = 'score-badge score-warning';
     badgeEl.innerHTML = '⚠ Medium Risk (' + score + '%)';
-    showToast('⚠️ Medium spam score: ' + score + '%');
+    showToast('⚠️ Warning: Medium spam score: ' + score + '%');
   } else {
     badgeEl.className = 'score-badge score-bad';
     badgeEl.innerHTML = '✗ High Risk (' + score + '%)';
-    showToast('❌ High spam score: ' + score + '%');
+    showToast('❌ Alert: High spam score: ' + score + '%');
   }
 }
 
@@ -1251,11 +1518,16 @@ function scheduleEmails() {
   const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   const count = lines.filter(function(l) { return parseLine(l); }).length;
   
+  if (count === 0) {
+    showToast('⚠️ No valid emails to schedule!');
+    return;
+  }
+  
   const hours = prompt('Schedule ' + count + ' emails. How many hours from now?', '2');
   if (!hours) return;
   
   const sendTime = new Date(Date.now() + parseInt(hours) * 60 * 60 * 1000);
-  showToast('📅 Scheduled for ' + sendTime.toLocaleString());
+  showToast('📅 Campaign scheduled for ' + sendTime.toLocaleString());
 }
 
 function saveTemplate() {
@@ -1266,7 +1538,7 @@ function saveTemplate() {
     name: name,
     subject: document.getElementById('subject').value,
     body: document.getElementById('body').value,
-    signature: document.getElementById('signature').value
+    format: emailFormat
   };
   
   try {
@@ -1303,6 +1575,8 @@ function switchTab(event, tab) {
   
   if (tab === 'preview') {
     updatePreview();
+  } else if (tab === 'html-preview') {
+    updateHTMLPreview();
   }
 }
 
@@ -1321,8 +1595,11 @@ function updatePreview() {
   
   const subj = document.getElementById('subject').value;
   let body = document.getElementById('body').value;
-  const sig = document.getElementById('signature').value;
-  body += '\n\n' + sig;
+  
+  if (emailFormat === 'html') {
+    const htmlCode = document.getElementById('htmlCode').value.trim();
+    if (htmlCode) body = htmlCode;
+  }
   
   let msg = body
     .replace(/{name}/g, parsed.name)
@@ -1345,17 +1622,20 @@ function compareSubjects() {
   const subjB = document.getElementById('subjectB').value;
   
   if (!subjA || !subjB) {
-    showToast('Please enter both subject lines');
+    showToast('⚠️ Please enter both subject lines');
     return;
   }
   
   const scoreA = Math.floor(Math.random() * 30) + 50;
   const scoreB = Math.floor(Math.random() * 30) + 50;
   
-  const results = document.getElementById('abResults');
-  results.innerHTML = '<div class="preview-card" style="margin-top: 15px;"><h4>A/B Test Results</h4><p><strong>Subject A:</strong> ' + subjA + '</p><p>Open Rate: ' + scoreA + '%</p><br><p><strong>Subject B:</strong> ' + subjB + '</p><p>Open Rate: ' + scoreB + '%</p><br><p><strong>Winner:</strong> ' + (scoreA > scoreB ? 'Subject A' : 'Subject B') + ' (' + Math.max(scoreA, scoreB) + '%)</p></div>';
+  const winner = scoreA > scoreB ? 'A' : 'B';
+  const winScore = Math.max(scoreA, scoreB);
   
-  showToast('Winner: Subject ' + (scoreA > scoreB ? 'A' : 'B'));
+  const results = document.getElementById('abResults');
+  results.innerHTML = '<div class="preview-card" style="margin-top: 15px;"><h3 style="margin-bottom: 15px;">📊 A/B Test Results</h3><p style="margin: 10px 0;"><strong>Subject A:</strong> ' + subjA + '</p><p style="margin: 5px 0; color: var(--primary);">Expected Open Rate: <strong>' + scoreA + '%</strong></p><hr style="margin: 15px 0; opacity: 0.2;"><p style="margin: 10px 0;"><strong>Subject B:</strong> ' + subjB + '</p><p style="margin: 5px 0; color: var(--secondary);">Expected Open Rate: <strong>' + scoreB + '%</strong></p><hr style="margin: 15px 0; opacity: 0.2;"><p style="margin: 15px 0; font-size: 16px;"><strong>🏆 Winner:</strong> <span style="color: var(--success);">Subject ' + winner + ' (' + winScore + '%)</span></p></div>';
+  
+  showToast('🏆 Winner: Subject ' + winner + ' with ' + winScore + '% open rate!');
 }
 
 function loadSavedData() {
@@ -1375,9 +1655,12 @@ function loadSavedData() {
       document.getElementById('body').value = savedBody;
     }
     
-    const savedSignature = localStorage.getItem('fatisco_signature');
-    if (savedSignature) {
-      document.getElementById('signature').value = savedSignature;
+    const savedFormat = localStorage.getItem('fatisco_format');
+    if (savedFormat) {
+      emailFormat = savedFormat;
+      if (savedFormat === 'html') {
+        setFormat('html');
+      }
     }
     
     const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
@@ -1390,7 +1673,7 @@ function loadSavedData() {
       
       let validCount = 0;
       lines.forEach(function(line) {
-        if (parseLine(line)) validCount++;
+        if (line.includes('@')) validCount++;
       });
       
       stats.total = lines.length;
@@ -1398,7 +1681,7 @@ function loadSavedData() {
       updateStats();
       
       setTimeout(function() {
-        showToast('📂 Session restored! ' + validCount + ' emails');
+        showToast('📂 Session restored! ' + validCount + ' emails loaded');
       }, 500);
     }
   } catch(e) {
@@ -1411,12 +1694,11 @@ function saveData() {
     const emailList = document.getElementById('list').value;
     const subject = document.getElementById('subject').value;
     const body = document.getElementById('body').value;
-    const signature = document.getElementById('signature').value;
     
     localStorage.setItem('fatisco_email_list', emailList);
     localStorage.setItem('fatisco_subject', subject);
     localStorage.setItem('fatisco_body', body);
-    localStorage.setItem('fatisco_signature', signature);
+    localStorage.setItem('fatisco_format', emailFormat);
     localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
   } catch(e) {
     console.error('Error saving data:', e);
@@ -1432,21 +1714,24 @@ function clearAllData() {
     localStorage.removeItem('fatisco_email_list');
     localStorage.removeItem('fatisco_subject');
     localStorage.removeItem('fatisco_body');
-    localStorage.removeItem('fatisco_signature');
+    localStorage.removeItem('fatisco_format');
     localStorage.removeItem('fatisco_sent_emails');
     
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
-    document.getElementById('signature').value = '--\nFatai | FATISCO\ncontact@fatisco.com';
     document.getElementById('output').innerHTML = '';
     document.getElementById('outputContainer').style.display = 'none';
     
+    setFormat('plain');
     sentEmails = {};
     stats = {total: 0, valid: 0};
     updateStats();
     
-    showToast('🗑️ All data cleared!');
+    document.querySelector('.scroll-top').style.display = 'none';
+    document.querySelector('.scroll-bottom').style.display = 'none';
+    
+    showToast('🗑️ All data cleared successfully!');
   } catch(e) {
     showToast('⚠️ Could not clear data');
   }
@@ -1475,10 +1760,26 @@ document.getElementById('fileInput').addEventListener('change', function() {
   reader.readAsText(file);
 });
 
-document.getElementById('list').addEventListener('input', saveData);
+document.getElementById('list').addEventListener('input', function() {
+  saveData();
+  const lines = this.value.trim().split('\n').filter(function(l) { return l.trim(); });
+  stats.total = lines.length;
+  stats.valid = lines.filter(function(l) { return l.includes('@'); }).length;
+  updateStats();
+});
+
 document.getElementById('subject').addEventListener('input', saveData);
-document.getElementById('body').addEventListener('input', saveData);
-document.getElementById('signature').addEventListener('input', saveData);
+document.getElementById('body').addEventListener('input', function() {
+  saveData();
+  if (emailFormat === 'html') {
+    updateHTMLPreview();
+  }
+});
+
+document.getElementById('htmlCode').addEventListener('input', function() {
+  saveData();
+  updateHTMLPreview();
+});
 
 window.addEventListener('beforeunload', function() {
   saveData();
