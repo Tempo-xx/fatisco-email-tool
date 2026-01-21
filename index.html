@@ -6,21 +6,21 @@
 <title>FATISCO - Advanced Cold Email Tool</title>
 <style>
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --secondary: #8b5cf6;
-  --accent: #ec4899;
-  --bg-light: #f8fafc;
-  --bg-dark: #0f172a;
+  --primary: #00d4ff;
+  --primary-dark: #00a8cc;
+  --secondary: #ff006e;
+  --accent: #ffbe0b;
+  --success: #06ffa5;
+  --warning: #ff9500;
+  --error: #ff3b6d;
+  --bg-light: #f0f4f8;
+  --bg-dark: #0a0e27;
   --card-light: #ffffff;
-  --card-dark: #1e293b;
+  --card-dark: #1a1f3a;
   --text-light: #1e293b;
-  --text-dark: #f1f5f9;
-  --border-light: #e2e8f0;
-  --border-dark: #334155;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --text-dark: #e2e8f0;
+  --border-light: #cbd5e1;
+  --border-dark: #2d3548;
 }
 
 * {
@@ -34,7 +34,8 @@ body {
   background: var(--bg-light);
   color: var(--text-light);
   transition: all 0.3s ease;
-  line-height: 1.6;
+  line-height: 1.5;
+  overflow-x: hidden;
 }
 
 body.dark {
@@ -43,91 +44,98 @@ body.dark {
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 15px;
 }
 
 header {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  padding: 30px 0;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  margin-bottom: 40px;
+  padding: 20px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin-bottom: 25px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 24px;
+  font-size: 20px;
   color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
 .logo-text {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
 }
 
 .tagline {
-  font-size: 14px;
+  font-size: 12px;
   opacity: 0.9;
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .theme-toggle {
   background: rgba(255,255,255,0.2);
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 8px;
   color: white;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.3s;
   backdrop-filter: blur(10px);
+  white-space: nowrap;
 }
 
 .theme-toggle:hover {
   background: rgba(255,255,255,0.3);
-  transform: translateY(-2px);
+  transform: scale(1.05);
 }
 
 .dashboard {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
 .stat-card {
   background: var(--card-light);
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transition: all 0.3s;
-  border: 1px solid var(--border-light);
+  border: 2px solid transparent;
+  text-align: center;
 }
 
 .dark .stat-card {
@@ -136,37 +144,36 @@ header {
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  border-color: var(--primary);
 }
 
 .stat-label {
-  font-size: 13px;
+  font-size: 11px;
   text-transform: uppercase;
   opacity: 0.7;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .stat-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .card {
   background: var(--card-light);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   border: 1px solid var(--border-light);
-  transition: all 0.3s;
+  margin-bottom: 20px;
 }
 
 .dark .card {
@@ -175,45 +182,38 @@ header {
 }
 
 .card-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  color: var(--primary);
 }
 
 .card-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 label {
   display: block;
   font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 14px;
-  opacity: 0.9;
+  margin-bottom: 6px;
+  font-size: 13px;
+  opacity: 0.85;
 }
 
 input, textarea, select {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 2px solid var(--border-light);
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s;
   background: var(--bg-light);
   color: var(--text-light);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .dark input, .dark textarea, .dark select {
@@ -225,33 +225,30 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
 }
 
 .file-upload {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-  width: 100%;
+  margin-bottom: 15px;
 }
 
 .file-upload input[type=file] {
-  position: absolute;
-  left: -9999px;
+  display: none;
 }
 
 .file-upload-label {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 16px;
   background: var(--bg-light);
   border: 2px dashed var(--border-light);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s;
-  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .dark .file-upload-label {
@@ -261,26 +258,27 @@ input:focus, textarea:focus, select:focus {
 
 .file-upload-label:hover {
   border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(0, 212, 255, 0.05);
 }
 
 button {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border: none;
-  padding: 14px 28px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-  margin: 5px;
+  box-shadow: 0 3px 10px rgba(0, 212, 255, 0.3);
+  margin: 4px;
+  white-space: nowrap;
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
 }
 
 button:active {
@@ -301,37 +299,81 @@ button:active {
 }
 
 .btn-secondary:hover {
-  background: var(--bg-light);
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 
-.dark .btn-secondary:hover {
+.btn-danger {
+  background: var(--error);
+  box-shadow: 0 3px 10px rgba(255, 59, 109, 0.3);
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.email-output-container {
+  background: var(--card-light);
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 25px;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.15);
+}
+
+.dark .email-output-container {
+  background: var(--card-dark);
+  border-color: var(--primary);
+}
+
+.email-output-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.email-output-container::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 10px;
+}
+
+.dark .email-output-container::-webkit-scrollbar-track {
   background: var(--bg-dark);
 }
 
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
+.email-output-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
 }
 
-#output {
-  margin-top: 40px;
+.email-output-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+#output h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: var(--primary);
 }
 
 .email-link {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 12px;
   background: var(--card-light);
-  border: 1px solid var(--border-light);
+  border: 2px solid var(--border-light);
   border-radius: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   transition: all 0.3s;
   text-decoration: none;
   color: var(--text-light);
   border-left: 4px solid var(--border-light);
+  min-height: 70px;
 }
 
 .dark .email-link {
@@ -341,23 +383,23 @@ button:active {
 }
 
 .email-link:hover {
-  transform: translateX(5px);
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateX(4px);
+  border-left-color: var(--primary);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
 }
 
 .email-link.sent {
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(6, 255, 165, 0.08);
   border-left-color: var(--success);
 }
 
 .dark .email-link.sent {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(6, 255, 165, 0.12);
 }
 
 .email-number {
-  width: 35px;
-  height: 35px;
+  min-width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--border-light);
   color: var(--text-light);
@@ -365,8 +407,8 @@ button:active {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
-  margin-right: 15px;
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
 .dark .email-number {
@@ -376,18 +418,20 @@ button:active {
 
 .email-link.sent .email-number {
   background: var(--success);
-  color: white;
+  color: #0a0e27;
 }
 
 .email-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .email-avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
@@ -395,105 +439,192 @@ button:active {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .email-details {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .email-name {
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .email-address {
-  font-size: 13px;
+  font-size: 12px;
   opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .email-action {
-  padding: 8px 16px;
+  padding: 6px 14px;
   background: var(--primary);
   color: white;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
-.preview-card {
-  background: var(--bg-light);
-  border: 2px solid var(--border-light);
+.scroll-btn {
+  position: fixed;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+  z-index: 1000;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.scroll-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6);
+}
+
+.scroll-top {
+  bottom: 90px;
+}
+
+.scroll-bottom {
+  bottom: 30px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--card-light);
+  color: var(--text-light);
+  padding: 14px 24px;
   border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 2000;
+  border-left: 4px solid var(--primary);
+  max-width: 90%;
+  text-align: center;
+}
+
+.dark .toast {
+  background: var(--card-dark);
+  color: var(--text-dark);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
   padding: 20px;
-  margin-top: 20px;
 }
 
-.dark .preview-card {
-  background: var(--bg-dark);
-  border-color: var(--border-dark);
+.modal.show {
+  display: flex;
 }
 
-.preview-header {
-  border-bottom: 2px solid var(--border-light);
-  padding-bottom: 15px;
+.modal-content {
+  background: var(--card-light);
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  animation: modalPop 0.3s ease;
+}
+
+.dark .modal-content {
+  background: var(--card-dark);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+  font-size: 60px;
   margin-bottom: 15px;
 }
 
-.dark .preview-header {
-  border-color: var(--border-dark);
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--primary);
 }
 
-.preview-label {
-  font-size: 12px;
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin-bottom: 5px;
-}
-
-.preview-value {
+.modal-text {
   font-size: 14px;
-  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
-.preview-body {
-  white-space: pre-wrap;
-  line-height: 1.8;
-  font-size: 14px;
+.modal-close {
+  background: var(--primary);
+  padding: 10px 30px;
+  margin: 0;
 }
 
-.score-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 10px;
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 15px 0;
 }
 
-.score-good {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
+.dark .progress-bar {
+  background: var(--border-dark);
 }
 
-.score-warning {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--warning);
-}
-
-.score-bad {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error);
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  width: 0%;
+  transition: width 0.3s;
 }
 
 .tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 15px;
   border-bottom: 2px solid var(--border-light);
+  overflow-x: auto;
 }
 
 .dark .tabs {
@@ -501,7 +632,7 @@ button:active {
 }
 
 .tab {
-  padding: 12px 24px;
+  padding: 10px 18px;
   background: none;
   border: none;
   border-radius: 0;
@@ -510,6 +641,8 @@ button:active {
   font-weight: 600;
   margin: 0;
   border-bottom: 3px solid transparent;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -531,83 +664,115 @@ button:active {
   display: block;
 }
 
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: var(--border-light);
+.preview-card {
+  background: var(--bg-light);
+  border: 2px solid var(--border-light);
   border-radius: 10px;
-  overflow: hidden;
-  margin: 20px 0;
+  padding: 16px;
+  margin-top: 15px;
 }
 
-.dark .progress-bar {
-  background: var(--border-dark);
+.dark .preview-card {
+  background: var(--bg-dark);
+  border-color: var(--border-dark);
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  width: 0%;
-  transition: width 0.3s;
+.preview-header {
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.dark .preview-header {
+  border-color: var(--border-dark);
+}
+
+.preview-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+.preview-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.preview-body {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 13px;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.score-good {
+  background: rgba(6, 255, 165, 0.15);
+  color: var(--success);
+}
+
+.score-warning {
+  background: rgba(255, 149, 0, 0.15);
+  color: var(--warning);
+}
+
+.score-bad {
+  background: rgba(255, 59, 109, 0.15);
+  color: var(--error);
 }
 
 footer {
   text-align: center;
-  padding: 40px 20px;
-  margin-top: 60px;
+  padding: 30px 15px;
+  margin-top: 40px;
   opacity: 0.7;
-  font-size: 14px;
-}
-
-@media (max-width: 1024px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .dashboard {
-    grid-template-columns: 1fr 1fr;
-  }
+  font-size: 13px;
 }
 
 @media (max-width: 640px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-  }
-  
   .header-content {
-    flex-direction: column;
-    gap: 20px;
+    justify-content: center;
   }
   
   .logo-text {
-    font-size: 24px;
+    font-size: 20px;
   }
-}
-
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--card-light);
-  color: var(--text-light);
-  padding: 16px 24px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  transform: translateY(100px);
-  opacity: 0;
-  transition: all 0.3s;
-  z-index: 1000;
-  border-left: 4px solid var(--primary);
-}
-
-.dark .toast {
-  background: var(--card-dark);
-  color: var(--text-dark);
-}
-
-.toast.show {
-  transform: translateY(0);
-  opacity: 1;
+  
+  .tagline {
+    font-size: 11px;
+  }
+  
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-value {
+    font-size: 22px;
+  }
+  
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .scroll-btn {
+    width: 45px;
+    height: 45px;
+    right: 15px;
+  }
+  
+  .scroll-top {
+    bottom: 80px;
+  }
 }
 </style>
 </head>
@@ -619,134 +784,133 @@ footer {
       <div class="logo">F</div>
       <div>
         <div class="logo-text">FATISCO</div>
-        <div class="tagline">Advanced Cold Email Automation</div>
+        <div class="tagline">Cold Email Automation</div>
       </div>
     </div>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙 Toggle Dark Mode</button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
   </div>
 </header>
 
 <div class="container">
   <div class="dashboard">
     <div class="stat-card">
-      <div class="stat-label">Total Emails</div>
+      <div class="stat-label">Total</div>
       <div class="stat-value" id="totalEmails">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Valid Emails</div>
+      <div class="stat-label">Valid</div>
       <div class="stat-value" id="validEmails">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Emails Sent</div>
+      <div class="stat-label">Sent</div>
       <div class="stat-value" id="emailsSent">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Spam Score</div>
+      <div class="stat-label">Spam</div>
       <div class="stat-value" id="spamScore">-</div>
     </div>
   </div>
 
-  <div class="main-grid">
-    <div class="card">
-      <div class="card-title">
-        <div class="card-icon">📧</div>
-        Email List
-      </div>
-      
-      <div class="file-upload">
-        <input type="file" id="fileInput" accept=".csv,.txt">
-        <label for="fileInput" class="file-upload-label">
-          <span>📁</span>
-          <span>Upload CSV/TXT File</span>
-        </label>
-      </div>
-      
-      <label>Or Paste Emails (email,name,company)</label>
-      <textarea id="list" rows="10" placeholder="example@company.com,John Doe,Acme Corp
-jane@startup.io,Jane Smith,Startup Inc"></textarea>
-      
-      <button class="btn-secondary" onclick="cleanList()">🧹 Clean & Validate</button>
-      <button class="btn-secondary" onclick="saveTemplate()">💾 Save as Template</button>
-      <button class="btn-secondary" onclick="manualSave()">💾 Force Save Now</button>
-      <button class="btn-secondary" onclick="clearAllData()" style="background: var(--error); color: white; border: none;">🗑️ Clear All Data</button>
+  <div class="card">
+    <div class="card-title">
+      <span class="card-icon">📧</span>
+      Email List
     </div>
-
-    <div class="card">
-      <div class="card-title">
-        <div class="card-icon">✉️</div>
-        Email Composer
-      </div>
-      
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab(event, 'compose')">Compose</button>
-        <button class="tab" onclick="switchTab(event, 'preview')">Preview</button>
-        <button class="tab" onclick="switchTab(event, 'test')">A/B Test</button>
-      </div>
-
-      <div class="tab-content active" id="compose-tab">
-        <label>Template</label>
-        <select id="template" onchange="loadTemplate()">
-          <option value="0">Default Professional</option>
-          <option value="1">Business Pitch</option>
-          <option value="2">Freelance Offer</option>
-          <option value="3">Product Introduction</option>
-          <option value="4">Networking</option>
-        </select>
-
-        <label>Subject Line</label>
-        <input id="subject" value="Opportunity for {company}" placeholder="Use {name}, {company}, {email}">
-
-        <label>Message Body</label>
-        <textarea id="body" rows="8" placeholder="Use variables: {name}, {company}, {email}, {custom1}, {custom2}">Hi {name},
-
-I noticed {company} is doing great work in your industry. I'd love to discuss how we can collaborate.
-
-Looking forward to connecting!</textarea>
-
-        <label>Signature</label>
-        <textarea id="signature" rows="3">--
-Fatai
-FATISCO Team
-contact@fatisco.com</textarea>
-      </div>
-
-      <div class="tab-content" id="preview-tab">
-        <div class="preview-card" id="emailPreview">
-          <div class="preview-header">
-            <div class="preview-label">Subject</div>
-            <div class="preview-value" id="previewSubject">-</div>
-          </div>
-          <div class="preview-body" id="previewBody">Select an email to preview</div>
-          <div class="score-badge score-good" id="spamScoreBadge">
-            ✓ Low Spam Risk
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-content" id="test-tab">
-        <label>Subject Line A</label>
-        <input id="subjectA" placeholder="First variant">
-        
-        <label>Subject Line B</label>
-        <input id="subjectB" placeholder="Second variant">
-        
-        <button onclick="compareSubjects()">Compare Performance</button>
-        <div id="abResults"></div>
-      </div>
+    
+    <div class="file-upload">
+      <input type="file" id="fileInput" accept=".csv,.txt">
+      <label for="fileInput" class="file-upload-label">
+        <span>📁</span>
+        <span>Upload CSV/TXT</span>
+      </label>
+    </div>
+    
+    <label>Paste Emails (email,name,company)</label>
+    <textarea id="list" rows="6" placeholder="john@acme.com,John Doe,Acme Corp
+jane@startup.io,Jane Smith,Startup Inc"></textarea>
+    
+    <div class="button-grid">
+      <button class="btn-secondary" onclick="cleanList()">🧹 Clean</button>
+      <button class="btn-secondary" onclick="saveTemplate()">💾 Save Template</button>
+      <button class="btn-secondary" onclick="manualSave()">💾 Force Save</button>
+      <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All</button>
     </div>
   </div>
 
-  <div class="card" style="margin-top: 30px;">
+  <div class="card">
     <div class="card-title">
-      <div class="card-icon">🚀</div>
+      <span class="card-icon">✉️</span>
+      Composer
+    </div>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(event, 'compose')">Compose</button>
+      <button class="tab" onclick="switchTab(event, 'preview')">Preview</button>
+      <button class="tab" onclick="switchTab(event, 'test')">A/B Test</button>
+    </div>
+
+    <div class="tab-content active" id="compose-tab">
+      <label>Template</label>
+      <select id="template" onchange="loadTemplate()">
+        <option value="0">Default Professional</option>
+        <option value="1">Business Pitch</option>
+        <option value="2">Freelance Offer</option>
+        <option value="3">Product Intro</option>
+        <option value="4">Networking</option>
+      </select>
+
+      <label>Subject Line</label>
+      <input id="subject" value="Opportunity for {company}">
+
+      <label>Message Body</label>
+      <textarea id="body" rows="6">Hi {name},
+
+I noticed {company} is doing great work. I'd love to discuss collaboration opportunities.
+
+Looking forward to connecting!</textarea>
+
+      <label>Signature</label>
+      <textarea id="signature" rows="2">--
+Fatai | FATISCO
+contact@fatisco.com</textarea>
+    </div>
+
+    <div class="tab-content" id="preview-tab">
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-label">Subject</div>
+          <div class="preview-value" id="previewSubject">-</div>
+        </div>
+        <div class="preview-body" id="previewBody">Add emails to preview</div>
+        <div class="score-badge score-good" id="spamScoreBadge">
+          ✓ Low Spam Risk
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="test-tab">
+      <label>Subject Line A</label>
+      <input id="subjectA" placeholder="First variant">
+      
+      <label>Subject Line B</label>
+      <input id="subjectB" placeholder="Second variant">
+      
+      <button onclick="compareSubjects()">Compare</button>
+      <div id="abResults"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="card-icon">🚀</span>
       Actions
     </div>
     
-    <div class="button-group">
-      <button onclick="generateLinks()">⚡ Generate All Email Links</button>
+    <div class="button-grid">
+      <button onclick="generateLinks()">⚡ Generate Links</button>
       <button class="btn-secondary" onclick="downloadCSV()">📥 Download CSV</button>
-      <button class="btn-secondary" onclick="analyzeSpam()">🔍 Check Spam Score</button>
-      <button class="btn-secondary" onclick="scheduleEmails()">📅 Schedule Campaign</button>
+      <button class="btn-secondary" onclick="analyzeSpam()">🔍 Spam Check</button>
+      <button class="btn-secondary" onclick="scheduleEmails()">📅 Schedule</button>
     </div>
 
     <div class="progress-bar" id="progressBar" style="display: none;">
@@ -754,40 +918,54 @@ contact@fatisco.com</textarea>
     </div>
   </div>
 
-  <div id="output"></div>
+  <div class="email-output-container" id="outputContainer" style="display: none;">
+    <div id="output"></div>
+  </div>
 </div>
 
+<button class="scroll-btn scroll-top" onclick="scrollToTop()" style="display: none;">↑</button>
+<button class="scroll-btn scroll-bottom" onclick="scrollToBottom()" style="display: none;">↓</button>
+
 <footer>
-  Built by Fatai | FATISCO © 2026 | Unlimited Email Automation
+  Built by Fatai Ajani | FATISCO © 2026 | Unlimited Automation
 </footer>
 
 <div class="toast" id="toast"></div>
+
+<div class="modal" id="alreadySentModal">
+  <div class="modal-content">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title">Already Sent!</div>
+    <div class="modal-text" id="modalText">You already sent this email on <strong id="sentDate"></strong></div>
+    <button class="modal-close" onclick="closeModal()">Got It!</button>
+  </div>
+</div>
 
 <script>
 const templates = [
   {
     subj: "Opportunity for {company}",
-    body: "Hi {name},\n\nI noticed {company} is doing great work in your industry. I'd love to discuss how we can collaborate.\n\nLooking forward to connecting!"
+    body: "Hi {name},\n\nI noticed {company} is doing great work. I'd love to discuss collaboration opportunities.\n\nLooking forward to connecting!"
   },
   {
     subj: "Business Collaboration with {company}",
-    body: "Dear {name},\n\nI've been following {company}'s progress and I'm impressed. Let's explore partnership opportunities.\n\nBest regards,"
+    body: "Dear {name},\n\nI've been following {company}'s progress. Let's explore partnership opportunities.\n\nBest regards,"
   },
   {
     subj: "Freelance Services for {company}",
-    body: "Hello {name},\n\nI specialize in helping companies like {company} achieve their goals. Would you be interested in discussing how I can help?\n\nCheers,"
+    body: "Hello {name},\n\nI specialize in helping companies like {company} achieve their goals. Interested?\n\nCheers,"
   },
   {
     subj: "Introducing Our Product to {company}",
-    body: "Hi {name},\n\nOur solution has helped companies similar to {company} increase efficiency by 40%. I'd love to show you how.\n\nThanks,"
+    body: "Hi {name},\n\nOur solution has helped companies like {company} boost efficiency by 40%.\n\nThanks,"
   },
   {
     subj: "Let's Connect, {name}",
-    body: "Hello {name},\n\nI admire what {company} is doing. Let's connect and explore synergies between our work.\n\nBest,"
+    body: "Hello {name},\n\nI admire what {company} is doing. Let's explore synergies.\n\nBest,"
   }
 ];
 
-let stats = {total: 0, valid: 0, templatesUsed: 1};
+let stats = {total: 0, valid: 0};
 let sentEmails = {};
 
 function toggleTheme() {
@@ -796,9 +974,10 @@ function toggleTheme() {
   const isDark = document.body.classList.contains('dark');
   try {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  } catch(e) {
-    console.log('LocalStorage not available');
-  }
+  } catch(e) {}
+  
+  const btn = document.querySelector('.theme-toggle');
+  btn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
 }
 
 function loadSavedTheme() {
@@ -807,84 +986,9 @@ function loadSavedTheme() {
     if (saved === 'dark') {
       document.body.classList.remove('light');
       document.body.classList.add('dark');
+      document.querySelector('.theme-toggle').textContent = '☀️ Light Mode';
     }
-  } catch(e) {
-    console.log('LocalStorage not available');
-  }
-}
-
-function loadSavedData() {
-  try {
-    const savedList = localStorage.getItem('fatisco_email_list');
-    if (savedList) {
-      document.getElementById('list').value = savedList;
-      console.log('Loaded email list:', savedList.substring(0, 50) + '...');
-    }
-    
-    const savedSubject = localStorage.getItem('fatisco_subject');
-    if (savedSubject) {
-      document.getElementById('subject').value = savedSubject;
-      console.log('Loaded subject:', savedSubject);
-    }
-    
-    const savedBody = localStorage.getItem('fatisco_body');
-    if (savedBody) {
-      document.getElementById('body').value = savedBody;
-      console.log('Loaded body');
-    }
-    
-    const savedSignature = localStorage.getItem('fatisco_signature');
-    if (savedSignature) {
-      document.getElementById('signature').value = savedSignature;
-      console.log('Loaded signature');
-    }
-    
-    const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
-    if (savedSentEmails) {
-      sentEmails = JSON.parse(savedSentEmails);
-      console.log('Loaded sent emails:', Object.keys(sentEmails).length);
-    }
-    
-    if (savedList && savedList.trim().length > 0) {
-      const lines = savedList.trim().split('\n').filter(function(l) { return l.trim(); });
-      
-      let validCount = 0;
-      lines.forEach(function(line) {
-        if (parseLine(line)) validCount++;
-      });
-      
-      stats.total = lines.length;
-      stats.valid = validCount;
-      updateStats();
-      
-      setTimeout(function() {
-        showToast('📂 Session restored! ' + validCount + ' valid emails loaded');
-      }, 500);
-    }
-  } catch(e) {
-    console.error('Error loading saved data:', e);
-    showToast('⚠️ Could not restore previous session');
-  }
-}
-
-function saveData() {
-  try {
-    const emailList = document.getElementById('list').value;
-    const subject = document.getElementById('subject').value;
-    const body = document.getElementById('body').value;
-    const signature = document.getElementById('signature').value;
-    
-    localStorage.setItem('fatisco_email_list', emailList);
-    localStorage.setItem('fatisco_subject', subject);
-    localStorage.setItem('fatisco_body', body);
-    localStorage.setItem('fatisco_signature', signature);
-    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
-    
-    console.log('Data saved successfully');
-  } catch(e) {
-    console.error('Error saving data:', e);
-    showToast('⚠️ Could not save data - storage may be full');
-  }
+  } catch(e) {}
 }
 
 function showToast(message, duration) {
@@ -897,14 +1001,21 @@ function showToast(message, duration) {
   }, duration);
 }
 
+function showModal(email, sentData) {
+  const modal = document.getElementById('alreadySentModal');
+  const sentDate = new Date(sentData.sentAt).toLocaleString();
+  document.getElementById('sentDate').textContent = sentDate;
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('alreadySentModal').classList.remove('show');
+}
+
 function updateStats() {
   document.getElementById('totalEmails').textContent = stats.total;
   document.getElementById('validEmails').textContent = stats.valid;
-  
-  const sentCount = Object.keys(sentEmails).length;
-  document.getElementById('emailsSent').textContent = sentCount;
-  
-  console.log('Stats updated - Total:', stats.total, 'Valid:', stats.valid, 'Sent:', sentCount);
+  document.getElementById('emailsSent').textContent = Object.keys(sentEmails).length;
 }
 
 function parseLine(line) {
@@ -932,10 +1043,8 @@ function loadTemplate() {
   const idx = document.getElementById('template').value;
   document.getElementById('subject').value = templates[idx].subj;
   document.getElementById('body').value = templates[idx].body;
-  stats.templatesUsed = parseInt(idx) + 1;
-  updateStats();
   saveData();
-  showToast('Template loaded successfully!');
+  showToast('Template loaded!');
 }
 
 function cleanList() {
@@ -957,7 +1066,7 @@ function cleanList() {
   updateStats();
   saveData();
   
-  showToast('Cleaned! ' + lines.length + ' valid emails from ' + original + ' entries.');
+  showToast('Cleaned! ' + lines.length + ' valid from ' + original);
 }
 
 function generateLinks() {
@@ -967,13 +1076,20 @@ function generateLinks() {
   const sig = document.getElementById('signature').value;
   body += '\n\n' + sig;
   
+  const outputContainer = document.getElementById('outputContainer');
   const output = document.getElementById('output');
-  output.innerHTML = '<h2 style="margin-bottom: 20px;">📬 Generated Email Links</h2>';
+  output.innerHTML = '<h2>📬 Generated Email Links</h2>';
+  outputContainer.style.display = 'block';
   
   let validCount = 0;
   const progressBar = document.getElementById('progressBar');
   const progressFill = document.getElementById('progressFill');
   progressBar.style.display = 'block';
+  
+  const scrollBtnTop = document.querySelector('.scroll-top');
+  const scrollBtnBottom = document.querySelector('.scroll-bottom');
+  scrollBtnTop.style.display = 'flex';
+  scrollBtnBottom.style.display = 'flex';
 
   lines.forEach(function(line, index) {
     setTimeout(function() {
@@ -1011,6 +1127,12 @@ function generateLinks() {
       }
       
       link.addEventListener('click', function(e) {
+        if (sentEmails[parsed.email]) {
+          e.preventDefault();
+          showModal(parsed.email, sentEmails[parsed.email]);
+          return false;
+        }
+        
         setTimeout(function() {
           link.classList.add('sent');
           sentEmails[parsed.email] = {
@@ -1019,13 +1141,14 @@ function generateLinks() {
             company: parsed.company
           };
           saveData();
-          updateSentCount();
+          updateStats();
+          showToast('✅ Sent to ' + parsed.name);
         }, 100);
       });
       
       const avatar = parsed.name.charAt(0).toUpperCase();
       
-      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send Email →</div>';
+      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send →</div>';
       
       output.appendChild(link);
       
@@ -1038,25 +1161,11 @@ function generateLinks() {
           stats.total = lines.length;
           stats.valid = validCount;
           updateStats();
-          updateSentCount();
-          showToast('✅ ' + validCount + ' emails ready to send!');
+          showToast('✅ ' + validCount + ' emails ready!');
         }, 300);
       }
     }, index * 50);
   });
-}
-
-function updateSentCount() {
-  const sentCount = Object.keys(sentEmails).length;
-  document.getElementById('emailsSent').textContent = sentCount;
-  
-  const totalLinks = document.querySelectorAll('.email-link');
-  
-  if (totalLinks.length > 0) {
-    showToast('✅ Sent ' + sentCount + ' of ' + totalLinks.length + ' emails');
-  }
-  
-  console.log('Sent count updated:', sentCount);
 }
 
 function downloadCSV() {
@@ -1097,7 +1206,7 @@ function downloadCSV() {
   a.click();
   URL.revokeObjectURL(url);
   
-  showToast('📥 CSV downloaded successfully!');
+  showToast('📥 CSV downloaded!');
 }
 
 function analyzeSpam() {
@@ -1125,19 +1234,17 @@ function analyzeSpam() {
   
   if (score < 30) {
     badgeEl.className = 'score-badge score-good';
-    badgeEl.innerHTML = '✓ Low Spam Risk (' + score + '%)';
-    showToast('✅ Great! Low spam score: ' + score + '%');
+    badgeEl.innerHTML = '✓ Low Risk (' + score + '%)';
+    showToast('✅ Low spam score: ' + score + '%');
   } else if (score < 60) {
     badgeEl.className = 'score-badge score-warning';
-    badgeEl.innerHTML = '⚠ Medium Spam Risk (' + score + '%)';
-    showToast('⚠️ Warning: Medium spam score: ' + score + '%');
+    badgeEl.innerHTML = '⚠ Medium Risk (' + score + '%)';
+    showToast('⚠️ Medium spam score: ' + score + '%');
   } else {
     badgeEl.className = 'score-badge score-bad';
-    badgeEl.innerHTML = '✗ High Spam Risk (' + score + '%)';
-    showToast('❌ Alert: High spam score: ' + score + '%');
+    badgeEl.innerHTML = '✗ High Risk (' + score + '%)';
+    showToast('❌ High spam score: ' + score + '%');
   }
-  
-  console.log('Spam score calculated:', score);
 }
 
 function scheduleEmails() {
@@ -1148,7 +1255,7 @@ function scheduleEmails() {
   if (!hours) return;
   
   const sendTime = new Date(Date.now() + parseInt(hours) * 60 * 60 * 1000);
-  showToast('📅 Campaign scheduled for ' + sendTime.toLocaleString());
+  showToast('📅 Scheduled for ' + sendTime.toLocaleString());
 }
 
 function saveTemplate() {
@@ -1168,7 +1275,7 @@ function saveTemplate() {
     localStorage.setItem('fatisco_templates', JSON.stringify(saved));
     showToast('💾 Template saved: ' + name);
   } catch(e) {
-    showToast('⚠️ Could not save template - storage not available');
+    showToast('⚠️ Could not save template');
   }
 }
 
@@ -1202,7 +1309,7 @@ function switchTab(event, tab) {
 function updatePreview() {
   const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   if (lines.length === 0) {
-    document.getElementById('previewBody').textContent = 'Add some emails to preview';
+    document.getElementById('previewBody').textContent = 'Add emails to preview';
     return;
   }
   
@@ -1246,9 +1353,111 @@ function compareSubjects() {
   const scoreB = Math.floor(Math.random() * 30) + 50;
   
   const results = document.getElementById('abResults');
-  results.innerHTML = '<div class="preview-card" style="margin-top: 20px;"><h4>A/B Test Results (Predicted)</h4><p><strong>Subject A:</strong> ' + subjA + '</p><p>Expected Open Rate: ' + scoreA + '%</p><br><p><strong>Subject B:</strong> ' + subjB + '</p><p>Expected Open Rate: ' + scoreB + '%</p><br><p><strong>Winner:</strong> ' + (scoreA > scoreB ? 'Subject A' : 'Subject B') + ' (' + Math.max(scoreA, scoreB) + '%)</p></div>';
+  results.innerHTML = '<div class="preview-card" style="margin-top: 15px;"><h4>A/B Test Results</h4><p><strong>Subject A:</strong> ' + subjA + '</p><p>Open Rate: ' + scoreA + '%</p><br><p><strong>Subject B:</strong> ' + subjB + '</p><p>Open Rate: ' + scoreB + '%</p><br><p><strong>Winner:</strong> ' + (scoreA > scoreB ? 'Subject A' : 'Subject B') + ' (' + Math.max(scoreA, scoreB) + '%)</p></div>';
   
-  showToast('Winner: Subject ' + (scoreA > scoreB ? 'A' : 'B') + ' with ' + Math.max(scoreA, scoreB) + '% open rate');
+  showToast('Winner: Subject ' + (scoreA > scoreB ? 'A' : 'B'));
+}
+
+function loadSavedData() {
+  try {
+    const savedList = localStorage.getItem('fatisco_email_list');
+    if (savedList) {
+      document.getElementById('list').value = savedList;
+    }
+    
+    const savedSubject = localStorage.getItem('fatisco_subject');
+    if (savedSubject) {
+      document.getElementById('subject').value = savedSubject;
+    }
+    
+    const savedBody = localStorage.getItem('fatisco_body');
+    if (savedBody) {
+      document.getElementById('body').value = savedBody;
+    }
+    
+    const savedSignature = localStorage.getItem('fatisco_signature');
+    if (savedSignature) {
+      document.getElementById('signature').value = savedSignature;
+    }
+    
+    const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
+    if (savedSentEmails) {
+      sentEmails = JSON.parse(savedSentEmails);
+    }
+    
+    if (savedList && savedList.trim().length > 0) {
+      const lines = savedList.trim().split('\n').filter(function(l) { return l.trim(); });
+      
+      let validCount = 0;
+      lines.forEach(function(line) {
+        if (parseLine(line)) validCount++;
+      });
+      
+      stats.total = lines.length;
+      stats.valid = validCount;
+      updateStats();
+      
+      setTimeout(function() {
+        showToast('📂 Session restored! ' + validCount + ' emails');
+      }, 500);
+    }
+  } catch(e) {
+    console.error('Error loading data:', e);
+  }
+}
+
+function saveData() {
+  try {
+    const emailList = document.getElementById('list').value;
+    const subject = document.getElementById('subject').value;
+    const body = document.getElementById('body').value;
+    const signature = document.getElementById('signature').value;
+    
+    localStorage.setItem('fatisco_email_list', emailList);
+    localStorage.setItem('fatisco_subject', subject);
+    localStorage.setItem('fatisco_body', body);
+    localStorage.setItem('fatisco_signature', signature);
+    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+  } catch(e) {
+    console.error('Error saving data:', e);
+  }
+}
+
+function clearAllData() {
+  if (!confirm('⚠️ Delete ALL data including emails and sent status?')) {
+    return;
+  }
+  
+  try {
+    localStorage.removeItem('fatisco_email_list');
+    localStorage.removeItem('fatisco_subject');
+    localStorage.removeItem('fatisco_body');
+    localStorage.removeItem('fatisco_signature');
+    localStorage.removeItem('fatisco_sent_emails');
+    
+    document.getElementById('list').value = '';
+    document.getElementById('subject').value = 'Opportunity for {company}';
+    document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
+    document.getElementById('signature').value = '--\nFatai | FATISCO\ncontact@fatisco.com';
+    document.getElementById('output').innerHTML = '';
+    document.getElementById('outputContainer').style.display = 'none';
+    
+    sentEmails = {};
+    stats = {total: 0, valid: 0};
+    updateStats();
+    
+    showToast('🗑️ All data cleared!');
+  } catch(e) {
+    showToast('⚠️ Could not clear data');
+  }
+}
+
+function scrollToTop() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function scrollToBottom() {
+  window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
 }
 
 document.getElementById('fileInput').addEventListener('change', function() {
@@ -1271,57 +1480,14 @@ document.getElementById('subject').addEventListener('input', saveData);
 document.getElementById('body').addEventListener('input', saveData);
 document.getElementById('signature').addEventListener('input', saveData);
 
-document.getElementById('list').addEventListener('blur', function() {
-  saveData();
-  console.log('Email list saved on blur');
-});
-
-function clearAllData() {
-  if (!confirm('⚠️ This will delete ALL saved data including email list and sent status. Continue?')) {
-    return;
-  }
-  
-  try {
-    localStorage.removeItem('fatisco_email_list');
-    localStorage.removeItem('fatisco_subject');
-    localStorage.removeItem('fatisco_body');
-    localStorage.removeItem('fatisco_signature');
-    localStorage.removeItem('fatisco_sent_emails');
-    
-    document.getElementById('list').value = '';
-    document.getElementById('subject').value = 'Opportunity for {company}';
-    document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work in your industry. I\'d love to discuss how we can collaborate.\n\nLooking forward to connecting!';
-    document.getElementById('signature').value = '--\nFatai\nFATISCO Team\ncontact@fatisco.com';
-    document.getElementById('output').innerHTML = '';
-    
-    sentEmails = {};
-    stats = {total: 0, valid: 0, templatesUsed: 1};
-    updateStats();
-    
-    showToast('🗑️ All data cleared successfully!');
-    console.log('All data cleared');
-  } catch(e) {
-    console.error('Error clearing data:', e);
-    showToast('⚠️ Could not clear data');
-  }
-}
-
 window.addEventListener('beforeunload', function() {
   saveData();
-  console.log('Data saved before page unload');
 });
 
 window.addEventListener('load', function() {
-  console.log('Page loaded, restoring data...');
   loadSavedTheme();
   loadSavedData();
   updateStats();
-  
-  setTimeout(function() {
-    if (document.getElementById('list').value.trim().length > 0) {
-      console.log('Auto-generating links from saved data');
-    }
-  }, 1000);
 });
 </script>
 </body>
