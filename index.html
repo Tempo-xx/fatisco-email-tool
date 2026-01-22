@@ -125,6 +125,27 @@ header {
   transform: scale(1.05);
 }
 
+.top-notification {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, var(--error), #ff1744);
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  transform: translateY(-100%);
+  transition: transform 0.4s ease;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.top-notification.show {
+  transform: translateY(0);
+}
+
 .dashboard {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -408,6 +429,47 @@ button:active {
   margin-top: 15px;
 }
 
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 10px 20px;
+  background: var(--card-light);
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.3s;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dark .filter-tab {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border-color: transparent;
+}
+
+.filter-tab .count {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .email-output-container {
   background: var(--card-light);
   border: 3px solid var(--primary);
@@ -454,17 +516,19 @@ button:active {
 .email-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 10px;
+  padding: 10px 12px;
   background: var(--card-light);
   border: 2px solid var(--border-light);
-  border-radius: 12px;
-  margin-bottom: 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
   transition: all 0.3s;
   text-decoration: none;
   color: var(--text-light);
-  border-left: 5px solid var(--border-light);
-  min-height: 75px;
+  border-left: 4px solid var(--border-light);
+  min-height: 50px;
+  position: relative;
+  overflow: hidden;
 }
 
 .dark .email-link {
@@ -474,23 +538,43 @@ button:active {
 }
 
 .email-link:hover {
-  transform: translateX(6px);
+  transform: translateX(4px);
   border-left-color: var(--primary);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
 }
 
 .email-link.sent {
   background: linear-gradient(90deg, rgba(6, 255, 165, 0.1), rgba(6, 255, 165, 0.05));
   border-left-color: var(--success);
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 .dark .email-link.sent {
   background: linear-gradient(90deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.08));
 }
 
+.email-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.email-link:active::before {
+  width: 300px;
+  height: 300px;
+}
+
 .email-number {
-  min-width: 36px;
-  height: 36px;
+  min-width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--border-light), var(--bg-light));
   color: var(--text-light);
@@ -498,7 +582,7 @@ button:active {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 12px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -517,14 +601,14 @@ button:active {
 .email-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
 }
 
 .email-avatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
@@ -532,9 +616,9 @@ button:active {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 13px;
   flex-shrink: 0;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .email-details {
@@ -544,7 +628,7 @@ button:active {
 
 .email-name {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -552,7 +636,7 @@ button:active {
 }
 
 .email-address {
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0.7;
   white-space: nowrap;
   overflow: hidden;
@@ -560,14 +644,14 @@ button:active {
 }
 
 .email-action {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .scroll-btn {
@@ -631,79 +715,6 @@ button:active {
 .toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.75);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 3000;
-  padding: 20px;
-  backdrop-filter: blur(5px);
-}
-
-.modal.show {
-  display: flex;
-}
-
-.modal-content {
-  background: var(--card-light);
-  padding: 35px;
-  border-radius: 20px;
-  max-width: 450px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 15px 60px rgba(0,0,0,0.5);
-  animation: modalPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.dark .modal-content {
-  background: var(--card-dark);
-}
-
-@keyframes modalPop {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.modal-icon {
-  font-size: 70px;
-  margin-bottom: 20px;
-  animation: bounce 0.6s ease;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.modal-title {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.modal-text {
-  font-size: 15px;
-  opacity: 0.85;
-  margin-bottom: 25px;
-  line-height: 1.7;
-}
-
-.modal-close {
-  background: linear-gradient(135deg, var(--success), #00cc88);
-  padding: 12px 40px;
-  margin: 0;
-  font-size: 14px;
 }
 
 .html-preview {
@@ -906,6 +917,10 @@ footer {
 </head>
 <body class="light">
 
+<div class="top-notification" id="topNotification">
+  ⚠️ Email already sent! Cannot send again.
+</div>
+
 <header>
   <div class="header-content">
     <div class="logo-section">
@@ -1023,6 +1038,7 @@ bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
         <button class="toolbar-btn" onclick="insertHTML('link')">🔗 Link</button>
         <button class="toolbar-btn" onclick="insertHTML('ul')">• List</button>
         <button class="toolbar-btn" onclick="insertHTML('color')">🎨 Color</button>
+        <button class="toolbar-btn" onclick="copyHTML()">📋 Copy HTML</button>
       </div>
 
       <label>Message Body</label>
@@ -1055,6 +1071,7 @@ Looking forward to connecting!</textarea>
       <div class="preview-card">
         <div class="preview-header">
           <div class="preview-label">HTML RENDERED PREVIEW</div>
+          <div class="preview-label" style="margin-top: 10px; opacity: 0.8;">Note: Gmail doesn't support HTML in mailto: links. Use "Copy HTML" button to paste into Gmail compose.</div>
         </div>
         <div class="html-preview" id="htmlPreview">
           <p style="color: #666;">Add content and switch to HTML format to see preview...</p>
@@ -1093,6 +1110,17 @@ Looking forward to connecting!</textarea>
   </div>
 
   <div class="email-output-container" id="outputContainer" style="display: none;">
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterEmails('all')">
+        📧 All <span class="count" id="countAll">0</span>
+      </button>
+      <button class="filter-tab" onclick="filterEmails('pending')">
+        ⏳ Pending <span class="count" id="countPending">0</span>
+      </button>
+      <button class="filter-tab" onclick="filterEmails('sent')">
+        ✅ Sent <span class="count" id="countSent">0</span>
+      </button>
+    </div>
     <div id="output"></div>
   </div>
 </div>
@@ -1105,15 +1133,6 @@ Looking forward to connecting!</textarea>
 </footer>
 
 <div class="toast" id="toast"></div>
-
-<div class="modal" id="alreadySentModal">
-  <div class="modal-content">
-    <div class="modal-icon">✅</div>
-    <div class="modal-title">Already Sent!</div>
-    <div class="modal-text">You already sent this email on <strong id="sentDate"></strong></div>
-    <button class="modal-close" onclick="closeModal()">Got It!</button>
-  </div>
-</div>
 
 <script>
 const templates = [
@@ -1144,6 +1163,7 @@ let sentEmails = {};
 let emailFormat = 'plain';
 let ccEnabled = false;
 let bccEnabled = false;
+let currentFilter = 'all';
 
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -1178,15 +1198,13 @@ function showToast(message, duration) {
   }, duration);
 }
 
-function showModal(email, sentData) {
-  const modal = document.getElementById('alreadySentModal');
-  const sentDate = new Date(sentData.sentAt).toLocaleString();
-  document.getElementById('sentDate').textContent = sentDate;
-  modal.classList.add('show');
-}
-
-function closeModal() {
-  document.getElementById('alreadySentModal').classList.remove('show');
+function showTopNotification(message) {
+  const notif = document.getElementById('topNotification');
+  if (message) notif.textContent = message;
+  notif.classList.add('show');
+  setTimeout(function() {
+    notif.classList.remove('show');
+  }, 3000);
 }
 
 function updateStats() {
@@ -1319,6 +1337,45 @@ function insertHTML(type) {
   }
 }
 
+function copyHTML() {
+  const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
+  if (lines.length === 0) {
+    showToast('⚠️ Add emails first!');
+    return;
+  }
+  
+  const parsed = parseLine(lines[0]);
+  if (!parsed) {
+    showToast('⚠️ Invalid email format!');
+    return;
+  }
+  
+  let body = document.getElementById('body').value;
+  const htmlCode = document.getElementById('htmlCode').value.trim();
+  
+  if (htmlCode) {
+    body = htmlCode;
+  }
+  
+  let html = body
+    .replace(/{name}/g, parsed.name)
+    .replace(/{company}/g, parsed.company)
+    .replace(/{email}/g, parsed.email)
+    .replace(/{custom1}/g, parsed.custom1)
+    .replace(/{custom2}/g, parsed.custom2);
+  
+  html = html.replace(/\n/g, '<br>');
+  
+  const tempTextarea = document.createElement('textarea');
+  tempTextarea.value = html;
+  document.body.appendChild(tempTextarea);
+  tempTextarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempTextarea);
+  
+  showToast('📋 HTML copied! Paste into Gmail compose window.');
+}
+
 function updateHTMLPreview() {
   if (emailFormat !== 'html') return;
   
@@ -1378,6 +1435,42 @@ function cleanList() {
   showToast('✨ Cleaned! ' + lines.length + ' emails (' + (original - lines.length) + ' duplicates removed)');
 }
 
+function filterEmails(filter) {
+  currentFilter = filter;
+  
+  const tabs = document.querySelectorAll('.filter-tab');
+  tabs.forEach(function(tab) {
+    tab.classList.remove('active');
+  });
+  
+  event.target.classList.add('active');
+  
+  const links = document.querySelectorAll('.email-link');
+  links.forEach(function(link) {
+    const isSent = link.classList.contains('sent');
+    
+    if (filter === 'all') {
+      link.style.display = 'flex';
+    } else if (filter === 'sent' && isSent) {
+      link.style.display = 'flex';
+    } else if (filter === 'pending' && !isSent) {
+      link.style.display = 'flex';
+    } else {
+      link.style.display = 'none';
+    }
+  });
+}
+
+function updateFilterCounts() {
+  const allLinks = document.querySelectorAll('.email-link');
+  const sentLinks = document.querySelectorAll('.email-link.sent');
+  const pendingLinks = allLinks.length - sentLinks.length;
+  
+  document.getElementById('countAll').textContent = allLinks.length;
+  document.getElementById('countSent').textContent = sentLinks.length;
+  document.getElementById('countPending').textContent = pendingLinks;
+}
+
 function generateLinks() {
   const lines = document.getElementById('list').value.trim().split('\n').filter(function(l) { return l.trim(); });
   
@@ -1425,94 +1518,94 @@ function generateLinks() {
   scrollBtnBottom.style.display = 'flex';
 
   lines.forEach(function(line, index) {
-    setTimeout(function() {
-      const parsed = parseLine(line);
-      if (!parsed) {
-        return;
-      }
-      
-      validCount++;
-      
-      let msg = body
-        .replace(/{name}/g, parsed.name)
-        .replace(/{company}/g, parsed.company)
-        .replace(/{email}/g, parsed.email)
-        .replace(/{custom1}/g, parsed.custom1)
-        .replace(/{custom2}/g, parsed.custom2);
-      
-      let sub = subj
-        .replace(/{name}/g, parsed.name)
-        .replace(/{company}/g, parsed.company)
-        .replace(/{email}/g, parsed.email)
-        .replace(/{custom1}/g, parsed.custom1)
-        .replace(/{custom2}/g, parsed.custom2);
-      
-      let href = 'mailto:' + parsed.email;
-      let params = [];
-      
-      if (ccEmail) {
-        params.push('cc=' + encodeURIComponent(ccEmail));
-      }
-      
-      if (bccEmail) {
-        params.push('bcc=' + encodeURIComponent(bccEmail));
-      }
-      
-      params.push('subject=' + encodeURIComponent(sub));
-      params.push('body=' + encodeURIComponent(msg));
-      
-      href += '?' + params.join('&');
-      
-      const link = document.createElement('a');
-      link.href = href;
-      link.className = 'email-link';
-      link.setAttribute('data-email-id', parsed.email);
-      
+    const parsed = parseLine(line);
+    if (!parsed) {
+      return;
+    }
+    
+    validCount++;
+    
+    let msg = body
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company)
+      .replace(/{email}/g, parsed.email)
+      .replace(/{custom1}/g, parsed.custom1)
+      .replace(/{custom2}/g, parsed.custom2);
+    
+    let sub = subj
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company)
+      .replace(/{email}/g, parsed.email)
+      .replace(/{custom1}/g, parsed.custom1)
+      .replace(/{custom2}/g, parsed.custom2);
+    
+    let href = 'mailto:' + parsed.email;
+    let params = [];
+    
+    if (ccEmail) {
+      params.push('cc=' + encodeURIComponent(ccEmail));
+    }
+    
+    if (bccEmail) {
+      params.push('bcc=' + encodeURIComponent(bccEmail));
+    }
+    
+    params.push('subject=' + encodeURIComponent(sub));
+    params.push('body=' + encodeURIComponent(msg));
+    
+    href += '?' + params.join('&');
+    
+    const link = document.createElement('a');
+    link.href = href;
+    link.className = 'email-link';
+    link.setAttribute('data-email-id', parsed.email);
+    
+    if (sentEmails[parsed.email]) {
+      link.classList.add('sent');
+    }
+    
+    link.addEventListener('click', function(e) {
       if (sentEmails[parsed.email]) {
-        link.classList.add('sent');
+        e.preventDefault();
+        showTopNotification('⚠️ Email already sent to ' + parsed.name + '!');
+        return false;
       }
       
-      link.addEventListener('click', function(e) {
-        if (sentEmails[parsed.email]) {
-          e.preventDefault();
-          showModal(parsed.email, sentEmails[parsed.email]);
-          return false;
-        }
-        
-        link.classList.add('sent');
-        sentEmails[parsed.email] = {
-          sentAt: new Date().toISOString(),
-          name: parsed.name,
-          company: parsed.company
-        };
-        saveData();
+      link.classList.add('sent');
+      sentEmails[parsed.email] = {
+        sentAt: new Date().toISOString(),
+        name: parsed.name,
+        company: parsed.company
+      };
+      saveData();
+      updateStats();
+      updateFilterCounts();
+      showToast('✅ Opened email for ' + parsed.name);
+    });
+    
+    const avatar = parsed.name.charAt(0).toUpperCase();
+    
+    let badges = '';
+    if (ccEmail) badges += '<span style="background: rgba(0,212,255,0.2); color: var(--primary); padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: 5px;">CC</span>';
+    if (bccEmail) badges += '<span style="background: rgba(255,0,110,0.2); color: var(--secondary); padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: 700; margin-left: 5px;">BCC</span>';
+    
+    link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + badges + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send →</div>';
+    
+    output.appendChild(link);
+    
+    const progress = ((index + 1) / lines.length) * 100;
+    progressFill.style.width = progress + '%';
+    
+    if (index === lines.length - 1) {
+      setTimeout(function() {
+        progressBar.style.display = 'none';
+        stats.total = lines.length;
+        stats.valid = validCount;
         updateStats();
-        showToast('✅ Email sent to ' + parsed.name);
-      });
-      
-      const avatar = parsed.name.charAt(0).toUpperCase();
-      
-      let badges = '';
-      if (ccEmail) badges += '<span style="background: rgba(0,212,255,0.2); color: var(--primary); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 5px;">CC</span>';
-      if (bccEmail) badges += '<span style="background: rgba(255,0,110,0.2); color: var(--secondary); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 5px;">BCC</span>';
-      
-      link.innerHTML = '<div class="email-number">' + (index + 1) + '</div><div class="email-info"><div class="email-avatar">' + avatar + '</div><div class="email-details"><div class="email-name">' + parsed.name + ' @ ' + parsed.company + badges + '</div><div class="email-address">' + parsed.email + '</div></div></div><div class="email-action">Send →</div>';
-      
-      output.appendChild(link);
-      
-      const progress = ((index + 1) / lines.length) * 100;
-      progressFill.style.width = progress + '%';
-      
-      if (index === lines.length - 1) {
-        setTimeout(function() {
-          progressBar.style.display = 'none';
-          stats.total = lines.length;
-          stats.valid = validCount;
-          updateStats();
-          showToast('🎉 ' + validCount + ' emails ready to send!');
-        }, 300);
-      }
-    }, index * 50);
+        updateFilterCounts();
+        showToast('🎉 ' + validCount + ' emails ready to send!');
+      }, 100);
+    }
   });
 }
 
@@ -1773,6 +1866,7 @@ function loadSavedData() {
     const savedSentEmails = localStorage.getItem('fatisco_sent_emails');
     if (savedSentEmails) {
       sentEmails = JSON.parse(savedSentEmails);
+      console.log('Loaded sent emails:', Object.keys(sentEmails).length);
     }
     
     if (savedList && savedList.trim().length > 0) {
@@ -1788,7 +1882,7 @@ function loadSavedData() {
       updateStats();
       
       setTimeout(function() {
-        showToast('📂 Session restored! ' + validCount + ' emails loaded');
+        showToast('📂 Session restored! ' + validCount + ' emails, ' + Object.keys(sentEmails).length + ' sent');
       }, 500);
     }
   } catch(e) {
@@ -1818,6 +1912,7 @@ function saveData() {
     }
     
     localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    console.log('Data saved. Sent emails:', Object.keys(sentEmails).length);
   } catch(e) {
     console.error('Error saving data:', e);
   }
@@ -1833,6 +1928,10 @@ function clearAllData() {
     localStorage.removeItem('fatisco_subject');
     localStorage.removeItem('fatisco_body');
     localStorage.removeItem('fatisco_format');
+    localStorage.removeItem('fatisco_cc_enabled');
+    localStorage.removeItem('fatisco_bcc_enabled');
+    localStorage.removeItem('fatisco_cc_email');
+    localStorage.removeItem('fatisco_bcc_email');
     localStorage.removeItem('fatisco_sent_emails');
     
     document.getElementById('list').value = '';
@@ -1842,6 +1941,10 @@ function clearAllData() {
     document.getElementById('outputContainer').style.display = 'none';
     
     setFormat('plain');
+    ccEnabled = false;
+    bccEnabled = false;
+    toggleCC();
+    toggleBCC();
     sentEmails = {};
     stats = {total: 0, valid: 0};
     updateStats();
@@ -1904,6 +2007,7 @@ document.getElementById('htmlCode').addEventListener('input', function() {
 
 window.addEventListener('beforeunload', function() {
   saveData();
+  console.log('Saving before unload');
 });
 
 window.addEventListener('load', function() {
@@ -1913,4 +2017,4 @@ window.addEventListener('load', function() {
 });
 </script>
 </body>
-</html>
+</html>)
