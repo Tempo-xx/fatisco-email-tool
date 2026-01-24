@@ -1164,6 +1164,7 @@ let emailFormat = 'plain';
 let ccEnabled = false;
 let bccEnabled = false;
 let currentFilter = 'all';
+let autoSaveInterval = null;
 
 function toggleTheme() {
   document.body.classList.toggle('dark');
@@ -1577,9 +1578,12 @@ function generateLinks() {
         name: parsed.name,
         company: parsed.company
       };
+      
       saveData();
       updateStats();
       updateFilterCounts();
+      
+      console.log('✅ Marked as sent:', parsed.email);
       showToast('✅ Opened email for ' + parsed.name);
     });
     
@@ -1912,10 +1916,24 @@ function saveData() {
     }
     
     localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
-    console.log('Data saved. Sent emails:', Object.keys(sentEmails).length);
+    
+    const timestamp = new Date().toLocaleTimeString();
+    console.log('[' + timestamp + '] Auto-saved. Sent emails:', Object.keys(sentEmails).length);
   } catch(e) {
     console.error('Error saving data:', e);
   }
+}
+
+function startAutoSave() {
+  if (autoSaveInterval) {
+    clearInterval(autoSaveInterval);
+  }
+  
+  autoSaveInterval = setInterval(function() {
+    saveData();
+  }, 1000);
+  
+  console.log('✅ Auto-save started (every 1 second)');
 }
 
 function clearAllData() {
@@ -2014,6 +2032,25 @@ window.addEventListener('load', function() {
   loadSavedTheme();
   loadSavedData();
   updateStats();
+  startAutoSave();
+  console.log('🚀 FATISCO loaded successfully!');
+});
+
+window.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    saveData();
+    console.log('💾 Saved before tab hidden');
+  }
+});
+
+window.addEventListener('pagehide', function() {
+  saveData();
+  console.log('💾 Saved on page hide');
+});
+
+window.addEventListener('freeze', function() {
+  saveData();
+  console.log('💾 Saved on freeze');
 });
 </script>
 </body>
