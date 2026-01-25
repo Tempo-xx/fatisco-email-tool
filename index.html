@@ -804,51 +804,176 @@ let sentEmails = {}; // {email: timestamp}
 let last24hSent = new Set(); // Track emails sent in last 24h
 let currentFilter = 'all';
 
-// Load saved data
-function loadSavedData() {
+// Enhanced storage with multiple backups
+const STORAGE_KEYS = {
+  EMAIL_LIST: 'fatisco_email_list',
+  SUBJECT: 'fatisco_subject',
+  BODY: 'fatisco_body',
+  SENT_EMAILS: 'fatisco_sent_emails',
+  THEME: 'fatisco_theme',
+  BACKUP_PREFIX: 'fatisco_backup_'
+};
+
+// Load ALL saved data
+function loadAllData() {
+  console.log('Loading data...');
+  
   try {
     // Load theme
-    const savedTheme = localStorage.getItem('fatisco_theme');
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
     if (savedTheme === 'dark') {
       document.body.classList.add('dark');
       document.querySelector('.theme-toggle').textContent = '☀️';
     }
     
-    // Load email list
-    const savedList = localStorage.getItem('fatisco_email_list');
-    if (savedList) {
-      document.getElementById('list').value = savedList;
-      updateStatsFromList();
+    // Load email list (try multiple sources)
+    let emailList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
+    if (!emailList) {
+      // Try backup
+      const backupKeys = Object.keys(localStorage)
+        .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
+        .sort()
+        .reverse();
+      
+      for (const key of backupKeys) {
+        try {
+          const backup = localStorage.getItem(key);
+          if (backup) {
+            const data = JSON.parse(backup);
+            if (data.emailList) {
+              emailList = data.emailList;
+              console.log('Loaded from backup:', key);
+              break;
+            }
+          }
+        } catch (e) {
+          console.log('Backup corrupted:', key);
+        }
+      }
+    }
+    
+    if (emailList) {
+      document.getElementById('list').value = emailList;
     }
     
     // Load subject and body
-    const savedSubject = localStorage.getItem('fatisco_subject');
+    const savedSubject = localStorage.getItem(STORAGE_KEYS.SUBJECT);
     if (savedSubject) document.getElementById('subject').value = savedSubject;
     
-    const savedBody = localStorage.getItem('fatisco_body');
+    const savedBody = localStorage.getItem(STORAGE_KEYS.BODY);
     if (savedBody) document.getElementById('body').value = savedBody;
     
-    // Load sent emails
-    const savedSent = localStorage.getItem('fatisco_sent_emails');
-    if (savedSent) {
-      sentEmails = JSON.parse(savedSent);
-      updateSentStats();
+    // Load sent emails (try multiple sources)
+    let savedSent = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS);
+    if (!savedSent) {
+      // Try to find sent emails in backups
+      const backupKeys = Object.keys(localStorage)
+        .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
+        .sort()
+        .reverse();
+      
+      for (const key of backupKeys) {
+        try {
+          const backup = localStorage.getItem(key);
+          if (backup) {
+            const data = JSON.parse(backup);
+            if (data.sentEmails) {
+              savedSent = JSON.stringify(data.sentEmails);
+              console.log('Loaded sent emails from backup:', key);
+              break;
+            }
+          }
+        } catch (e) {
+          console.log('Backup corrupted:', key);
+        }
+      }
     }
     
+    if (savedSent) {
+      sentEmails = JSON.parse(savedSent);
+      console.log('Loaded sent emails:', Object.keys(sentEmails).length);
+    } else {
+      sentEmails = {};
+    }
+    
+    // Update stats
+    updateStatsFromList();
+    updateSentStats();
+    
+    // Auto-save backup
+    createBackup();
+    
   } catch (e) {
-    console.log('Error loading data:', e);
+    console.error('Error loading data:', e);
+    showToast('Error loading saved data');
   }
 }
 
-// Save data
+// Save data with multiple backups
 function saveData() {
   try {
-    localStorage.setItem('fatisco_email_list', document.getElementById('list').value);
-    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
-    localStorage.setItem('fatisco_body', document.getElementById('body').value);
-    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    const dataToSave = {
+      emailList: document.getElementById('list').value,
+      subject: document.getElementById('subject').value,
+      body: document.getElementById('body').value,
+      sentEmails: sentEmails,
+      timestamp: Date.now()
+    };
+    
+    // Save to primary keys
+    localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, dataToSave.emailList);
+    localStorage.setItem(STORAGE_KEYS.SUBJECT, dataToSave.subject);
+    localStorage.setItem(STORAGE_KEYS.BODY, dataToSave.body);
+    localStorage.setItem(STORAGE_KEYS.SENT_EMAILS, JSON.stringify(dataToSave.sentEmails));
+    
+    // Create backup
+    createBackup();
+    
+    console.log('Data saved successfully');
+    return true;
   } catch (e) {
-    console.log('Error saving:', e);
+    console.error('Save error:', e);
+    
+    // Try emergency minimal save
+    try {
+      localStorage.setItem('fatisco_emergency', JSON.stringify({
+        sentEmails: sentEmails,
+        timestamp: Date.now()
+      }));
+      console.log('Emergency save completed');
+    } catch (e2) {
+      console.error('Emergency save also failed');
+    }
+    
+    return false;
+  }
+}
+
+// Create backup
+function createBackup() {
+  try {
+    const backupData = {
+      emailList: document.getElementById('list').value,
+      subject: document.getElementById('subject').value,
+      body: document.getElementById('body').value,
+      sentEmails: sentEmails,
+      timestamp: Date.now()
+    };
+    
+    const backupKey = STORAGE_KEYS.BACKUP_PREFIX + Date.now();
+    localStorage.setItem(backupKey, JSON.stringify(backupData));
+    
+    // Clean old backups (keep last 5)
+    const backupKeys = Object.keys(localStorage)
+      .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
+      .sort()
+      .reverse()
+      .slice(5);
+    
+    backupKeys.forEach(k => localStorage.removeItem(k));
+    
+  } catch (e) {
+    console.error('Backup failed:', e);
   }
 }
 
@@ -857,7 +982,7 @@ function toggleTheme() {
   const isDark = document.body.classList.toggle('dark');
   const btn = document.querySelector('.theme-toggle');
   btn.textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem('fatisco_theme', isDark ? 'dark' : 'light');
+  localStorage.setItem(STORAGE_KEYS.THEME, isDark ? 'dark' : 'light');
 }
 
 // Update stats from email list
@@ -890,7 +1015,7 @@ function updateSentStats() {
   last24hSent.clear();
   
   for (const email in sentEmails) {
-    const sentTime = sentEmails[email].timestamp;
+    const sentTime = sentEmails[email];
     if (sentTime > twentyFourHoursAgo) {
       sentTodayCount++;
       last24hSent.add(email);
@@ -930,8 +1055,11 @@ function cleanList() {
 
 // Force save
 function forceSave() {
-  saveData();
-  showToast('Data saved');
+  if (saveData()) {
+    showToast('Data saved successfully');
+  } else {
+    showToast('Save failed - check storage');
+  }
 }
 
 // Clear all data
@@ -948,7 +1076,13 @@ function clearAllData() {
     updateSentStats();
     updateFilterCounts();
     
-    localStorage.clear();
+    // Clear all FATISCO data from localStorage
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('fatisco')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
     showToast('All data cleared');
   }
 }
@@ -1001,13 +1135,13 @@ function generateLinks() {
     
     const mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    const isSent = sentEmails[parsed.email];
-    const sent24h = last24hSent.has(parsed.email);
+    const isSent = sentEmails.hasOwnProperty(parsed.email);
     
     const emailLink = document.createElement('a');
     emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
     emailLink.href = mailtoLink;
     emailLink.setAttribute('data-email', parsed.email);
+    emailLink.setAttribute('data-index', index);
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
@@ -1016,18 +1150,18 @@ function generateLinks() {
           <div class="email-name">${parsed.name}</div>
           <div class="email-address">${parsed.email}</div>
         </div>
-        <button class="email-action" onclick="event.preventDefault(); markAsSent('${parsed.email}', '${parsed.name}')">
+        <button class="email-action" onclick="event.preventDefault(); markAsSent('${parsed.email}', '${parsed.name}', ${index})">
           ${isSent ? '✓ Sent' : 'Send'}
         </button>
       </div>
     `;
     
-    // Prevent sending if already sent
+    // If already sent, prevent default click behavior
     if (isSent) {
-      emailLink.onclick = function(e) {
+      emailLink.addEventListener('click', function(e) {
         e.preventDefault();
         showToast(`Already sent to ${parsed.name}`);
-      };
+      });
     }
     
     output.appendChild(emailLink);
@@ -1041,27 +1175,57 @@ function generateLinks() {
   document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
 
-// Mark email as sent
-function markAsSent(email, name) {
-  const now = Date.now();
-  sentEmails[email] = { timestamp: now };
+// Mark email as sent - FIXED VERSION
+function markAsSent(email, name, index) {
+  console.log('Marking as sent:', email, name);
   
-  // Update UI
+  const now = Date.now();
+  sentEmails[email] = now;
+  
+  // Update the specific email link
   const emailLink = document.querySelector(`[data-email="${email}"]`);
   if (emailLink) {
+    // Update the class
     emailLink.classList.add('sent');
-    emailLink.querySelector('.email-action').textContent = '✓ Sent';
+    
+    // Update the button text
+    const button = emailLink.querySelector('.email-action');
+    if (button) {
+      button.textContent = '✓ Sent';
+      button.style.background = '#10b981';
+    }
+    
+    // Update the number badge
+    const numberBadge = emailLink.querySelector('.email-number');
+    if (numberBadge) {
+      numberBadge.style.background = '#10b981';
+    }
+    
+    // Update click behavior
     emailLink.onclick = function(e) {
       e.preventDefault();
       showToast(`Already sent to ${name}`);
     };
+    
+    // Also remove the onclick from the button itself
+    const sendButton = emailLink.querySelector('.email-action');
+    if (sendButton) {
+      sendButton.onclick = function(e) {
+        e.preventDefault();
+        showToast(`Already sent to ${name}`);
+      };
+    }
   }
   
+  // Update stats
   updateSentStats();
   updateFilterCounts();
+  
+  // Save immediately
   saveData();
   
-  showToast(`Sent to ${name}`);
+  showToast(`Marked as sent: ${name}`);
+  console.log('Email marked as sent:', email);
 }
 
 // Filter emails
@@ -1076,19 +1240,29 @@ function filterEmails(filter) {
   
   // Show/hide emails
   const emailLinks = document.querySelectorAll('.email-link');
+  let visibleCount = 0;
+  
   emailLinks.forEach(link => {
     const isSent = link.classList.contains('sent');
+    let shouldShow = false;
     
     if (filter === 'all') {
-      link.style.display = 'flex';
+      shouldShow = true;
     } else if (filter === 'sent' && isSent) {
-      link.style.display = 'flex';
+      shouldShow = true;
     } else if (filter === 'pending' && !isSent) {
+      shouldShow = true;
+    }
+    
+    if (shouldShow) {
       link.style.display = 'flex';
+      visibleCount++;
     } else {
       link.style.display = 'none';
     }
   });
+  
+  console.log(`Filter: ${filter}, Showing: ${visibleCount} emails`);
 }
 
 // Update filter counts
@@ -1102,6 +1276,8 @@ function updateFilterCounts() {
   document.getElementById('countAll').textContent = emailLinks.length;
   document.getElementById('countSent').textContent = sentCount;
   document.getElementById('countPending').textContent = pendingCount;
+  
+  console.log(`Counts - All: ${emailLinks.length}, Sent: ${sentCount}, Pending: ${pendingCount}`);
 }
 
 // Download CSV
@@ -1192,22 +1368,48 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
 });
 
 // Auto-save on input
+let saveTimeout;
+function scheduleSave() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    saveData();
+  }, 1000);
+}
+
 document.getElementById('list').addEventListener('input', function() {
   updateStatsFromList();
-  saveData();
+  scheduleSave();
 });
 
-document.getElementById('subject').addEventListener('input', saveData);
-document.getElementById('body').addEventListener('input', saveData);
+document.getElementById('subject').addEventListener('input', scheduleSave);
+document.getElementById('body').addEventListener('input', scheduleSave);
+
+// Save before page unload
+window.addEventListener('beforeunload', function() {
+  saveData();
+  console.log('Saved before unload');
+});
+
+// Save on visibility change
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    saveData();
+    console.log('Saved on tab hidden');
+  }
+});
 
 // Initialize
 window.addEventListener('load', function() {
-  loadSavedData();
+  loadAllData();
   
   // Update sent stats every minute to refresh 24h count
   setInterval(updateSentStats, 60000);
   
-  console.log('FATISCO loaded');
+  // Initial update
+  updateSentStats();
+  
+  console.log('FATISCO loaded with enhanced saving');
+  showToast('FATISCO loaded - Data restored');
 });
 </script>
 </body>
