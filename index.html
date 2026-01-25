@@ -2,53 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FATISCO 🚀 | AI-Powered Cold Email Platform</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FATISCO | Email Automation</title>
 <style>
-/* Premium Color Palette */
-:root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --secondary: #f59e0b;
-  --accent: #10b981;
-  --danger: #ef4444;
-  --warning: #f97316;
-  --success: #10b981;
-  --info: #3b82f6;
-  
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
-  
-  --bg-dark: #0f172a;
-  --bg-card-dark: #1e293b;
-  --bg-light: #f8fafc;
-  --bg-card-light: #ffffff;
-  
-  --text-dark: #e2e8f0;
-  --text-light: #1e293b;
-  --text-muted: #94a3b8;
-  
-  --border-dark: #334155;
-  --border-light: #e2e8f0;
-  --border-radius: 16px;
-  --border-radius-lg: 24px;
-  --border-radius-sm: 12px;
-  
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.2);
-  --shadow-primary: 0 10px 30px rgba(99, 102, 241, 0.3);
-  
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-}
-
 /* Reset & Base */
 * {
   margin: 0;
@@ -56,744 +12,434 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-light);
-  color: var(--text-light);
-  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  line-height: 1.4;
   overflow-x: hidden;
-  transition: all var(--transition-normal);
-  position: relative;
+  padding-bottom: 60px;
 }
 
 body.dark {
-  background: var(--bg-dark);
-  color: var(--text-dark);
+  background: #0f172a;
+  color: #e2e8f0;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
-              radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 40%);
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Premium Header */
-.premium-header {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.25rem 0;
+/* Header */
+.header {
+  background: #4f46e5;
+  padding: 12px 16px;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.dark .premium-header {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+.dark .header {
+  background: #1e1b4b;
 }
 
-.header-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+.header-content {
+  max-width: 100%;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  align-items: center;
 }
 
-.logo-brand {
+.logo {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 8px;
+  color: white;
   text-decoration: none;
 }
 
 .logo-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--gradient-primary);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: white;
-  box-shadow: var(--shadow-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .logo-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-name {
-  font-size: 1.75rem;
-  font-weight: 800;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.5px;
-}
-
-.brand-tagline {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.user-profile:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: white;
-  font-size: 0.9rem;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.user-plan {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.premium-badge {
-  background: var(--gradient-secondary);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 50px;
-  font-size: 0.75rem;
+  font-size: 18px;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
-/* Container & Layout */
+.theme-toggle {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Main Container */
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  padding: 16px;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Premium Stats Cards */
+/* Stats */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.premium-stat-card {
-  background: linear-gradient(145deg, var(--bg-card-light), #f1f5f9);
-  border-radius: var(--border-radius);
-  padding: 1.75rem;
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-}
-
-.dark .premium-stat-card {
-  background: linear-gradient(145deg, var(--bg-card-dark), #1a243b);
-  border-color: var(--border-dark);
-}
-
-.premium-stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-light);
-}
-
-.premium-stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--gradient-primary);
-}
-
-.stat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
+.stat-card {
+  background: white;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: var(--primary);
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.dark .stat-card {
+  background: #1e293b;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .stat-value {
-  font-size: 2.5rem;
+  font-size: 28px;
   font-weight: 800;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #4f46e5;
   line-height: 1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 4px;
+}
+
+.dark .stat-value {
+  color: #818cf8;
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 12px;
+  color: #666;
   font-weight: 600;
-  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
-.stat-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+.dark .stat-label {
+  color: #94a3b8;
 }
 
-.trend-up {
-  color: var(--success);
-}
-
-.trend-down {
-  color: var(--danger);
-}
-
-/* Premium Cards */
-.premium-card {
-  background: var(--bg-card-light);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-normal);
+/* Cards */
+.card {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   overflow: hidden;
 }
 
-.dark .premium-card {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
+.dark .card {
+  background: #1e293b;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.premium-card:hover {
-  box-shadow: var(--shadow-xl);
-}
-
-.premium-card-header {
-  padding: 1.75rem 2rem;
-  border-bottom: 1px solid var(--border-light);
+.card-header {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
 }
 
-.dark .premium-card-header {
-  border-color: var(--border-dark);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.dark .card-header {
+  border-color: #334155;
 }
 
 .card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--gradient-primary);
+  font-size: 18px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+/* File Upload */
+.file-upload {
+  margin-bottom: 16px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  color: white;
-}
-
-.card-title-text {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-light);
-}
-
-.dark .card-title-text {
-  color: var(--text-dark);
-}
-
-.card-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.premium-card-body {
-  padding: 2rem;
-}
-
-/* Enhanced File Upload */
-.enhanced-upload {
-  margin-bottom: 1.5rem;
-}
-
-.upload-zone {
-  border: 2px dashed var(--border-light);
-  border-radius: var(--border-radius);
-  padding: 3rem 2rem;
-  text-align: center;
-  background: linear-gradient(145deg, rgba(99, 102, 241, 0.02), rgba(139, 92, 246, 0.02));
-  transition: all var(--transition-normal);
+  gap: 8px;
+  padding: 14px;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.dark .upload-zone {
-  border-color: var(--border-dark);
-  background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+.dark .file-label {
+  background: #1e293b;
+  border-color: #475569;
+  color: #cbd5e1;
 }
 
-.upload-zone:hover {
-  border-color: var(--primary);
-  background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
-  transform: translateY(-2px);
+.file-label:hover {
+  border-color: #4f46e5;
 }
 
-.upload-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: var(--primary);
-}
-
-.upload-text {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.upload-subtext {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-}
-
-.upload-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Enhanced Inputs */
+/* Inputs */
 .input-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 16px;
 }
 
-.input-label {
+.label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-light);
+  margin-bottom: 6px;
+  color: #333;
 }
 
-.dark .input-label {
-  color: var(--text-dark);
+.dark .label {
+  color: #e2e8f0;
 }
 
-.input-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-}
-
-.premium-input,
-.premium-textarea,
-.premium-select {
+.textarea {
   width: 100%;
-  padding: 1rem 1.25rem;
-  background: var(--bg-card-light);
-  border: 2px solid var(--border-light);
-  border-radius: var(--border-radius-sm);
-  font-size: 0.95rem;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
   font-family: inherit;
-  transition: all var(--transition-fast);
-  color: var(--text-light);
-}
-
-.dark .premium-input,
-.dark .premium-textarea,
-.dark .premium-select {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
-  color: var(--text-dark);
-}
-
-.premium-input:focus,
-.premium-textarea:focus,
-.premium-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-  transform: translateY(-1px);
-}
-
-.premium-textarea {
-  min-height: 120px;
+  background: white;
+  color: #333;
   resize: vertical;
-  line-height: 1.6;
+  min-height: 120px;
 }
 
-/* Premium Buttons */
+.dark .textarea {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: #333;
+}
+
+.dark .input {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
 .btn {
-  padding: 0.875rem 1.75rem;
-  border-radius: var(--border-radius-sm);
-  font-size: 0.95rem;
-  font-weight: 600;
+  padding: 10px 16px;
   border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.btn:hover::before {
-  left: 100%;
+  gap: 6px;
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: #4f46e5;
   color: white;
-  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+  background: #4338ca;
 }
 
 .btn-secondary {
-  background: var(--bg-card-light);
-  color: var(--text-light);
-  border: 2px solid var(--border-light);
+  background: #f1f5f9;
+  color: #333;
+  border: 1px solid #cbd5e1;
 }
 
 .dark .btn-secondary {
-  background: var(--bg-card-dark);
-  color: var(--text-dark);
-  border-color: var(--border-dark);
+  background: #334155;
+  color: #e2e8f0;
+  border-color: #475569;
 }
 
 .btn-secondary:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-  transform: translateY(-2px);
+  background: #e2e8f0;
 }
 
-.btn-success {
-  background: var(--gradient-success);
-  color: white;
+.dark .btn-secondary:hover {
+  background: #475569;
 }
 
 .btn-danger {
-  background: var(--gradient-danger);
+  background: #dc2626;
   color: white;
 }
 
-.btn-icon {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.btn-danger:hover {
+  background: #b91c1c;
 }
 
-.button-group {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1.5rem;
-}
-
-/* Enhanced Tabs */
-.premium-tabs {
-  display: flex;
-  gap: 0.5rem;
-  border-bottom: 2px solid var(--border-light);
-  margin-bottom: 2rem;
-  overflow-x: auto;
-}
-
-.dark .premium-tabs {
-  border-color: var(--border-dark);
-}
-
-.tab-btn {
-  padding: 1rem 1.5rem;
-  background: transparent;
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.tab-btn:hover {
-  color: var(--primary);
-}
-
-.tab-btn.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-}
-
-/* Enhanced Email Links */
+/* Email List Card */
 .email-list-container {
-  background: var(--bg-card-light);
-  border-radius: var(--border-radius-lg);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-lg);
-  padding: 2rem;
+  display: none;
+  background: white;
+  border-radius: 12px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .dark .email-list-container {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
+  background: #1e293b;
 }
 
 .email-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dark .email-list-header {
+  border-color: #334155;
 }
 
 .email-filters {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .filter-btn {
-  padding: 0.5rem 1rem;
-  background: var(--bg-card-light);
-  border: 1px solid var(--border-light);
-  border-radius: 50px;
-  font-size: 0.875rem;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-light);
+  color: #333;
   cursor: pointer;
-  transition: all var(--transition-fast);
 }
 
 .dark .filter-btn {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
-  color: var(--text-dark);
-}
-
-.filter-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
 }
 
 .filter-btn.active {
-  background: var(--gradient-primary);
+  background: #4f46e5;
   color: white;
-  border-color: transparent;
+  border-color: #4f46e5;
 }
 
 .filter-count {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.125rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.75rem;
-  margin-left: 0.5rem;
+  background: rgba(255,255,255,0.2);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  margin-left: 4px;
 }
 
+/* Email Links - COMPACT */
 .email-list {
-  max-height: 600px;
+  max-height: 400px;
   overflow-y: auto;
-  padding-right: 0.5rem;
+  padding: 8px;
 }
 
-.email-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.email-list::-webkit-scrollbar-track {
-  background: var(--border-light);
-  border-radius: 3px;
-}
-
-.dark .email-list::-webkit-scrollbar-track {
-  background: var(--border-dark);
-}
-
-.email-list::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 3px;
-}
-
-.premium-email-link {
+.email-link {
   display: flex;
   align-items: center;
-  padding: 1.25rem;
-  background: var(--bg-card-light);
-  border: 1px solid var(--border-light);
-  border-radius: var(--border-radius-sm);
-  margin-bottom: 0.75rem;
+  padding: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 6px;
   text-decoration: none;
   color: inherit;
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
+  font-size: 12px;
+  min-height: 44px;
 }
 
-.dark .premium-email-link {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
+.dark .email-link {
+  background: #1e293b;
+  border-color: #334155;
 }
 
-.premium-email-link:hover {
-  transform: translateX(5px);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
+.email-link:hover {
+  border-color: #4f46e5;
 }
 
-.premium-email-link::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px;
-  background: var(--gradient-primary);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
+.email-link.sent {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  opacity: 0.7;
 }
 
-.premium-email-link:hover::before {
-  opacity: 1;
-}
-
-.email-link-sent {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.02));
-  border-color: rgba(16, 185, 129, 0.3);
+.dark .email-link.sent {
+  background: #064e3b;
+  border-color: #047857;
 }
 
 .email-number {
-  min-width: 36px;
-  height: 36px;
+  min-width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--gradient-primary);
+  background: #4f46e5;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 11px;
   font-weight: 700;
-  font-size: 0.875rem;
-  margin-right: 1rem;
+  margin-right: 8px;
   flex-shrink: 0;
+}
+
+.email-link.sent .email-number {
+  background: #10b981;
 }
 
 .email-content {
@@ -801,357 +447,158 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 8px;
+  min-width: 0;
 }
 
 .email-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex: 1;
-}
-
-.email-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.email-details {
   flex: 1;
   min-width: 0;
 }
 
 .email-name {
   font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 0.25rem;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 2px;
 }
 
 .email-address {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-size: 11px;
+  color: #666;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.email-company {
-  font-size: 0.75rem;
-  color: var(--primary);
-  font-weight: 600;
-  background: rgba(99, 102, 241, 0.1);
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.email-status {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.email-time {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+.dark .email-address {
+  color: #94a3b8;
 }
 
 .email-action {
-  padding: 0.5rem 1rem;
-  background: var(--gradient-primary);
+  padding: 4px 10px;
+  background: #4f46e5;
   color: white;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 11px;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
-.email-action:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+.email-link.sent .email-action {
+  background: #10b981;
 }
 
-/* Sidebar */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.quick-actions {
-  background: var(--bg-card-light);
-  border-radius: var(--border-radius-lg);
-  padding: 2rem;
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-lg);
-}
-
-.dark .quick-actions {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
-}
-
-.quick-actions-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.action-buttons {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.action-btn {
-  padding: 1rem;
-  background: rgba(99, 102, 241, 0.05);
-  border: 1px solid var(--border-light);
-  border-radius: var(--border-radius-sm);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.dark .action-btn {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: var(--border-dark);
-  color: var(--text-dark);
-}
-
-.action-btn:hover {
-  background: var(--primary);
-  color: white;
-  transform: translateX(3px);
-}
-
-.action-btn i {
-  font-size: 1.25rem;
-}
-
-/* Analytics */
-.analytics-card {
-  background: var(--bg-card-light);
-  border-radius: var(--border-radius-lg);
-  padding: 2rem;
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-lg);
-}
-
-.dark .analytics-card {
-  background: var(--bg-card-dark);
-  border-color: var(--border-dark);
-}
-
-.analytics-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.analytics-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.analytics-stats {
-  display: grid;
-  gap: 1rem;
-}
-
-.analytics-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background: rgba(99, 102, 241, 0.05);
-  border-radius: var(--border-radius-sm);
-}
-
-.dark .analytics-item {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-.analytics-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.analytics-value {
-  font-size: 1.125rem;
-  font-weight: 700;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Floating Actions */
-.floating-actions {
+/* Scroll Buttons */
+.scroll-btn {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  z-index: 100;
-}
-
-.floating-btn {
-  width: 56px;
-  height: 56px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--gradient-primary);
+  background: #4f46e5;
   color: white;
   border: none;
-  font-size: 1.25rem;
+  font-size: 18px;
   cursor: pointer;
-  box-shadow: var(--shadow-xl);
-  transition: all var(--transition-normal);
-  display: flex;
+  z-index: 1000;
+  display: none;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
-.floating-btn:hover {
-  transform: scale(1.1) rotate(10deg);
-  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+.scroll-btn:hover {
+  background: #4338ca;
 }
 
-.floating-btn.secondary {
-  background: var(--gradient-secondary);
+.scroll-top {
+  bottom: 80px;
 }
 
-/* Toast Notifications */
-.premium-toast {
+.scroll-bottom {
+  bottom: 24px;
+}
+
+/* Toast */
+.toast {
   position: fixed;
-  bottom: 2rem;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: var(--bg-card-light);
-  color: var(--text-light);
-  padding: 1rem 1.5rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-xl);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  background: #1e293b;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
   z-index: 1000;
   opacity: 0;
-  transition: all var(--transition-normal);
-  border-left: 4px solid var(--primary);
-  max-width: 500px;
-  width: 90%;
+  transition: all 0.3s;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-.dark .premium-toast {
-  background: var(--bg-card-dark);
-  color: var(--text-dark);
-}
-
-.premium-toast.show {
+.toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
 
-.toast-icon {
-  font-size: 1.5rem;
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px 16px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  z-index: 99;
 }
 
-.toast-success .toast-icon {
-  color: var(--success);
+.dark .footer {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
 }
 
-.toast-error .toast-icon {
-  color: var(--danger);
-}
-
-.toast-warning .toast-icon {
-  color: var(--warning);
-}
-
-.toast-content {
-  flex: 1;
-}
-
-.toast-title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.toast-message {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar {
-    order: -1;
-  }
-}
-
+/* Media Queries for Mobile Optimization */
 @media (max-width: 768px) {
-  .container {
-    padding: 1rem;
+  html {
+    font-size: 14px;
   }
   
-  .header-container {
-    padding: 0 1rem;
-    flex-wrap: wrap;
+  .container {
+    padding: 12px;
   }
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
   
-  .premium-card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  .stat-card {
+    padding: 12px;
   }
   
-  .email-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+  .stat-value {
+    font-size: 24px;
   }
   
-  .email-status {
-    width: 100%;
-    justify-content: space-between;
+  .card {
+    margin-bottom: 12px;
   }
-}
-
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
+  
+  .card-header, .card-body {
+    padding: 12px;
   }
   
   .button-group {
@@ -1162,695 +609,605 @@ body::before {
     width: 100%;
   }
   
-  .premium-tabs {
-    flex-wrap: wrap;
+  .email-link {
+    padding: 6px;
+    margin-bottom: 4px;
   }
+  
+  .scroll-btn {
+    width: 40px;
+    height: 40px;
+    right: 12px;
+  }
+  
+  .scroll-top {
+    bottom: 76px;
+  }
+  
+  .scroll-bottom {
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 10px 12px;
+  }
+  
+  .container {
+    padding: 10px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-value {
+    font-size: 22px;
+  }
+  
+  .email-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .email-action {
+    align-self: flex-end;
+  }
+}
+
+/* Prevent horizontal scroll */
+body, .container, .card, .email-list-container {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 </style>
 </head>
 <body class="light">
 
-<!-- Premium Header -->
-<header class="premium-header">
-  <div class="header-container">
-    <a href="#" class="logo-brand">
-      <div class="logo-icon">F</div>
-      <div class="logo-text">
-        <div class="brand-name">FATISCO</div>
-        <div class="brand-tagline">AI-Powered Email Automation</div>
-      </div>
-    </a>
-    
-    <div class="header-actions">
-      <button class="btn btn-secondary" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i> Dark Mode
-      </button>
-      
-      <div class="user-profile" onclick="showUserMenu()">
-        <div class="user-avatar">F</div>
-        <div class="user-info">
-          <div class="user-name">Fatai Ajani</div>
-          <div class="user-plan">
-            <span class="premium-badge">
-              <i class="fas fa-crown"></i> PRO
-            </span>
-          </div>
-        </div>
-        <i class="fas fa-chevron-down"></i>
-      </div>
+<div class="header">
+  <div class="header-content">
+    <div class="logo">
+      <span class="logo-icon">F</span>
+      <span class="logo-text">FATISCO</span>
     </div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
   </div>
-</header>
+</div>
 
 <div class="container">
-  <!-- Stats Dashboard -->
+  <!-- Stats -->
   <div class="stats-grid">
-    <div class="premium-stat-card">
-      <div class="stat-header">
-        <div>
-          <div class="stat-value" id="totalEmails">0</div>
-          <div class="stat-label">Total Contacts</div>
-        </div>
-        <div class="stat-icon">
-          <i class="fas fa-users"></i>
-        </div>
-      </div>
-      <div class="stat-trend trend-up">
-        <i class="fas fa-arrow-up"></i>
-        <span>12% from last week</span>
-      </div>
+    <div class="stat-card">
+      <div class="stat-value" id="totalEmails">0</div>
+      <div class="stat-label">Total</div>
     </div>
-    
-    <div class="premium-stat-card">
-      <div class="stat-header">
-        <div>
-          <div class="stat-value" id="validEmails">0</div>
-          <div class="stat-label">Valid Emails</div>
-        </div>
-        <div class="stat-icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-      </div>
-      <div class="stat-trend trend-up">
-        <i class="fas fa-arrow-up"></i>
-        <span>98% accuracy</span>
-      </div>
+    <div class="stat-card">
+      <div class="stat-value" id="validEmails">0</div>
+      <div class="stat-label">Valid</div>
     </div>
-    
-    <div class="premium-stat-card">
-      <div class="stat-header">
-        <div>
-          <div class="stat-value" id="emailsSent">0</div>
-          <div class="stat-label">Emails Sent</div>
-        </div>
-        <div class="stat-icon">
-          <i class="fas fa-paper-plane"></i>
-        </div>
-      </div>
-      <div class="stat-trend trend-up">
-        <i class="fas fa-arrow-up"></i>
-        <span>24 today</span>
-      </div>
+    <div class="stat-card">
+      <div class="stat-value" id="emailsSent24h">0</div>
+      <div class="stat-label">Sent (24h)</div>
     </div>
-    
-    <div class="premium-stat-card">
-      <div class="stat-header">
-        <div>
-          <div class="stat-value" id="spamScore">0%</div>
-          <div class="stat-label">Spam Score</div>
-        </div>
-        <div class="stat-icon">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-      </div>
-      <div class="stat-trend trend-down">
-        <i class="fas fa-arrow-down"></i>
-        <span>Low risk</span>
-      </div>
+    <div class="stat-card">
+      <div class="stat-value" id="emailsSentTotal">0</div>
+      <div class="stat-label">Sent (Total)</div>
     </div>
   </div>
 
-  <div class="dashboard-grid">
-    <div class="main-content">
-      <!-- Email List Card -->
-      <div class="premium-card">
-        <div class="premium-card-header">
-          <div class="card-title">
-            <div class="card-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <div class="card-title-text">Email Campaign</div>
-          </div>
-          <div class="card-actions">
-            <button class="btn btn-icon btn-secondary" onclick="cleanList()" title="Clean List">
-              <i class="fas fa-broom"></i>
-            </button>
-            <button class="btn btn-icon btn-secondary" onclick="importContacts()" title="Import">
-              <i class="fas fa-upload"></i>
-            </button>
-          </div>
-        </div>
-        
-        <div class="premium-card-body">
-          <div class="enhanced-upload">
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-              <div class="upload-icon">
-                <i class="fas fa-cloud-upload-alt"></i>
-              </div>
-              <div class="upload-text">Upload Contact List</div>
-              <div class="upload-subtext">Drag & drop CSV or TXT files, or click to browse</div>
-              <div class="upload-buttons">
-                <button class="btn btn-secondary">
-                  <i class="fas fa-file-csv"></i> CSV File
-                </button>
-                <button class="btn btn-secondary">
-                  <i class="fas fa-file-alt"></i> TXT File
-                </button>
-                <button class="btn btn-secondary" onclick="pasteFromClipboard()">
-                  <i class="fas fa-paste"></i> Paste
-                </button>
-              </div>
-              <input type="file" id="fileInput" accept=".csv,.txt" style="display: none;">
-            </div>
-          </div>
-          
-          <div class="input-group">
-            <label class="input-label">Contact List (email, name, company)</label>
-            <textarea class="premium-textarea" id="list" rows="6" placeholder="john@acme.com,John Doe,Acme Corp
-jane@startup.io,Jane Smith,Startup Inc
-bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
-            <div class="input-hint">Enter one contact per line. Use commas to separate email, name, and company.</div>
-          </div>
-          
-          <div class="button-group">
-            <button class="btn btn-primary" onclick="validateEmails()">
-              <i class="fas fa-check"></i> Validate Emails
-            </button>
-            <button class="btn btn-secondary" onclick="saveTemplate()">
-              <i class="fas fa-save"></i> Save Template
-            </button>
-            <button class="btn btn-danger" onclick="clearAllData()">
-              <i class="fas fa-trash"></i> Clear All
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Email Composer Card -->
-      <div class="premium-card">
-        <div class="premium-card-header">
-          <div class="card-title">
-            <div class="card-icon">
-              <i class="fas fa-edit"></i>
-            </div>
-            <div class="card-title-text">Email Composer</div>
-          </div>
-          <div class="card-actions">
-            <button class="btn btn-secondary" onclick="aiGenerate()">
-              <i class="fas fa-robot"></i> AI Assist
-            </button>
-          </div>
-        </div>
-        
-        <div class="premium-card-body">
-          <div class="premium-tabs">
-            <button class="tab-btn active" onclick="switchTab('compose')">
-              <i class="fas fa-edit"></i> Compose
-            </button>
-            <button class="tab-btn" onclick="switchTab('preview')">
-              <i class="fas fa-eye"></i> Preview
-            </button>
-            <button class="tab-btn" onclick="switchTab('analytics')">
-              <i class="fas fa-chart-bar"></i> Analytics
-            </button>
-            <button class="tab-btn" onclick="switchTab('schedule')">
-              <i class="fas fa-clock"></i> Schedule
-            </button>
-          </div>
-          
-          <div id="composeTab" class="tab-content active">
-            <div class="input-group">
-              <label class="input-label">Template</label>
-              <select class="premium-select" id="template" onchange="loadTemplate()">
-                <option value="0">🏢 Default Professional</option>
-                <option value="1">💼 Business Partnership</option>
-                <option value="2">🎯 Product Introduction</option>
-                <option value="3">🤝 Networking</option>
-                <option value="4">🔥 Sales Outreach</option>
-              </select>
-            </div>
-            
-            <div class="input-group">
-              <label class="input-label">Subject Line</label>
-              <input class="premium-input" id="subject" value="Exciting opportunity for {company}">
-              <div class="input-hint">Use {name} and {company} for personalization</div>
-            </div>
-            
-            <div class="input-group">
-              <div class="input-label">Email Options</div>
-              <div class="button-group">
-                <button class="btn btn-secondary" id="ccToggle" onclick="toggleCC()">
-                  <i class="fas fa-copy"></i> Add CC
-                </button>
-                <button class="btn btn-secondary" id="bccToggle" onclick="toggleBCC()">
-                  <i class="fas fa-eye-slash"></i> Add BCC
-                </button>
-                <button class="btn btn-secondary" onclick="toggleTracking()">
-                  <i class="fas fa-chart-line"></i> Track Opens
-                </button>
-              </div>
-            </div>
-            
-            <div id="ccField" style="display: none; margin-bottom: 1.5rem;">
-              <label class="input-label">CC Email Address</label>
-              <input class="premium-input" id="ccEmail" type="email" placeholder="cc@example.com">
-            </div>
-            
-            <div id="bccField" style="display: none; margin-bottom: 1.5rem;">
-              <label class="input-label">BCC Email Address</label>
-              <input class="premium-input" id="bccEmail" type="email" placeholder="bcc@example.com">
-            </div>
-            
-            <div class="input-group">
-              <label class="input-label">Message Body</label>
-              <textarea class="premium-textarea" id="body" rows="8">Hi {name},
-
-I've been following {company}'s impressive work in the industry and would love to explore potential collaboration opportunities.
-
-Looking forward to connecting!
-
-Best regards,
-[Your Name]</textarea>
-              <div class="input-hint">
-                <i class="fas fa-lightbulb"></i> Tip: Keep it concise and personalized for better response rates
-              </div>
-            </div>
-            
-            <div class="button-group">
-              <button class="btn btn-primary" onclick="generateLinks()">
-                <i class="fas fa-bolt"></i> Generate Email Links
-              </button>
-              <button class="btn btn-secondary" onclick="analyzeSpam()">
-                <i class="fas fa-shield-alt"></i> Spam Check
-              </button>
-              <button class="btn btn-success" onclick="testEmail()">
-                <i class="fas fa-paper-plane"></i> Send Test Email
-              </button>
-            </div>
-          </div>
-          
-          <div id="previewTab" class="tab-content" style="display: none;">
-            <!-- Preview content will go here -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Email Output Card -->
-      <div class="email-list-container" id="outputContainer" style="display: none;">
-        <div class="email-list-header">
-          <div class="card-title">
-            <div class="card-icon">
-              <i class="fas fa-paper-plane"></i>
-            </div>
-            <div class="card-title-text">Ready to Send</div>
-          </div>
-          <div class="email-filters">
-            <button class="filter-btn active" onclick="filterEmails('all')">
-              All <span class="filter-count" id="countAll">0</span>
-            </button>
-            <button class="filter-btn" onclick="filterEmails('pending')">
-              Pending <span class="filter-count" id="countPending">0</span>
-            </button>
-            <button class="filter-btn" onclick="filterEmails('sent')">
-              Sent <span class="filter-count" id="countSent">0</span>
-            </button>
-          </div>
-        </div>
-        
-        <div class="email-list" id="output">
-          <!-- Email links will be generated here -->
-        </div>
-      </div>
+  <!-- Email List Card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">📧</span>
+      <span class="card-title">Email List</span>
     </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="quick-actions">
-        <div class="quick-actions-title">
-          <i class="fas fa-bolt"></i> Quick Actions
-        </div>
-        <div class="action-buttons">
-          <button class="action-btn" onclick="downloadCSV()">
-            <i class="fas fa-file-export"></i>
-            <span>Export Contacts</span>
-          </button>
-          <button class="action-btn" onclick="scheduleEmails()">
-            <i class="fas fa-clock"></i>
-            <span>Schedule Campaign</span>
-          </button>
-          <button class="action-btn" onclick="createSegment()">
-            <i class="fas fa-filter"></i>
-            <span>Create Segment</span>
-          </button>
-          <button class="action-btn" onclick="showAnalytics()">
-            <i class="fas fa-chart-pie"></i>
-            <span>View Analytics</span>
-          </button>
-          <button class="action-btn" onclick="showTemplates()">
-            <i class="fas fa-layer-group"></i>
-            <span>Template Library</span>
-          </button>
-          <button class="action-btn" onclick="showSettings()">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-          </button>
-        </div>
+    <div class="card-body">
+      <div class="file-upload">
+        <input type="file" id="fileInput" class="file-input" accept=".csv,.txt">
+        <label for="fileInput" class="file-label">
+          📁 Upload CSV/TXT
+        </label>
       </div>
       
-      <div class="analytics-card">
-        <div class="analytics-header">
-          <div class="analytics-title">Campaign Stats</div>
-          <i class="fas fa-chart-line" style="color: var(--primary);"></i>
-        </div>
-        <div class="analytics-stats">
-          <div class="analytics-item">
-            <span class="analytics-label">Open Rate</span>
-            <span class="analytics-value">42%</span>
-          </div>
-          <div class="analytics-item">
-            <span class="analytics-label">Reply Rate</span>
-            <span class="analytics-value">18%</span>
-          </div>
-          <div class="analytics-item">
-            <span class="analytics-label">Spam Score</span>
-            <span class="analytics-value" id="currentSpamScore">Low</span>
-          </div>
-          <div class="analytics-item">
-            <span class="analytics-label">Avg. Response Time</span>
-            <span class="analytics-value">2.4h</span>
-          </div>
-        </div>
+      <div class="input-group">
+        <label class="label">Paste Emails (email,name,company)</label>
+        <textarea class="textarea" id="list" placeholder="john@acme.com,John Doe,Acme Corp
+jane@startup.io,Jane Smith,Startup Inc
+bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
       </div>
+      
+      <div class="button-group">
+        <button class="btn btn-secondary" onclick="cleanList()">🧹 Clean</button>
+        <button class="btn btn-secondary" onclick="forceSave()">💾 Save</button>
+        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Composer Card -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">✉️</span>
+      <span class="card-title">Email Composer</span>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <label class="label">Subject Line</label>
+        <input class="input" id="subject" value="Opportunity for {company}">
+      </div>
+      
+      <div class="input-group">
+        <label class="label">Message Body</label>
+        <textarea class="textarea" id="body" rows="6">Hi {name},
+
+I noticed {company} is doing great work. I'd love to discuss collaboration opportunities.
+
+Looking forward to connecting!</textarea>
+      </div>
+      
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="generateLinks()">
+          ⚡ Generate Links
+        </button>
+        <button class="btn btn-secondary" onclick="downloadCSV()">
+          📥 Export CSV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Output -->
+  <div class="email-list-container" id="outputContainer">
+    <div class="email-list-header">
+      <div class="email-filters">
+        <button class="filter-btn active" onclick="filterEmails('all')">
+          All <span class="filter-count" id="countAll">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterEmails('pending')">
+          Pending <span class="filter-count" id="countPending">0</span>
+        </button>
+        <button class="filter-btn" onclick="filterEmails('sent')">
+          Sent <span class="filter-count" id="countSent">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="email-list" id="output">
+      <!-- Email links will appear here -->
     </div>
   </div>
 </div>
 
-<!-- Floating Actions -->
-<div class="floating-actions">
-  <button class="floating-btn" onclick="scrollToTop()" title="Scroll to Top">
-    <i class="fas fa-arrow-up"></i>
-  </button>
-  <button class="floating-btn" onclick="generateLinks()" title="Generate Links">
-    <i class="fas fa-bolt"></i>
-  </button>
-  <button class="floating-btn secondary" onclick="showHelp()" title="Help">
-    <i class="fas fa-question"></i>
-  </button>
-</div>
+<!-- Scroll Buttons -->
+<button class="scroll-btn scroll-top" onclick="scrollToTop()" id="scrollTopBtn">↑</button>
+<button class="scroll-btn scroll-bottom" onclick="scrollToBottom()" id="scrollBottomBtn">↓</button>
 
-<!-- Toast Notification -->
-<div class="premium-toast" id="toast">
-  <div class="toast-icon">
-    <i class="fas fa-check-circle"></i>
-  </div>
-  <div class="toast-content">
-    <div class="toast-title" id="toastTitle">Success</div>
-    <div class="toast-message" id="toastMessage">Operation completed successfully</div>
-  </div>
-  <button onclick="hideToast()">
-    <i class="fas fa-times"></i>
-  </button>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Footer -->
+<div class="footer">
+  <div>Built by Fatai Ajani | FATISCO © 2026</div>
 </div>
 
 <script>
-// Premium UI Functions
-function toggleTheme() {
-  document.body.classList.toggle('dark');
-  document.body.classList.toggle('light');
-  const btn = document.querySelector('.btn-secondary');
-  const icon = btn.querySelector('i');
-  
-  if (document.body.classList.contains('dark')) {
-    icon.className = 'fas fa-sun';
-    btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-    showToast('Dark Mode', 'Switched to dark theme');
-  } else {
-    icon.className = 'fas fa-moon';
-    btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-    showToast('Light Mode', 'Switched to light theme');
-  }
-  
-  // Save theme preference
-  localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-}
+// Core Data
+let stats = {
+  total: 0,
+  valid: 0,
+  sentToday: 0,
+  sentTotal: 0
+};
 
-function switchTab(tabName) {
-  // Update tab buttons
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  event.target.classList.add('active');
-  
-  // Show selected tab content
-  document.querySelectorAll('.tab-content').forEach(content => {
-    content.style.display = 'none';
-  });
-  document.getElementById(tabName + 'Tab').style.display = 'block';
-}
+let sentEmails = {}; // {email: timestamp}
+let last24hSent = new Set(); // Track emails sent in last 24h
+let currentFilter = 'all';
 
-function showToast(title, message, type = 'success') {
-  const toast = document.getElementById('toast');
-  const toastTitle = document.getElementById('toastTitle');
-  const toastMessage = document.getElementById('toastMessage');
-  const toastIcon = toast.querySelector('.toast-icon i');
-  
-  // Set content
-  toastTitle.textContent = title;
-  toastMessage.textContent = message;
-  
-  // Set icon based on type
-  toast.className = 'premium-toast toast-' + type;
-  if (type === 'success') {
-    toastIcon.className = 'fas fa-check-circle';
-  } else if (type === 'error') {
-    toastIcon.className = 'fas fa-exclamation-circle';
-  } else if (type === 'warning') {
-    toastIcon.className = 'fas fa-exclamation-triangle';
-  } else if (type === 'info') {
-    toastIcon.className = 'fas fa-info-circle';
-  }
-  
-  // Show toast
-  toast.classList.add('show');
-  
-  // Auto hide after 5 seconds
-  setTimeout(hideToast, 5000);
-}
-
-function hideToast() {
-  document.getElementById('toast').classList.remove('show');
-}
-
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// User menu functions
-function showUserMenu() {
-  showToast('User Menu', 'Profile options will appear here', 'info');
-}
-
-// Action functions
-function importContacts() {
-  document.getElementById('fileInput').click();
-}
-
-function pasteFromClipboard() {
-  navigator.clipboard.readText().then(text => {
-    document.getElementById('list').value = text;
-    showToast('Clipboard', 'Pasted from clipboard', 'success');
-    validateEmails();
-  }).catch(err => {
-    showToast('Error', 'Could not access clipboard', 'error');
-  });
-}
-
-function aiGenerate() {
-  showToast('AI Assistant', 'Generating optimized email content...', 'info');
-  // Simulate AI generation
-  setTimeout(() => {
-    document.getElementById('subject').value = "Transformative collaboration with {company}";
-    document.getElementById('body').value = `Dear {name},
-
-I've been genuinely impressed by {company}'s innovative approach and market impact. 
-
-Our team has developed solutions that could potentially complement your current initiatives and drive even greater results.
-
-Would you be open to a brief conversation next week to explore synergies?
-
-Warm regards,
-[Your Name]`;
+// Load saved data
+function loadSavedData() {
+  try {
+    // Load theme
+    const savedTheme = localStorage.getItem('fatisco_theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+      document.querySelector('.theme-toggle').textContent = '☀️';
+    }
     
-    showToast('AI Assistant', 'Email content generated successfully!', 'success');
-  }, 1500);
-}
-
-function validateEmails() {
-  const list = document.getElementById('list').value;
-  const lines = list.split('\n').filter(line => line.trim());
-  const validEmails = lines.filter(line => {
-    const email = line.split(',')[0]?.trim();
-    return email && email.includes('@') && email.includes('.');
-  }).length;
-  
-  document.getElementById('validEmails').textContent = validEmails;
-  document.getElementById('totalEmails').textContent = lines.length;
-  
-  showToast('Validation', `Found ${validEmails} valid emails out of ${lines.length}`, 'success');
-}
-
-function analyzeSpam() {
-  const subject = document.getElementById('subject').value;
-  const body = document.getElementById('body').value;
-  
-  // Simple spam analysis
-  const spamWords = ['free', 'buy now', 'click here', 'winner', 'urgent', 'guarantee'];
-  let spamScore = 0;
-  
-  const text = (subject + ' ' + body).toLowerCase();
-  spamWords.forEach(word => {
-    if (text.includes(word)) spamScore += 15;
-  });
-  
-  if (subject.includes('!')) spamScore += 10;
-  if (subject.length > 60) spamScore += 10;
-  
-  const score = Math.min(100, spamScore);
-  document.getElementById('spamScore').textContent = score + '%';
-  document.getElementById('currentSpamScore').textContent = score < 30 ? 'Low' : score < 60 ? 'Medium' : 'High';
-  
-  if (score < 30) {
-    showToast('Spam Analysis', 'Low spam risk - Good to go!', 'success');
-  } else if (score < 60) {
-    showToast('Spam Analysis', 'Medium spam risk - Consider revising', 'warning');
-  } else {
-    showToast('Spam Analysis', 'High spam risk - Needs revision', 'error');
+    // Load email list
+    const savedList = localStorage.getItem('fatisco_email_list');
+    if (savedList) {
+      document.getElementById('list').value = savedList;
+      updateStatsFromList();
+    }
+    
+    // Load subject and body
+    const savedSubject = localStorage.getItem('fatisco_subject');
+    if (savedSubject) document.getElementById('subject').value = savedSubject;
+    
+    const savedBody = localStorage.getItem('fatisco_body');
+    if (savedBody) document.getElementById('body').value = savedBody;
+    
+    // Load sent emails
+    const savedSent = localStorage.getItem('fatisco_sent_emails');
+    if (savedSent) {
+      sentEmails = JSON.parse(savedSent);
+      updateSentStats();
+    }
+    
+  } catch (e) {
+    console.log('Error loading data:', e);
   }
 }
 
-function generateLinks() {
+// Save data
+function saveData() {
+  try {
+    localStorage.setItem('fatisco_email_list', document.getElementById('list').value);
+    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
+    localStorage.setItem('fatisco_body', document.getElementById('body').value);
+    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+  } catch (e) {
+    console.log('Error saving:', e);
+  }
+}
+
+// Theme toggle
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  const btn = document.querySelector('.theme-toggle');
+  btn.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('fatisco_theme', isDark ? 'dark' : 'light');
+}
+
+// Update stats from email list
+function updateStatsFromList() {
   const list = document.getElementById('list').value;
   const lines = list.split('\n').filter(line => line.trim());
   
-  if (lines.length === 0) {
-    showToast('Error', 'Please add contacts first', 'error');
+  let validCount = 0;
+  lines.forEach(line => {
+    const email = line.split(',')[0]?.trim();
+    if (email && email.includes('@') && email.includes('.')) {
+      validCount++;
+    }
+  });
+  
+  stats.total = lines.length;
+  stats.valid = validCount;
+  
+  document.getElementById('totalEmails').textContent = stats.total;
+  document.getElementById('validEmails').textContent = stats.valid;
+}
+
+// Update sent stats
+function updateSentStats() {
+  const now = Date.now();
+  const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
+  
+  // Count emails sent in last 24h
+  let sentTodayCount = 0;
+  last24hSent.clear();
+  
+  for (const email in sentEmails) {
+    const sentTime = sentEmails[email].timestamp;
+    if (sentTime > twentyFourHoursAgo) {
+      sentTodayCount++;
+      last24hSent.add(email);
+    }
+  }
+  
+  stats.sentToday = sentTodayCount;
+  stats.sentTotal = Object.keys(sentEmails).length;
+  
+  document.getElementById('emailsSent24h').textContent = stats.sentToday;
+  document.getElementById('emailsSentTotal').textContent = stats.sentTotal;
+}
+
+// Clean list
+function cleanList() {
+  let lines = document.getElementById('list').value.split('\n').filter(line => line.trim());
+  const originalCount = lines.length;
+  
+  // Remove duplicates
+  const uniqueLines = [];
+  const seen = new Set();
+  
+  lines.forEach(line => {
+    const email = line.split(',')[0]?.trim().toLowerCase();
+    if (email && !seen.has(email)) {
+      seen.add(email);
+      uniqueLines.push(line);
+    }
+  });
+  
+  document.getElementById('list').value = uniqueLines.join('\n');
+  updateStatsFromList();
+  saveData();
+  
+  showToast(`Cleaned: ${originalCount - uniqueLines.length} duplicates removed`);
+}
+
+// Force save
+function forceSave() {
+  saveData();
+  showToast('Data saved');
+}
+
+// Clear all data
+function clearAllData() {
+  if (confirm('Clear ALL data including sent emails?')) {
+    document.getElementById('list').value = '';
+    document.getElementById('subject').value = 'Opportunity for {company}';
+    document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
+    document.getElementById('output').innerHTML = '';
+    document.getElementById('outputContainer').style.display = 'none';
+    
+    sentEmails = {};
+    updateStatsFromList();
+    updateSentStats();
+    updateFilterCounts();
+    
+    localStorage.clear();
+    showToast('All data cleared');
+  }
+}
+
+// Parse email line
+function parseLine(line) {
+  const parts = line.split(',').map(p => p.trim());
+  const email = parts[0];
+  if (!email || !email.includes('@')) return null;
+  
+  let name = parts[1] || email.split('@')[0];
+  let company = parts[2] || email.split('@')[1]?.split('.')[0] || 'Company';
+  
+  // Capitalize
+  name = name.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+  
+  company = company.charAt(0).toUpperCase() + company.slice(1);
+  
+  return { email, name, company };
+}
+
+// Generate email links
+function generateLinks() {
+  const list = document.getElementById('list').value.trim();
+  if (!list) {
+    showToast('Please add emails first');
     return;
   }
   
-  // Show output container
-  document.getElementById('outputContainer').style.display = 'block';
+  const lines = list.split('\n').filter(line => line.trim());
   const output = document.getElementById('output');
-  output.innerHTML = '';
+  const container = document.getElementById('outputContainer');
   
-  // Generate email links
+  output.innerHTML = '';
+  container.style.display = 'block';
+  
   lines.forEach((line, index) => {
-    const parts = line.split(',');
-    const email = parts[0]?.trim() || '';
-    const name = parts[1]?.trim() || email.split('@')[0];
-    const company = parts[2]?.trim() || 'Company';
+    const parsed = parseLine(line);
+    if (!parsed) return;
     
-    if (!email.includes('@')) return;
+    const subject = document.getElementById('subject').value
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company);
+    
+    const body = document.getElementById('body').value
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company);
+    
+    const mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    const isSent = sentEmails[parsed.email];
+    const sent24h = last24hSent.has(parsed.email);
     
     const emailLink = document.createElement('a');
-    emailLink.className = 'premium-email-link';
-    emailLink.href = `mailto:${email}?subject=${encodeURIComponent(document.getElementById('subject').value.replace('{company}', company).replace('{name}', name))}&body=${encodeURIComponent(document.getElementById('body').value.replace('{company}', company).replace('{name}', name))}`;
+    emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
+    emailLink.href = mailtoLink;
+    emailLink.setAttribute('data-email', parsed.email);
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
       <div class="email-content">
         <div class="email-info">
-          <div class="email-avatar">${name.charAt(0).toUpperCase()}</div>
-          <div class="email-details">
-            <div class="email-name">${name}</div>
-            <div class="email-address">${email}</div>
-            <div class="email-company">${company}</div>
-          </div>
+          <div class="email-name">${parsed.name}</div>
+          <div class="email-address">${parsed.email}</div>
         </div>
-        <div class="email-status">
-          <div class="email-time">Ready to send</div>
-          <button class="email-action" onclick="event.preventDefault(); sendEmail(${index}, '${email}', '${name}')">
-            <i class="fas fa-paper-plane"></i> Send
-          </button>
-        </div>
+        <button class="email-action" onclick="event.preventDefault(); markAsSent('${parsed.email}', '${parsed.name}')">
+          ${isSent ? '✓ Sent' : 'Send'}
+        </button>
       </div>
     `;
+    
+    // Prevent sending if already sent
+    if (isSent) {
+      emailLink.onclick = function(e) {
+        e.preventDefault();
+        showToast(`Already sent to ${parsed.name}`);
+      };
+    }
     
     output.appendChild(emailLink);
   });
   
-  // Update counts
-  document.getElementById('countAll').textContent = lines.length;
-  document.getElementById('countPending').textContent = lines.length;
+  updateFilterCounts();
+  showToast(`Generated ${lines.length} email links`);
   
-  showToast('Success', `Generated ${lines.length} email links`, 'success');
+  // Show scroll buttons
+  document.getElementById('scrollTopBtn').style.display = 'flex';
+  document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
 
+// Mark email as sent
+function markAsSent(email, name) {
+  const now = Date.now();
+  sentEmails[email] = { timestamp: now };
+  
+  // Update UI
+  const emailLink = document.querySelector(`[data-email="${email}"]`);
+  if (emailLink) {
+    emailLink.classList.add('sent');
+    emailLink.querySelector('.email-action').textContent = '✓ Sent';
+    emailLink.onclick = function(e) {
+      e.preventDefault();
+      showToast(`Already sent to ${name}`);
+    };
+  }
+  
+  updateSentStats();
+  updateFilterCounts();
+  saveData();
+  
+  showToast(`Sent to ${name}`);
+}
+
+// Filter emails
 function filterEmails(filter) {
-  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  currentFilter = filter;
+  
+  // Update filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
   event.target.classList.add('active');
-  showToast('Filter', `Showing ${filter} emails`, 'info');
+  
+  // Show/hide emails
+  const emailLinks = document.querySelectorAll('.email-link');
+  emailLinks.forEach(link => {
+    const isSent = link.classList.contains('sent');
+    
+    if (filter === 'all') {
+      link.style.display = 'flex';
+    } else if (filter === 'sent' && isSent) {
+      link.style.display = 'flex';
+    } else if (filter === 'pending' && !isSent) {
+      link.style.display = 'flex';
+    } else {
+      link.style.display = 'none';
+    }
+  });
 }
 
-function sendEmail(index, email, name) {
-  // Mark as sent
-  const emailLinks = document.querySelectorAll('.premium-email-link');
-  if (emailLinks[index]) {
-    emailLinks[index].classList.add('email-link-sent');
-    emailLinks[index].querySelector('.email-time').textContent = 'Sent just now';
-    emailLinks[index].querySelector('.email-action').innerHTML = '<i class="fas fa-check"></i> Sent';
-    emailLinks[index].querySelector('.email-action').style.background = 'var(--gradient-success)';
-    emailLinks[index].querySelector('.email-action').onclick = null;
-  }
+// Update filter counts
+function updateFilterCounts() {
+  const emailLinks = document.querySelectorAll('.email-link');
+  const sentCount = Array.from(emailLinks).filter(link => 
+    link.classList.contains('sent')
+  ).length;
+  const pendingCount = emailLinks.length - sentCount;
   
-  // Update sent count
-  const sentCount = parseInt(document.getElementById('emailsSent').textContent) + 1;
-  document.getElementById('emailsSent').textContent = sentCount;
+  document.getElementById('countAll').textContent = emailLinks.length;
   document.getElementById('countSent').textContent = sentCount;
-  document.getElementById('countPending').textContent = parseInt(document.getElementById('countAll').textContent) - sentCount;
-  
-  showToast('Email Sent', `Email sent to ${name}`, 'success');
+  document.getElementById('countPending').textContent = pendingCount;
 }
 
-function testEmail() {
-  showToast('Test Email', 'Test email sent to your address', 'success');
-}
-
+// Download CSV
 function downloadCSV() {
-  showToast('Export', 'CSV export started', 'info');
-  // Add CSV download logic here
-}
-
-function scheduleEmails() {
-  showToast('Schedule', 'Campaign scheduling opened', 'info');
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-  // Load saved theme
-  const savedTheme = localStorage.getItem('fatisco_theme');
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark');
-    document.body.classList.remove('light');
-    document.querySelector('.btn-secondary').innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+  const list = document.getElementById('list').value.trim();
+  if (!list) {
+    showToast('No data to export');
+    return;
   }
   
-  // Initialize stats
-  validateEmails();
-  analyzeSpam();
+  const lines = list.split('\n').filter(line => line.trim());
+  let csv = 'Email,Name,Company,Status\n';
   
-  // File input handler
-  document.getElementById('fileInput').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('list').value = e.target.result;
-        validateEmails();
-        showToast('Import', `Loaded ${file.name} successfully`, 'success');
-      };
-      reader.readAsText(file);
+  lines.forEach(line => {
+    const parsed = parseLine(line);
+    if (parsed) {
+      const status = sentEmails[parsed.email] ? 'Sent' : 'Pending';
+      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}"\n`;
     }
   });
   
-  // Auto-save listeners
-  const inputs = ['list', 'subject', 'body'];
-  inputs.forEach(id => {
-    document.getElementById(id).addEventListener('input', function() {
-      // Auto-save logic here
-    });
-  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fatisco_${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
   
-  showToast('Welcome', 'FATISCO Premium is ready!', 'success');
+  showToast('CSV downloaded');
+}
+
+// Scroll functions
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// Show/hide scroll buttons based on scroll position
+window.addEventListener('scroll', function() {
+  const scrollTop = window.pageYOffset;
+  const scrollHeight = document.body.scrollHeight;
+  const clientHeight = window.innerHeight;
+  
+  const topBtn = document.getElementById('scrollTopBtn');
+  const bottomBtn = document.getElementById('scrollBottomBtn');
+  
+  if (scrollTop > 100) {
+    topBtn.style.display = 'flex';
+  } else {
+    topBtn.style.display = 'none';
+  }
+  
+  if (scrollHeight - scrollTop - clientHeight > 100) {
+    bottomBtn.style.display = 'flex';
+  } else {
+    bottomBtn.style.display = 'none';
+  }
+});
+
+// Toast notification
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// File input handler
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('list').value = e.target.result;
+    updateStatsFromList();
+    saveData();
+    showToast(`Loaded ${file.name}`);
+  };
+  reader.readAsText(file);
+});
+
+// Auto-save on input
+document.getElementById('list').addEventListener('input', function() {
+  updateStatsFromList();
+  saveData();
+});
+
+document.getElementById('subject').addEventListener('input', saveData);
+document.getElementById('body').addEventListener('input', saveData);
+
+// Initialize
+window.addEventListener('load', function() {
+  loadSavedData();
+  
+  // Update sent stats every minute to refresh 24h count
+  setInterval(updateSentStats, 60000);
+  
+  console.log('FATISCO loaded');
 });
 </script>
 </body>
