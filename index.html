@@ -401,6 +401,8 @@ body.dark {
   color: inherit;
   font-size: 12px;
   min-height: 44px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .dark .email-link {
@@ -410,6 +412,8 @@ body.dark {
 
 .email-link:hover {
   border-color: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .email-link.sent {
@@ -436,6 +440,7 @@ body.dark {
   font-weight: 700;
   margin-right: 8px;
   flex-shrink: 0;
+  transition: background 0.2s;
 }
 
 .email-link.sent .email-number {
@@ -487,10 +492,21 @@ body.dark {
   border: none;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s;
+  pointer-events: auto;
+}
+
+.email-action:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
 }
 
 .email-link.sent .email-action {
   background: #10b981;
+}
+
+.email-link.sent .email-action:hover {
+  background: #0da271;
 }
 
 /* Scroll Buttons */
@@ -803,6 +819,7 @@ let stats = {
 let sentEmails = {}; // {email: timestamp}
 let last24hSent = new Set();
 let currentFilter = 'all';
+let emailData = {}; // Store email data for quick access
 
 // Storage Keys
 const STORAGE_KEYS = {
@@ -810,8 +827,7 @@ const STORAGE_KEYS = {
   SUBJECT: 'fatisco_subject',
   BODY: 'fatisco_body',
   SENT_EMAILS: 'fatisco_sent_emails',
-  THEME: 'fatisco_theme',
-  BACKUP_PREFIX: 'fatisco_backup_'
+  THEME: 'fatisco_theme'
 };
 
 // Load saved data
@@ -960,6 +976,7 @@ function clearAllData() {
     document.getElementById('outputContainer').style.display = 'none';
     
     sentEmails = {};
+    emailData = {};
     updateStatsFromList();
     updateSentStats();
     updateFilterCounts();
@@ -1000,11 +1017,19 @@ function generateLinks() {
   const container = document.getElementById('outputContainer');
   
   output.innerHTML = '';
+  emailData = {}; // Clear previous data
   container.style.display = 'block';
   
   lines.forEach((line, index) => {
     const parsed = parseLine(line);
     if (!parsed) return;
+    
+    // Store email data for quick access
+    emailData[parsed.email] = {
+      name: parsed.name,
+      company: parsed.company,
+      index: index
+    };
     
     const subject = document.getElementById('subject').value
       .replace(/{name}/g, parsed.name)
@@ -1018,10 +1043,26 @@ function generateLinks() {
     
     const isSent = sentEmails.hasOwnProperty(parsed.email);
     
-    const emailLink = document.createElement('div');
+    const emailLink = document.createElement('a');
     emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
+    emailLink.href = mailtoLink;
     emailLink.setAttribute('data-email', parsed.email);
     emailLink.setAttribute('data-index', index);
+    
+    // Add click handler for the entire card
+    emailLink.addEventListener('click', function(e) {
+      // If clicking the send button, let it handle separately
+      if (e.target.classList.contains('email-action')) {
+        return;
+      }
+      
+      // Mark as sent when card is clicked
+      if (!sentEmails[parsed.email]) {
+        e.preventDefault();
+        markAsSentAndOpen(parsed.email, parsed.name, mailtoLink);
+      }
+      // If already sent, just open Gmail (default link behavior)
+    });
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
@@ -1039,7 +1080,7 @@ function generateLinks() {
     output.appendChild(emailLink);
   });
   
-  // Add event listeners to ALL send buttons
+  // Add event listeners to send buttons
   attachSendButtonListeners();
   
   updateFilterCounts();
@@ -1052,13 +1093,13 @@ function generateLinks() {
 
 // Attach event listeners to send buttons
 function attachSendButtonListeners() {
-  const sendButtons = document.querySelectorAll('.email-action');
-  sendButtons.forEach(button => {
-    // Remove any existing listeners
-    button.replaceWith(button.cloneNode(true));
+  document.querySelectorAll('.email-action').forEach(button => {
+    // Remove existing listeners
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
   });
   
-  // Re-select buttons and add new listeners
+  // Add new listeners to all send buttons
   document.querySelectorAll('.email-action').forEach(button => {
     button.addEventListener('click', function(e) {
       e.preventDefault();
@@ -1066,75 +1107,31 @@ function attachSendButtonListeners() {
       
       const email = this.getAttribute('data-email');
       const name = this.getAttribute('data-name');
+      const emailLink = this.closest('.email-link');
+      const mailtoLink = emailLink.href;
       
-      if (sentEmails[email]) {
-        showToast(`Already sent to ${name}`);
-        return;
-      }
-      
-      markAsSent(email, name);
-    });
-  });
-  
-  // Add click handlers to email links themselves
-  document.querySelectorAll('.email-link:not(.sent)').forEach(link => {
-    link.addEventListener('click', function(e) {
-      if (e.target.classList.contains('email-action')) {
-        return; // Let the button handle it
-      }
-      
-      const email = this.getAttribute('data-email');
-      const name = this.querySelector('.email-name').textContent;
-      
-      if (sentEmails[email]) {
-        e.preventDefault();
-        showToast(`Already sent to ${name}`);
-      }
+      markAsSentAndOpen(email, name, mailtoLink);
     });
   });
 }
 
-// Mark email as sent - FIXED VERSION
-function markAsSent(email, name) {
-  console.log('Marking as sent:', email, name);
+// Mark as sent AND open Gmail
+function markAsSentAndOpen(email, name, mailtoLink) {
+  console.log('Marking as sent and opening Gmail:', email);
   
+  // If already sent, just open Gmail
+  if (sentEmails[email]) {
+    window.open(mailtoLink, '_blank');
+    showToast(`Already sent to ${name}`);
+    return;
+  }
+  
+  // Mark as sent
   const now = Date.now();
   sentEmails[email] = now;
   
-  // Find and update the email link
-  const emailLink = document.querySelector(`[data-email="${email}"]`);
-  if (emailLink) {
-    // Add sent class
-    emailLink.classList.add('sent');
-    
-    // Update number badge
-    const numberBadge = emailLink.querySelector('.email-number');
-    if (numberBadge) {
-      numberBadge.style.background = '#10b981';
-    }
-    
-    // Update button
-    const button = emailLink.querySelector('.email-action');
-    if (button) {
-      button.textContent = '✓ Sent';
-      button.style.background = '#10b981';
-      
-      // Update button listener to show "already sent" message
-      button.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        showToast(`Already sent to ${name}`);
-      };
-    }
-    
-    // Update link click behavior
-    emailLink.onclick = function(e) {
-      e.preventDefault();
-      if (!e.target.classList.contains('email-action')) {
-        showToast(`Already sent to ${name}`);
-      }
-    };
-  }
+  // Update UI immediately
+  updateEmailUI(email);
   
   // Update stats and counters
   updateSentStats();
@@ -1143,7 +1140,62 @@ function markAsSent(email, name) {
   // Save data
   saveData();
   
-  showToast(`Sent to ${name}`);
+  // Open Gmail in new tab
+  setTimeout(() => {
+    window.open(mailtoLink, '_blank');
+  }, 100);
+  
+  showToast(`Opening Gmail for ${name}`);
+}
+
+// Update email UI
+function updateEmailUI(email) {
+  const emailLink = document.querySelector(`[data-email="${email}"]`);
+  if (!emailLink) return;
+  
+  // Add sent class
+  emailLink.classList.add('sent');
+  
+  // Update number badge
+  const numberBadge = emailLink.querySelector('.email-number');
+  if (numberBadge) {
+    numberBadge.style.background = '#10b981';
+  }
+  
+  // Update button
+  const button = emailLink.querySelector('.email-action');
+  if (button) {
+    button.textContent = '✓ Sent';
+    button.style.background = '#10b981';
+    
+    // Update button click handler
+    button.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const name = this.getAttribute('data-name');
+      showToast(`Already sent to ${name}`);
+      
+      // Still open Gmail if they click
+      setTimeout(() => {
+        window.open(emailLink.href, '_blank');
+      }, 100);
+    };
+  }
+  
+  // Update link click behavior
+  emailLink.onclick = function(e) {
+    if (e.target.classList.contains('email-action')) {
+      return;
+    }
+    
+    const name = emailData[email]?.name || 'Contact';
+    showToast(`Already sent to ${name}`);
+    
+    // Still open Gmail
+    setTimeout(() => {
+      window.open(emailLink.href, '_blank');
+    }, 100);
+  };
 }
 
 // Filter emails
