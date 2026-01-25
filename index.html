@@ -788,7 +788,7 @@ Looking forward to connecting!</textarea>
 
 <!-- Footer -->
 <div class="footer">
-  <div>Built by Fatai | FATISCO © 2026</div>
+  <div>Built by Fatai Ajani | FATISCO © 2026</div>
 </div>
 
 <script>
@@ -801,10 +801,10 @@ let stats = {
 };
 
 let sentEmails = {}; // {email: timestamp}
-let last24hSent = new Set(); // Track emails sent in last 24h
+let last24hSent = new Set();
 let currentFilter = 'all';
 
-// Enhanced storage with multiple backups
+// Storage Keys
 const STORAGE_KEYS = {
   EMAIL_LIST: 'fatisco_email_list',
   SUBJECT: 'fatisco_subject',
@@ -814,10 +814,8 @@ const STORAGE_KEYS = {
   BACKUP_PREFIX: 'fatisco_backup_'
 };
 
-// Load ALL saved data
+// Load saved data
 function loadAllData() {
-  console.log('Loading data...');
-  
   try {
     // Load theme
     const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
@@ -826,34 +824,10 @@ function loadAllData() {
       document.querySelector('.theme-toggle').textContent = '☀️';
     }
     
-    // Load email list (try multiple sources)
-    let emailList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
-    if (!emailList) {
-      // Try backup
-      const backupKeys = Object.keys(localStorage)
-        .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
-        .sort()
-        .reverse();
-      
-      for (const key of backupKeys) {
-        try {
-          const backup = localStorage.getItem(key);
-          if (backup) {
-            const data = JSON.parse(backup);
-            if (data.emailList) {
-              emailList = data.emailList;
-              console.log('Loaded from backup:', key);
-              break;
-            }
-          }
-        } catch (e) {
-          console.log('Backup corrupted:', key);
-        }
-      }
-    }
-    
-    if (emailList) {
-      document.getElementById('list').value = emailList;
+    // Load email list
+    const savedList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
+    if (savedList) {
+      document.getElementById('list').value = savedList;
     }
     
     // Load subject and body
@@ -863,117 +837,33 @@ function loadAllData() {
     const savedBody = localStorage.getItem(STORAGE_KEYS.BODY);
     if (savedBody) document.getElementById('body').value = savedBody;
     
-    // Load sent emails (try multiple sources)
-    let savedSent = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS);
-    if (!savedSent) {
-      // Try to find sent emails in backups
-      const backupKeys = Object.keys(localStorage)
-        .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
-        .sort()
-        .reverse();
-      
-      for (const key of backupKeys) {
-        try {
-          const backup = localStorage.getItem(key);
-          if (backup) {
-            const data = JSON.parse(backup);
-            if (data.sentEmails) {
-              savedSent = JSON.stringify(data.sentEmails);
-              console.log('Loaded sent emails from backup:', key);
-              break;
-            }
-          }
-        } catch (e) {
-          console.log('Backup corrupted:', key);
-        }
-      }
-    }
-    
+    // Load sent emails
+    const savedSent = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS);
     if (savedSent) {
       sentEmails = JSON.parse(savedSent);
       console.log('Loaded sent emails:', Object.keys(sentEmails).length);
-    } else {
-      sentEmails = {};
     }
     
     // Update stats
     updateStatsFromList();
     updateSentStats();
     
-    // Auto-save backup
-    createBackup();
-    
   } catch (e) {
     console.error('Error loading data:', e);
-    showToast('Error loading saved data');
   }
 }
 
-// Save data with multiple backups
+// Save data
 function saveData() {
   try {
-    const dataToSave = {
-      emailList: document.getElementById('list').value,
-      subject: document.getElementById('subject').value,
-      body: document.getElementById('body').value,
-      sentEmails: sentEmails,
-      timestamp: Date.now()
-    };
-    
-    // Save to primary keys
-    localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, dataToSave.emailList);
-    localStorage.setItem(STORAGE_KEYS.SUBJECT, dataToSave.subject);
-    localStorage.setItem(STORAGE_KEYS.BODY, dataToSave.body);
-    localStorage.setItem(STORAGE_KEYS.SENT_EMAILS, JSON.stringify(dataToSave.sentEmails));
-    
-    // Create backup
-    createBackup();
-    
-    console.log('Data saved successfully');
+    localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, document.getElementById('list').value);
+    localStorage.setItem(STORAGE_KEYS.SUBJECT, document.getElementById('subject').value);
+    localStorage.setItem(STORAGE_KEYS.BODY, document.getElementById('body').value);
+    localStorage.setItem(STORAGE_KEYS.SENT_EMAILS, JSON.stringify(sentEmails));
     return true;
   } catch (e) {
     console.error('Save error:', e);
-    
-    // Try emergency minimal save
-    try {
-      localStorage.setItem('fatisco_emergency', JSON.stringify({
-        sentEmails: sentEmails,
-        timestamp: Date.now()
-      }));
-      console.log('Emergency save completed');
-    } catch (e2) {
-      console.error('Emergency save also failed');
-    }
-    
     return false;
-  }
-}
-
-// Create backup
-function createBackup() {
-  try {
-    const backupData = {
-      emailList: document.getElementById('list').value,
-      subject: document.getElementById('subject').value,
-      body: document.getElementById('body').value,
-      sentEmails: sentEmails,
-      timestamp: Date.now()
-    };
-    
-    const backupKey = STORAGE_KEYS.BACKUP_PREFIX + Date.now();
-    localStorage.setItem(backupKey, JSON.stringify(backupData));
-    
-    // Clean old backups (keep last 5)
-    const backupKeys = Object.keys(localStorage)
-      .filter(k => k.startsWith(STORAGE_KEYS.BACKUP_PREFIX))
-      .sort()
-      .reverse()
-      .slice(5);
-    
-    backupKeys.forEach(k => localStorage.removeItem(k));
-    
-  } catch (e) {
-    console.error('Backup failed:', e);
   }
 }
 
@@ -1010,7 +900,6 @@ function updateSentStats() {
   const now = Date.now();
   const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
   
-  // Count emails sent in last 24h
   let sentTodayCount = 0;
   last24hSent.clear();
   
@@ -1034,7 +923,6 @@ function cleanList() {
   let lines = document.getElementById('list').value.split('\n').filter(line => line.trim());
   const originalCount = lines.length;
   
-  // Remove duplicates
   const uniqueLines = [];
   const seen = new Set();
   
@@ -1058,7 +946,7 @@ function forceSave() {
   if (saveData()) {
     showToast('Data saved successfully');
   } else {
-    showToast('Save failed - check storage');
+    showToast('Save failed');
   }
 }
 
@@ -1076,13 +964,7 @@ function clearAllData() {
     updateSentStats();
     updateFilterCounts();
     
-    // Clear all FATISCO data from localStorage
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('fatisco')) {
-        localStorage.removeItem(key);
-      }
-    });
-    
+    localStorage.clear();
     showToast('All data cleared');
   }
 }
@@ -1096,14 +978,13 @@ function parseLine(line) {
   let name = parts[1] || email.split('@')[0];
   let company = parts[2] || email.split('@')[1]?.split('.')[0] || 'Company';
   
-  // Capitalize
   name = name.split(' ').map(word => 
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ');
   
   company = company.charAt(0).toUpperCase() + company.slice(1);
   
-  return { email, name, company };
+  return { email: email.toLowerCase(), name, company };
 }
 
 // Generate email links
@@ -1137,9 +1018,8 @@ function generateLinks() {
     
     const isSent = sentEmails.hasOwnProperty(parsed.email);
     
-    const emailLink = document.createElement('a');
+    const emailLink = document.createElement('div');
     emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
-    emailLink.href = mailtoLink;
     emailLink.setAttribute('data-email', parsed.email);
     emailLink.setAttribute('data-index', index);
     
@@ -1150,22 +1030,17 @@ function generateLinks() {
           <div class="email-name">${parsed.name}</div>
           <div class="email-address">${parsed.email}</div>
         </div>
-        <button class="email-action" onclick="event.preventDefault(); markAsSent('${parsed.email}', '${parsed.name}', ${index})">
+        <button class="email-action" data-email="${parsed.email}" data-name="${parsed.name}">
           ${isSent ? '✓ Sent' : 'Send'}
         </button>
       </div>
     `;
     
-    // If already sent, prevent default click behavior
-    if (isSent) {
-      emailLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showToast(`Already sent to ${parsed.name}`);
-      });
-    }
-    
     output.appendChild(emailLink);
   });
+  
+  // Add event listeners to ALL send buttons
+  attachSendButtonListeners();
   
   updateFilterCounts();
   showToast(`Generated ${lines.length} email links`);
@@ -1175,57 +1050,100 @@ function generateLinks() {
   document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
 
+// Attach event listeners to send buttons
+function attachSendButtonListeners() {
+  const sendButtons = document.querySelectorAll('.email-action');
+  sendButtons.forEach(button => {
+    // Remove any existing listeners
+    button.replaceWith(button.cloneNode(true));
+  });
+  
+  // Re-select buttons and add new listeners
+  document.querySelectorAll('.email-action').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const email = this.getAttribute('data-email');
+      const name = this.getAttribute('data-name');
+      
+      if (sentEmails[email]) {
+        showToast(`Already sent to ${name}`);
+        return;
+      }
+      
+      markAsSent(email, name);
+    });
+  });
+  
+  // Add click handlers to email links themselves
+  document.querySelectorAll('.email-link:not(.sent)').forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (e.target.classList.contains('email-action')) {
+        return; // Let the button handle it
+      }
+      
+      const email = this.getAttribute('data-email');
+      const name = this.querySelector('.email-name').textContent;
+      
+      if (sentEmails[email]) {
+        e.preventDefault();
+        showToast(`Already sent to ${name}`);
+      }
+    });
+  });
+}
+
 // Mark email as sent - FIXED VERSION
-function markAsSent(email, name, index) {
+function markAsSent(email, name) {
   console.log('Marking as sent:', email, name);
   
   const now = Date.now();
   sentEmails[email] = now;
   
-  // Update the specific email link
+  // Find and update the email link
   const emailLink = document.querySelector(`[data-email="${email}"]`);
   if (emailLink) {
-    // Update the class
+    // Add sent class
     emailLink.classList.add('sent');
     
-    // Update the button text
-    const button = emailLink.querySelector('.email-action');
-    if (button) {
-      button.textContent = '✓ Sent';
-      button.style.background = '#10b981';
-    }
-    
-    // Update the number badge
+    // Update number badge
     const numberBadge = emailLink.querySelector('.email-number');
     if (numberBadge) {
       numberBadge.style.background = '#10b981';
     }
     
-    // Update click behavior
-    emailLink.onclick = function(e) {
-      e.preventDefault();
-      showToast(`Already sent to ${name}`);
-    };
-    
-    // Also remove the onclick from the button itself
-    const sendButton = emailLink.querySelector('.email-action');
-    if (sendButton) {
-      sendButton.onclick = function(e) {
+    // Update button
+    const button = emailLink.querySelector('.email-action');
+    if (button) {
+      button.textContent = '✓ Sent';
+      button.style.background = '#10b981';
+      
+      // Update button listener to show "already sent" message
+      button.onclick = function(e) {
         e.preventDefault();
+        e.stopPropagation();
         showToast(`Already sent to ${name}`);
       };
     }
+    
+    // Update link click behavior
+    emailLink.onclick = function(e) {
+      e.preventDefault();
+      if (!e.target.classList.contains('email-action')) {
+        showToast(`Already sent to ${name}`);
+      }
+    };
   }
   
-  // Update stats
+  // Update stats and counters
   updateSentStats();
   updateFilterCounts();
   
-  // Save immediately
+  // Save data
   saveData();
   
-  showToast(`Marked as sent: ${name}`);
-  console.log('Email marked as sent:', email);
+  showToast(`Sent to ${name}`);
 }
 
 // Filter emails
@@ -1238,31 +1156,19 @@ function filterEmails(filter) {
   });
   event.target.classList.add('active');
   
-  // Show/hide emails
+  // Filter emails
   const emailLinks = document.querySelectorAll('.email-link');
-  let visibleCount = 0;
-  
   emailLinks.forEach(link => {
     const isSent = link.classList.contains('sent');
-    let shouldShow = false;
     
     if (filter === 'all') {
-      shouldShow = true;
-    } else if (filter === 'sent' && isSent) {
-      shouldShow = true;
-    } else if (filter === 'pending' && !isSent) {
-      shouldShow = true;
-    }
-    
-    if (shouldShow) {
       link.style.display = 'flex';
-      visibleCount++;
-    } else {
-      link.style.display = 'none';
+    } else if (filter === 'sent') {
+      link.style.display = isSent ? 'flex' : 'none';
+    } else if (filter === 'pending') {
+      link.style.display = !isSent ? 'flex' : 'none';
     }
   });
-  
-  console.log(`Filter: ${filter}, Showing: ${visibleCount} emails`);
 }
 
 // Update filter counts
@@ -1277,7 +1183,7 @@ function updateFilterCounts() {
   document.getElementById('countSent').textContent = sentCount;
   document.getElementById('countPending').textContent = pendingCount;
   
-  console.log(`Counts - All: ${emailLinks.length}, Sent: ${sentCount}, Pending: ${pendingCount}`);
+  console.log(`Counts updated: All=${emailLinks.length}, Sent=${sentCount}, Pending=${pendingCount}`);
 }
 
 // Download CSV
@@ -1319,7 +1225,7 @@ function scrollToBottom() {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
-// Show/hide scroll buttons based on scroll position
+// Show/hide scroll buttons
 window.addEventListener('scroll', function() {
   const scrollTop = window.pageYOffset;
   const scrollHeight = document.body.scrollHeight;
@@ -1387,31 +1293,17 @@ document.getElementById('body').addEventListener('input', scheduleSave);
 // Save before page unload
 window.addEventListener('beforeunload', function() {
   saveData();
-  console.log('Saved before unload');
-});
-
-// Save on visibility change
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden) {
-    saveData();
-    console.log('Saved on tab hidden');
-  }
 });
 
 // Initialize
 window.addEventListener('load', function() {
   loadAllData();
   
-  // Update sent stats every minute to refresh 24h count
+  // Update sent stats every minute
   setInterval(updateSentStats, 60000);
   
-  // Initial update
-  updateSentStats();
-  
-  console.log('FATISCO loaded with enhanced saving');
-  showToast('FATISCO loaded - Data restored');
+  console.log('FATISCO loaded');
 });
 </script>
 </body>
 </html>
-
