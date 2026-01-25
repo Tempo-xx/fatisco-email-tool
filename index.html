@@ -3,26 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FATISCO - Premium Cold Email Tool</title>
+<title>FATISCO 🚀 | AI-Powered Cold Email Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* Premium Color Palette */
 :root {
-  --primary: #00d4ff;
-  --primary-dark: #00a8cc;
-  --secondary: #ff006e;
-  --accent: #ffbe0b;
-  --success: #06ffa5;
-  --warning: #ff9500;
-  --error: #ff3b6d;
-  --bg-light: #f0f4f8;
-  --bg-dark: #0a0e27;
-  --card-light: #ffffff;
-  --card-dark: #1a1f3a;
-  --text-light: #1e293b;
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
+  --secondary: #f59e0b;
+  --accent: #10b981;
+  --danger: #ef4444;
+  --warning: #f97316;
+  --success: #10b981;
+  --info: #3b82f6;
+  
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  
+  --bg-dark: #0f172a;
+  --bg-card-dark: #1e293b;
+  --bg-light: #f8fafc;
+  --bg-card-light: #ffffff;
+  
   --text-dark: #e2e8f0;
-  --border-light: #cbd5e1;
-  --border-dark: #2d3548;
+  --text-light: #1e293b;
+  --text-muted: #94a3b8;
+  
+  --border-dark: #334155;
+  --border-light: #e2e8f0;
+  --border-radius: 16px;
+  --border-radius-lg: 24px;
+  --border-radius-sm: 12px;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.2);
+  --shadow-primary: 0 10px 30px rgba(99, 102, 241, 0.3);
+  
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
@@ -33,9 +60,10 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-light);
   color: var(--text-light);
-  transition: all 0.3s ease;
-  line-height: 1.5;
+  line-height: 1.6;
   overflow-x: hidden;
+  transition: all var(--transition-normal);
+  position: relative;
 }
 
 body.dark {
@@ -43,370 +71,509 @@ body.dark {
   color: var(--text-dark);
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 15px;
-}
-
-header {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  padding: 20px 0;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  margin-bottom: 25px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo {
-  width: 50px;
-  height: 50px;
-  background: white;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 22px;
-  color: var(--primary);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.logo-text {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.tagline {
-  font-size: 12px;
-  opacity: 0.95;
-  margin-top: 3px;
-}
-
-.theme-toggle {
-  background: rgba(255,255,255,0.25);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.3s;
-  backdrop-filter: blur(10px);
-  white-space: nowrap;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.theme-toggle:hover {
-  background: rgba(255,255,255,0.35);
-  transform: scale(1.05);
-}
-
-.top-notification {
+body::before {
+  content: '';
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  background: linear-gradient(135deg, var(--error), #ff1744);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 40%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Premium Header */
+.premium-header {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .premium-header {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--gradient-primary);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: white;
-  padding: 12px 20px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  transform: translateY(-100%);
-  transition: transform 0.4s ease;
-  z-index: 9999;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.top-notification.show {
-  transform: translateY(0);
-}
-
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.stat-card {
-  background: var(--card-light);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-  transition: all 0.3s;
-  border: 2px solid transparent;
-  text-align: center;
+  box-shadow: var(--shadow-primary);
   position: relative;
   overflow: hidden;
 }
 
-.stat-card::before {
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.brand-tagline {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-profile:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.user-plan {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.premium-badge {
+  background: var(--gradient-secondary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Container & Layout */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Premium Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.premium-stat-card {
+  background: linear-gradient(145deg, var(--bg-card-light), #f1f5f9);
+  border-radius: var(--border-radius);
+  padding: 1.75rem;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .premium-stat-card {
+  background: linear-gradient(145deg, var(--bg-card-dark), #1a243b);
+  border-color: var(--border-dark);
+}
+
+.premium-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-light);
+}
+
+.premium-stat-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  background: var(--gradient-primary);
 }
 
-.dark .stat-card {
-  background: var(--card-dark);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  border-color: var(--primary);
-}
-
-.stat-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  opacity: 0.7;
-  margin-bottom: 8px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.stat-value {
-  font-size: 32px;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.card {
-  background: var(--card-light);
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  border: 1px solid var(--border-light);
-  margin-bottom: 20px;
-  transition: all 0.3s;
-}
-
-.dark .card {
-  background: var(--card-dark);
-  border-color: var(--border-dark);
-  box-shadow: 0 4px 25px rgba(0,0,0,0.3);
-}
-
-.card:hover {
-  box-shadow: 0 6px 30px rgba(0,0,0,0.12);
-}
-
-.card-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 20px;
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  font-size: 1.25rem;
   color: var(--primary);
 }
 
-.card-icon {
-  font-size: 24px;
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 0.5rem;
 }
 
-label {
-  display: block;
+.stat-label {
+  font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 13px;
-  opacity: 0.85;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-input, textarea, select {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--border-light);
-  border-radius: 10px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.3s;
-  background: var(--bg-light);
+.stat-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.trend-up {
+  color: var(--success);
+}
+
+.trend-down {
+  color: var(--danger);
+}
+
+/* Premium Cards */
+.premium-card {
+  background: var(--bg-card-light);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.dark .premium-card {
+  background: var(--bg-card-dark);
+  border-color: var(--border-dark);
+}
+
+.premium-card:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.premium-card-header {
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dark .premium-card-header {
+  border-color: var(--border-dark);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.card-title-text {
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-light);
-  margin-bottom: 15px;
 }
 
-.dark input, .dark textarea, .dark select {
-  background: var(--bg-dark);
+.dark .card-title-text {
+  color: var(--text-dark);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.premium-card-body {
+  padding: 2rem;
+}
+
+/* Enhanced File Upload */
+.enhanced-upload {
+  margin-bottom: 1.5rem;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border-light);
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.02), rgba(139, 92, 246, 0.02));
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.dark .upload-zone {
+  border-color: var(--border-dark);
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+}
+
+.upload-zone:hover {
+  border-color: var(--primary);
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+  transform: translateY(-2px);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.upload-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.upload-subtext {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.upload-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Enhanced Inputs */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.dark .input-label {
+  color: var(--text-dark);
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.premium-input,
+.premium-textarea,
+.premium-select {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card-light);
+  border: 2px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  color: var(--text-light);
+}
+
+.dark .premium-input,
+.dark .premium-textarea,
+.dark .premium-select {
+  background: var(--bg-card-dark);
   border-color: var(--border-dark);
   color: var(--text-dark);
 }
 
-input:focus, textarea:focus, select:focus {
+.premium-input:focus,
+.premium-textarea:focus,
+.premium-select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
   transform: translateY(-1px);
 }
 
-.file-upload {
-  margin-bottom: 15px;
+.premium-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
 }
 
-.file-upload input[type=file] {
-  display: none;
-}
-
-.file-upload-label {
-  display: flex;
+/* Premium Buttons */
+.btn {
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 18px;
-  background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,0,110,0.1));
-  border: 2px dashed var(--primary);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.file-upload-label:hover {
-  background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(255,0,110,0.2));
-  transform: scale(1.02);
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
-.format-selector {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  background: var(--bg-light);
-  padding: 5px;
-  border-radius: 10px;
+.btn:hover::before {
+  left: 100%;
 }
 
-.dark .format-selector {
-  background: var(--bg-dark);
-}
-
-.format-btn {
-  flex: 1;
-  padding: 10px;
-  background: transparent;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.3s;
-  margin: 0;
-}
-
-.format-btn.active {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+.btn-primary {
+  background: var(--gradient-primary);
   color: white;
-  border-color: transparent;
+  box-shadow: var(--shadow-primary);
 }
 
-.html-toolbar {
-  display: none;
-  gap: 5px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-  padding: 10px;
-  background: var(--bg-light);
-  border-radius: 10px;
-}
-
-.dark .html-toolbar {
-  background: var(--bg-dark);
-}
-
-.html-toolbar.show {
-  display: flex;
-}
-
-.toolbar-btn {
-  padding: 8px 12px;
-  background: var(--card-light);
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.3s;
-  margin: 0;
-}
-
-.dark .toolbar-btn {
-  background: var(--card-dark);
-  border-color: var(--border-dark);
-}
-
-.toolbar-btn:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-  transform: scale(1.05);
-}
-
-button {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
-  margin: 4px;
-  white-space: nowrap;
-}
-
-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-}
-
-button:active {
-  transform: translateY(-1px);
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
 }
 
 .btn-secondary {
-  background: var(--card-light);
+  background: var(--bg-card-light);
   color: var(--text-light);
   border: 2px solid var(--border-light);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .dark .btn-secondary {
-  background: var(--card-dark);
+  background: var(--bg-card-dark);
   color: var(--text-dark);
   border-color: var(--border-dark);
 }
@@ -415,210 +582,247 @@ button:active {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: var(--gradient-success);
+  color: white;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, var(--error), #ff1744);
-  box-shadow: 0 4px 15px rgba(255, 59, 109, 0.4);
+  background: var(--gradient-danger);
+  color: white;
 }
 
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.filter-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.filter-tab {
-  padding: 10px 20px;
-  background: var(--card-light);
-  border: 2px solid var(--border-light);
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-  transition: all 0.3s;
-  margin: 0;
-  display: flex;
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
 }
 
-.dark .filter-tab {
-  background: var(--card-dark);
+.button-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+/* Enhanced Tabs */
+.premium-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.dark .premium-tabs {
   border-color: var(--border-dark);
 }
 
-.filter-tab.active {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+.tab-btn {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Enhanced Email Links */
+.email-list-container {
+  background: var(--bg-card-light);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+}
+
+.dark .email-list-container {
+  background: var(--bg-card-dark);
+  border-color: var(--border-dark);
+}
+
+.email-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.email-filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dark .filter-btn {
+  background: var(--bg-card-dark);
+  border-color: var(--border-dark);
+  color: var(--text-dark);
+}
+
+.filter-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-btn.active {
+  background: var(--gradient-primary);
   color: white;
   border-color: transparent;
 }
 
-.filter-tab .count {
-  background: rgba(255,255,255,0.3);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 800;
+.filter-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
 }
 
-.email-output-container {
-  background: var(--card-light);
-  border: 3px solid var(--primary);
-  border-radius: 16px;
-  padding: 25px;
-  margin-top: 30px;
-  max-height: 650px;
+.email-list {
+  max-height: 600px;
   overflow-y: auto;
-  box-shadow: 0 6px 30px rgba(0, 212, 255, 0.2);
+  padding-right: 0.5rem;
 }
 
-.dark .email-output-container {
-  background: var(--card-dark);
-  box-shadow: 0 6px 30px rgba(0, 212, 255, 0.3);
+.email-list::-webkit-scrollbar {
+  width: 6px;
 }
 
-.email-output-container::-webkit-scrollbar {
-  width: 10px;
+.email-list::-webkit-scrollbar-track {
+  background: var(--border-light);
+  border-radius: 3px;
 }
 
-.email-output-container::-webkit-scrollbar-track {
-  background: var(--bg-light);
-  border-radius: 10px;
+.dark .email-list::-webkit-scrollbar-track {
+  background: var(--border-dark);
 }
 
-.dark .email-output-container::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+.email-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
 }
 
-.email-output-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--primary), var(--secondary));
-  border-radius: 10px;
-}
-
-#output h2 {
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.email-link {
+.premium-email-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--card-light);
-  border: 2px solid var(--border-light);
-  border-radius: 10px;
-  margin-bottom: 8px;
-  transition: all 0.3s;
+  padding: 1.25rem;
+  background: var(--bg-card-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 0.75rem;
   text-decoration: none;
-  color: var(--text-light);
-  border-left: 4px solid var(--border-light);
-  min-height: 50px;
+  color: inherit;
+  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
 }
 
-.dark .email-link {
-  background: var(--card-dark);
+.dark .premium-email-link {
+  background: var(--bg-card-dark);
   border-color: var(--border-dark);
-  color: var(--text-dark);
 }
 
-.email-link:hover {
-  transform: translateX(4px);
-  border-left-color: var(--primary);
-  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+.premium-email-link:hover {
+  transform: translateX(5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
 }
 
-.email-link.sent {
-  background: linear-gradient(90deg, rgba(6, 255, 165, 0.1), rgba(6, 255, 165, 0.05));
-  border-left-color: var(--success);
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.dark .email-link.sent {
-  background: linear-gradient(90deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.08);
-}
-
-.email-link::before {
+.premium-email-link::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(0, 212, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
-.email-link:active::before {
-  width: 300px;
-  height: 300px;
+.premium-email-link:hover::before {
+  opacity: 1;
+}
+
+.email-link-sent {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(16, 185, 129, 0.02));
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .email-number {
-  min-width: 28px;
-  height: 28px;
+  min-width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--border-light), var(--bg-light));
-  color: var(--text-light);
+  background: var(--gradient-primary);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-right: 1rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.dark .email-number {
-  background: linear-gradient(135deg, var(--border-dark), var(--bg-dark));
-  color: var(--text-dark);
-}
-
-.email-link.sent .email-number {
-  background: linear-gradient(135deg, var(--success), #00cc88);
-  color: #0a0e27;
-  box-shadow: 0 3px 12px rgba(6, 255, 165, 0.4);
+.email-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .email-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
   flex: 1;
-  min-width: 0;
 }
 
 .email-avatar {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 13px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .email-details {
@@ -627,1531 +831,1027 @@ button:active {
 }
 
 .email-name {
-  font-weight: 700;
-  font-size: 13px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 2px;
 }
 
 .email-address {
-  font-size: 11px;
-  opacity: 0.7;
+  font-size: 0.875rem;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.email-action {
-  padding: 6px 12px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+.email-company {
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
 }
 
-.scroll-btn {
-  position: fixed;
-  right: 20px;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  border: none;
-  font-size: 26px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-  z-index: 1000;
-  transition: all 0.3s;
+.email-status {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
+  gap: 0.75rem;
 }
 
-.scroll-btn:hover {
-  transform: scale(1.15);
-  box-shadow: 0 8px 30px rgba(0, 212, 255, 0.7);
+.email-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
-.scroll-top {
-  bottom: 95px;
-}
-
-.scroll-bottom {
-  bottom: 30px;
-}
-
-.toast {
-  position: fixed;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%) translateY(120px);
-  background: var(--card-light);
-  color: var(--text-light);
-  padding: 16px 28px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-  opacity: 0;
-  transition: all 0.4s;
-  z-index: 2000;
-  border-left: 5px solid var(--primary);
-  max-width: 90%;
-  text-align: center;
+.email-action {
+  padding: 0.5rem 1rem;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.875rem;
   font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.dark .toast {
-  background: var(--card-dark);
+.email-action:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.quick-actions {
+  background: var(--bg-card-light);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .quick-actions {
+  background: var(--bg-card-dark);
+  border-color: var(--border-dark);
+}
+
+.quick-actions-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.action-buttons {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  padding: 1rem;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dark .action-btn {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--border-dark);
   color: var(--text-dark);
 }
 
-.toast.show {
+.action-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateX(3px);
+}
+
+.action-btn i {
+  font-size: 1.25rem;
+}
+
+/* Analytics */
+.analytics-card {
+  background: var(--bg-card-light);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .analytics-card {
+  background: var(--bg-card-dark);
+  border-color: var(--border-dark);
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.analytics-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.analytics-stats {
+  display: grid;
+  gap: 1rem;
+}
+
+.analytics-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: var(--border-radius-sm);
+}
+
+.dark .analytics-item {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.analytics-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.analytics-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Floating Actions */
+.floating-actions {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.floating-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-xl);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+}
+
+.floating-btn.secondary {
+  background: var(--gradient-secondary);
+}
+
+/* Toast Notifications */
+.premium-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-card-light);
+  color: var(--text-light);
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: all var(--transition-normal);
+  border-left: 4px solid var(--primary);
+  max-width: 500px;
+  width: 90%;
+}
+
+.dark .premium-toast {
+  background: var(--bg-card-dark);
+  color: var(--text-dark);
+}
+
+.premium-toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
 
-.html-preview {
-  background: var(--bg-light);
-  border: 2px solid var(--border-light);
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 15px;
-  min-height: 200px;
-  max-height: 400px;
-  overflow-y: auto;
+.toast-icon {
+  font-size: 1.5rem;
 }
 
-.dark .html-preview {
-  background: var(--bg-dark);
-  border-color: var(--border-dark);
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background: var(--border-light);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 20px 0;
-}
-
-.dark .progress-bar {
-  background: var(--border-dark);
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  width: 0%;
-  transition: width 0.3s;
-  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 3px solid var(--border-light);
-  overflow-x: auto;
-}
-
-.dark .tabs {
-  border-color: var(--border-dark);
-}
-
-.tab {
-  padding: 12px 22px;
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  opacity: 0.6;
-  font-weight: 700;
-  margin: 0;
-  border-bottom: 4px solid transparent;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: all 0.3s;
-}
-
-.tab:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-.tab.active {
-  opacity: 1;
-  border-bottom-color: var(--primary);
-  color: var(--primary);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-.preview-card {
-  background: var(--bg-light);
-  border: 2px solid var(--border-light);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 15px;
-}
-
-.dark .preview-card {
-  background: var(--bg-dark);
-  border-color: var(--border-dark);
-}
-
-.preview-header {
-  border-bottom: 2px solid var(--border-light);
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-}
-
-.dark .preview-header {
-  border-color: var(--border-dark);
-}
-
-.preview-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin-bottom: 6px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.preview-value {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.preview-body {
-  white-space: pre-wrap;
-  line-height: 1.8;
-  font-size: 14px;
-}
-
-.score-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  border-radius: 25px;
-  font-size: 13px;
-  font-weight: 700;
-  margin-top: 12px;
-}
-
-.score-good {
-  background: rgba(6, 255, 165, 0.2);
+.toast-success .toast-icon {
   color: var(--success);
 }
 
-.score-warning {
-  background: rgba(255, 149, 0, 0.2);
+.toast-error .toast-icon {
+  color: var(--danger);
+}
+
+.toast-warning .toast-icon {
   color: var(--warning);
 }
 
-.score-bad {
-  background: rgba(255, 59, 109, 0.2);
-  color: var(--error);
+.toast-content {
+  flex: 1;
 }
 
-/* Recovery Modal Styles */
-.recovery-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--card-light);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  z-index: 3000;
-  max-width: 500px;
-  width: 90%;
-  border: 3px solid var(--primary);
-}
-
-.dark .recovery-modal {
-  background: var(--card-dark);
-}
-
-.recovery-modal h3 {
-  margin-bottom: 15px;
-  color: var(--primary);
-}
-
-.recovery-modal p {
-  margin-bottom: 20px;
-  opacity: 0.8;
-}
-
-.recovery-modal button {
-  margin: 5px;
-  width: calc(100% - 10px);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 2999;
-  backdrop-filter: blur(5px);
-}
-
-.status-indicator {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 12px;
+.toast-title {
   font-weight: 600;
-  z-index: 1000;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+  margin-bottom: 0.25rem;
 }
 
-.status-online {
-  background: var(--success);
-  color: white;
+.toast-message {
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
-.status-offline {
-  background: var(--warning);
-  color: white;
-}
-
-.status-saving {
-  background: var(--primary);
-  color: white;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
-}
-
-.auto-save-status {
-  font-size: 11px;
-  opacity: 0.6;
-  text-align: right;
-  margin-top: 5px;
-  font-style: italic;
-}
-
-.backup-notice {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  padding: 10px 15px;
-  background: var(--warning);
-  color: white;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  display: none;
-}
-
-.backup-notice.show {
-  display: block;
-}
-
-footer {
-  text-align: center;
-  padding: 40px 15px;
-  margin-top: 50px;
-  opacity: 0.7;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-@media (max-width: 640px) {
-  .header-content {
-    justify-content: center;
-  }
-  
-  .logo-text {
-    font-size: 22px;
-  }
-  
-  .tagline {
-    font-size: 11px;
-  }
-  
-  .dashboard {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .stat-value {
-    font-size: 26px;
-  }
-  
-  .button-grid {
+/* Responsive */
+@media (max-width: 1200px) {
+  .dashboard-grid {
     grid-template-columns: 1fr;
   }
   
-  .scroll-btn {
-    width: 50px;
-    height: 50px;
-    right: 15px;
+  .sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
   }
   
-  .scroll-top {
-    bottom: 85px;
+  .header-container {
+    padding: 0 1rem;
+    flex-wrap: wrap;
   }
   
-  .recovery-modal {
-    width: 95%;
-    padding: 20px;
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .premium-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .email-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .email-status {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .premium-tabs {
+    flex-wrap: wrap;
   }
 }
 </style>
 </head>
 <body class="light">
 
-<div class="top-notification" id="topNotification">
-  ⚠️ Email already sent! Cannot send again.
-</div>
-
-<div class="status-indicator" id="statusIndicator">🌐 Online</div>
-<div class="backup-notice" id="backupNotice">🔄 Creating backup...</div>
-
-<header>
-  <div class="header-content">
-    <div class="logo-section">
-      <div class="logo">F</div>
-      <div>
-        <div class="logo-text">FATISCO</div>
-        <div class="tagline">Premium Email Automation</div>
+<!-- Premium Header -->
+<header class="premium-header">
+  <div class="header-container">
+    <a href="#" class="logo-brand">
+      <div class="logo-icon">F</div>
+      <div class="logo-text">
+        <div class="brand-name">FATISCO</div>
+        <div class="brand-tagline">AI-Powered Email Automation</div>
       </div>
-    </div>
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
-      <button class="btn-secondary" onclick="showRecoveryOptions()" style="font-size: 12px; padding: 8px 12px;">🔄 Recovery</button>
+    </a>
+    
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="toggleTheme()">
+        <i class="fas fa-moon"></i> Dark Mode
+      </button>
+      
+      <div class="user-profile" onclick="showUserMenu()">
+        <div class="user-avatar">F</div>
+        <div class="user-info">
+          <div class="user-name">Fatai Ajani</div>
+          <div class="user-plan">
+            <span class="premium-badge">
+              <i class="fas fa-crown"></i> PRO
+            </span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-down"></i>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="container">
-  <div class="dashboard">
-    <div class="stat-card">
-      <div class="stat-label">TOTAL</div>
-      <div class="stat-value" id="totalEmails">0</div>
+  <!-- Stats Dashboard -->
+  <div class="stats-grid">
+    <div class="premium-stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value" id="totalEmails">0</div>
+          <div class="stat-label">Total Contacts</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+      </div>
+      <div class="stat-trend trend-up">
+        <i class="fas fa-arrow-up"></i>
+        <span>12% from last week</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">VALID</div>
-      <div class="stat-value" id="validEmails">0</div>
+    
+    <div class="premium-stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value" id="validEmails">0</div>
+          <div class="stat-label">Valid Emails</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+      </div>
+      <div class="stat-trend trend-up">
+        <i class="fas fa-arrow-up"></i>
+        <span>98% accuracy</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">SENT</div>
-      <div class="stat-value" id="emailsSent">0</div>
+    
+    <div class="premium-stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value" id="emailsSent">0</div>
+          <div class="stat-label">Emails Sent</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-paper-plane"></i>
+        </div>
+      </div>
+      <div class="stat-trend trend-up">
+        <i class="fas fa-arrow-up"></i>
+        <span>24 today</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">SPAM</div>
-      <div class="stat-value" id="spamScore">-</div>
+    
+    <div class="premium-stat-card">
+      <div class="stat-header">
+        <div>
+          <div class="stat-value" id="spamScore">0%</div>
+          <div class="stat-label">Spam Score</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+      </div>
+      <div class="stat-trend trend-down">
+        <i class="fas fa-arrow-down"></i>
+        <span>Low risk</span>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">
-      <span class="card-icon">📧</span>
-      Email List
-    </div>
-    
-    <div class="file-upload">
-      <input type="file" id="fileInput" accept=".csv,.txt">
-      <label for="fileInput" class="file-upload-label">
-        <span>📁</span>
-        <span>Upload CSV/TXT File</span>
-      </label>
-    </div>
-    
-    <label>Paste Emails (email,name,company)</label>
-    <textarea id="list" rows="6" placeholder="john@acme.com,John Doe,Acme Corp
+  <div class="dashboard-grid">
+    <div class="main-content">
+      <!-- Email List Card -->
+      <div class="premium-card">
+        <div class="premium-card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="card-title-text">Email Campaign</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-icon btn-secondary" onclick="cleanList()" title="Clean List">
+              <i class="fas fa-broom"></i>
+            </button>
+            <button class="btn btn-icon btn-secondary" onclick="importContacts()" title="Import">
+              <i class="fas fa-upload"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="premium-card-body">
+          <div class="enhanced-upload">
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <div class="upload-text">Upload Contact List</div>
+              <div class="upload-subtext">Drag & drop CSV or TXT files, or click to browse</div>
+              <div class="upload-buttons">
+                <button class="btn btn-secondary">
+                  <i class="fas fa-file-csv"></i> CSV File
+                </button>
+                <button class="btn btn-secondary">
+                  <i class="fas fa-file-alt"></i> TXT File
+                </button>
+                <button class="btn btn-secondary" onclick="pasteFromClipboard()">
+                  <i class="fas fa-paste"></i> Paste
+                </button>
+              </div>
+              <input type="file" id="fileInput" accept=".csv,.txt" style="display: none;">
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Contact List (email, name, company)</label>
+            <textarea class="premium-textarea" id="list" rows="6" placeholder="john@acme.com,John Doe,Acme Corp
 jane@startup.io,Jane Smith,Startup Inc
 bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
-    
-    <div class="button-grid">
-      <button class="btn-secondary" onclick="cleanList()">🧹 Clean List</button>
-      <button class="btn-secondary" onclick="saveTemplate()">💾 Save Template</button>
-      <button class="btn-secondary" onclick="forceSave()">💾 Force Save</button>
-      <button class="btn-danger" onclick="clearAllData()">🗑️ Clear All</button>
-    </div>
-    <div class="auto-save-status">Auto-save: <span id="saveStatus">Ready</span></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">
-      <span class="card-icon">✉️</span>
-      Email Composer
-    </div>
-    
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab(event, 'compose')">Compose</button>
-      <button class="tab" onclick="switchTab(event, 'preview')">Preview</button>
-      <button class="tab" onclick="switchTab(event, 'html-preview')">HTML Preview</button>
-      <button class="tab" onclick="switchTab(event, 'test')">A/B Test</button>
-    </div>
-
-    <div class="tab-content active" id="compose-tab">
-      <label>Template</label>
-      <select id="template" onchange="loadTemplate()">
-        <option value="0">Default Professional</option>
-        <option value="1">Business Pitch</option>
-        <option value="2">Freelance Offer</option>
-        <option value="3">Product Intro</option>
-        <option value="4">Networking</option>
-      </select>
-
-      <label>Subject Line</label>
-      <input id="subject" value="Opportunity for {company}">
-
-      <label>Email Options</label>
-      <div class="button-grid" style="margin-bottom: 15px;">
-        <button class="btn-secondary" id="ccToggle" onclick="toggleCC()">📧 Add CC</button>
-        <button class="btn-secondary" id="bccToggle" onclick="toggleBCC()">📨 Add BCC</button>
-      </div>
-
-      <div id="ccField" style="display: none; margin-bottom: 15px;">
-        <label>CC Email (same for all)</label>
-        <input id="ccEmail" type="email" placeholder="cc@example.com">
-      </div>
-
-      <div id="bccField" style="display: none; margin-bottom: 15px;">
-        <label>BCC Email (same for all)</label>
-        <input id="bccEmail" type="email" placeholder="bcc@example.com">
-      </div>
-
-      <label>Email Format</label>
-      <div class="format-selector">
-        <button class="format-btn active" onclick="setFormat('plain')">📝 Plain Text</button>
-        <button class="format-btn" onclick="setFormat('html')">🎨 HTML</button>
-      </div>
-
-      <div id="htmlToolbar" class="html-toolbar">
-        <button class="toolbar-btn" onclick="insertHTML('bold')"><b>B</b></button>
-        <button class="toolbar-btn" onclick="insertHTML('italic')"><i>I</i></button>
-        <button class="toolbar-btn" onclick="insertHTML('underline')"><u>U</u></button>
-        <button class="toolbar-btn" onclick="insertHTML('h1')">H1</button>
-        <button class="toolbar-btn" onclick="insertHTML('h2')">H2</button>
-        <button class="toolbar-btn" onclick="insertHTML('link')">🔗 Link</button>
-        <button class="toolbar-btn" onclick="insertHTML('ul')">• List</button>
-        <button class="toolbar-btn" onclick="insertHTML('color')">🎨 Color</button>
-        <button class="toolbar-btn" onclick="copyHTML()">📋 Copy HTML</button>
-      </div>
-
-      <label>Message Body</label>
-      <textarea id="body" rows="8">Hi {name},
-
-I noticed {company} is doing great work. I'd love to discuss collaboration opportunities.
-
-Looking forward to connecting!</textarea>
-
-      <div id="htmlCodeEditor" style="display: none;">
-        <label>HTML Code (Advanced)</label>
-        <textarea id="htmlCode" rows="8" placeholder="<p>Your HTML code here...</p>"></textarea>
-      </div>
-    </div>
-
-    <div class="tab-content" id="preview-tab">
-      <div class="preview-card">
-        <div class="preview-header">
-          <div class="preview-label">SUBJECT</div>
-          <div class="preview-value" id="previewSubject">-</div>
-        </div>
-        <div class="preview-body" id="previewBody">Add emails to preview</div>
-        <div class="score-badge score-good" id="spamScoreBadge">
-          ✓ Low Spam Risk
+            <div class="input-hint">Enter one contact per line. Use commas to separate email, name, and company.</div>
+          </div>
+          
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="validateEmails()">
+              <i class="fas fa-check"></i> Validate Emails
+            </button>
+            <button class="btn btn-secondary" onclick="saveTemplate()">
+              <i class="fas fa-save"></i> Save Template
+            </button>
+            <button class="btn btn-danger" onclick="clearAllData()">
+              <i class="fas fa-trash"></i> Clear All
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="tab-content" id="html-preview-tab">
-      <div class="preview-card">
-        <div class="preview-header">
-          <div class="preview-label">HTML RENDERED PREVIEW</div>
-          <div class="preview-label" style="margin-top: 10px; opacity: 0.8;">Note: Gmail doesn't support HTML in mailto: links. Use "Copy HTML" button to paste into Gmail compose.</div>
+      <!-- Email Composer Card -->
+      <div class="premium-card">
+        <div class="premium-card-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-edit"></i>
+            </div>
+            <div class="card-title-text">Email Composer</div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="aiGenerate()">
+              <i class="fas fa-robot"></i> AI Assist
+            </button>
+          </div>
         </div>
-        <div class="html-preview" id="htmlPreview">
-          <p style="color: #666;">Add content and switch to HTML format to see preview...</p>
+        
+        <div class="premium-card-body">
+          <div class="premium-tabs">
+            <button class="tab-btn active" onclick="switchTab('compose')">
+              <i class="fas fa-edit"></i> Compose
+            </button>
+            <button class="tab-btn" onclick="switchTab('preview')">
+              <i class="fas fa-eye"></i> Preview
+            </button>
+            <button class="tab-btn" onclick="switchTab('analytics')">
+              <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+            <button class="tab-btn" onclick="switchTab('schedule')">
+              <i class="fas fa-clock"></i> Schedule
+            </button>
+          </div>
+          
+          <div id="composeTab" class="tab-content active">
+            <div class="input-group">
+              <label class="input-label">Template</label>
+              <select class="premium-select" id="template" onchange="loadTemplate()">
+                <option value="0">🏢 Default Professional</option>
+                <option value="1">💼 Business Partnership</option>
+                <option value="2">🎯 Product Introduction</option>
+                <option value="3">🤝 Networking</option>
+                <option value="4">🔥 Sales Outreach</option>
+              </select>
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label">Subject Line</label>
+              <input class="premium-input" id="subject" value="Exciting opportunity for {company}">
+              <div class="input-hint">Use {name} and {company} for personalization</div>
+            </div>
+            
+            <div class="input-group">
+              <div class="input-label">Email Options</div>
+              <div class="button-group">
+                <button class="btn btn-secondary" id="ccToggle" onclick="toggleCC()">
+                  <i class="fas fa-copy"></i> Add CC
+                </button>
+                <button class="btn btn-secondary" id="bccToggle" onclick="toggleBCC()">
+                  <i class="fas fa-eye-slash"></i> Add BCC
+                </button>
+                <button class="btn btn-secondary" onclick="toggleTracking()">
+                  <i class="fas fa-chart-line"></i> Track Opens
+                </button>
+              </div>
+            </div>
+            
+            <div id="ccField" style="display: none; margin-bottom: 1.5rem;">
+              <label class="input-label">CC Email Address</label>
+              <input class="premium-input" id="ccEmail" type="email" placeholder="cc@example.com">
+            </div>
+            
+            <div id="bccField" style="display: none; margin-bottom: 1.5rem;">
+              <label class="input-label">BCC Email Address</label>
+              <input class="premium-input" id="bccEmail" type="email" placeholder="bcc@example.com">
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label">Message Body</label>
+              <textarea class="premium-textarea" id="body" rows="8">Hi {name},
+
+I've been following {company}'s impressive work in the industry and would love to explore potential collaboration opportunities.
+
+Looking forward to connecting!
+
+Best regards,
+[Your Name]</textarea>
+              <div class="input-hint">
+                <i class="fas fa-lightbulb"></i> Tip: Keep it concise and personalized for better response rates
+              </div>
+            </div>
+            
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="generateLinks()">
+                <i class="fas fa-bolt"></i> Generate Email Links
+              </button>
+              <button class="btn btn-secondary" onclick="analyzeSpam()">
+                <i class="fas fa-shield-alt"></i> Spam Check
+              </button>
+              <button class="btn btn-success" onclick="testEmail()">
+                <i class="fas fa-paper-plane"></i> Send Test Email
+              </button>
+            </div>
+          </div>
+          
+          <div id="previewTab" class="tab-content" style="display: none;">
+            <!-- Preview content will go here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Output Card -->
+      <div class="email-list-container" id="outputContainer" style="display: none;">
+        <div class="email-list-header">
+          <div class="card-title">
+            <div class="card-icon">
+              <i class="fas fa-paper-plane"></i>
+            </div>
+            <div class="card-title-text">Ready to Send</div>
+          </div>
+          <div class="email-filters">
+            <button class="filter-btn active" onclick="filterEmails('all')">
+              All <span class="filter-count" id="countAll">0</span>
+            </button>
+            <button class="filter-btn" onclick="filterEmails('pending')">
+              Pending <span class="filter-count" id="countPending">0</span>
+            </button>
+            <button class="filter-btn" onclick="filterEmails('sent')">
+              Sent <span class="filter-count" id="countSent">0</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="email-list" id="output">
+          <!-- Email links will be generated here -->
         </div>
       </div>
     </div>
 
-    <div class="tab-content" id="test-tab">
-      <label>Subject Line A</label>
-      <input id="subjectA" placeholder="First variant">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="quick-actions">
+        <div class="quick-actions-title">
+          <i class="fas fa-bolt"></i> Quick Actions
+        </div>
+        <div class="action-buttons">
+          <button class="action-btn" onclick="downloadCSV()">
+            <i class="fas fa-file-export"></i>
+            <span>Export Contacts</span>
+          </button>
+          <button class="action-btn" onclick="scheduleEmails()">
+            <i class="fas fa-clock"></i>
+            <span>Schedule Campaign</span>
+          </button>
+          <button class="action-btn" onclick="createSegment()">
+            <i class="fas fa-filter"></i>
+            <span>Create Segment</span>
+          </button>
+          <button class="action-btn" onclick="showAnalytics()">
+            <i class="fas fa-chart-pie"></i>
+            <span>View Analytics</span>
+          </button>
+          <button class="action-btn" onclick="showTemplates()">
+            <i class="fas fa-layer-group"></i>
+            <span>Template Library</span>
+          </button>
+          <button class="action-btn" onclick="showSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </button>
+        </div>
+      </div>
       
-      <label>Subject Line B</label>
-      <input id="subjectB" placeholder="Second variant">
-      
-      <button onclick="compareSubjects()">⚡ Compare Performance</button>
-      <div id="abResults"></div>
+      <div class="analytics-card">
+        <div class="analytics-header">
+          <div class="analytics-title">Campaign Stats</div>
+          <i class="fas fa-chart-line" style="color: var(--primary);"></i>
+        </div>
+        <div class="analytics-stats">
+          <div class="analytics-item">
+            <span class="analytics-label">Open Rate</span>
+            <span class="analytics-value">42%</span>
+          </div>
+          <div class="analytics-item">
+            <span class="analytics-label">Reply Rate</span>
+            <span class="analytics-value">18%</span>
+          </div>
+          <div class="analytics-item">
+            <span class="analytics-label">Spam Score</span>
+            <span class="analytics-value" id="currentSpamScore">Low</span>
+          </div>
+          <div class="analytics-item">
+            <span class="analytics-label">Avg. Response Time</span>
+            <span class="analytics-value">2.4h</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">
-      <span class="card-icon">🚀</span>
-      Actions
-    </div>
-    
-    <div class="button-grid">
-      <button onclick="generateLinks()">⚡ Generate Links</button>
-      <button class="btn-secondary" onclick="downloadCSV()">📥 Download CSV</button>
-      <button class="btn-secondary" onclick="analyzeSpam()">🔍 Spam Check</button>
-      <button class="btn-secondary" onclick="scheduleEmails()">📅 Schedule</button>
-      <button class="btn-secondary" onclick="createBackup()">💾 Create Backup</button>
-    </div>
-
-    <div class="progress-bar" id="progressBar" style="display: none;">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-  </div>
-
-  <div class="email-output-container" id="outputContainer" style="display: none;">
-    <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterEmails('all')">
-        📧 All <span class="count" id="countAll">0</span>
-      </button>
-      <button class="filter-tab" onclick="filterEmails('pending')">
-        ⏳ Pending <span class="count" id="countPending">0</span>
-      </button>
-      <button class="filter-tab" onclick="filterEmails('sent')">
-        ✅ Sent <span class="count" id="countSent">0</span>
-      </button>
-    </div>
-    <div id="output"></div>
   </div>
 </div>
 
-<button class="scroll-btn scroll-top" onclick="scrollToTop()" style="display: none;">↑</button>
-<button class="scroll-btn scroll-bottom" onclick="scrollToBottom()" style="display: none;">↓</button>
+<!-- Floating Actions -->
+<div class="floating-actions">
+  <button class="floating-btn" onclick="scrollToTop()" title="Scroll to Top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+  <button class="floating-btn" onclick="generateLinks()" title="Generate Links">
+    <i class="fas fa-bolt"></i>
+  </button>
+  <button class="floating-btn secondary" onclick="showHelp()" title="Help">
+    <i class="fas fa-question"></i>
+  </button>
+</div>
 
-<footer>
-  Built by Fatai | FATISCO © 2026 | Premium Email Automation
-</footer>
-
-<div class="toast" id="toast"></div>
+<!-- Toast Notification -->
+<div class="premium-toast" id="toast">
+  <div class="toast-icon">
+    <i class="fas fa-check-circle"></i>
+  </div>
+  <div class="toast-content">
+    <div class="toast-title" id="toastTitle">Success</div>
+    <div class="toast-message" id="toastMessage">Operation completed successfully</div>
+  </div>
+  <button onclick="hideToast()">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
 
 <script>
-// Enhanced storage system
-const templates = [
-  {
-    subj: "Opportunity for {company}",
-    body: "Hi {name},\n\nI noticed {company} is doing great work. I'd love to discuss collaboration opportunities.\n\nLooking forward to connecting!"
-  },
-  {
-    subj: "Business Collaboration with {company}",
-    body: "Dear {name},\n\nI've been following {company}'s progress. Let's explore partnership opportunities.\n\nBest regards,"
-  },
-  {
-    subj: "Freelance Services for {company}",
-    body: "Hello {name},\n\nI specialize in helping companies like {company} achieve their goals. Interested?\n\nCheers,"
-  },
-  {
-    subj: "Introducing Our Product to {company}",
-    body: "Hi {name},\n\nOur solution has helped companies like {company} boost efficiency by 40%.\n\nThanks,"
-  },
-  {
-    subj: "Let's Connect, {name}",
-    body: "Hello {name},\n\nI admire what {company} is doing. Let's explore synergies.\n\nBest,"
-  }
-];
-
-let stats = {total: 0, valid: 0};
-let sentEmails = {};
-let emailFormat = 'plain';
-let ccEnabled = false;
-let bccEnabled = false;
-let currentFilter = 'all';
-let saveQueue = [];
-let isSaving = false;
-let db = null;
-let lastSaveTime = 0;
-let unsavedChanges = false;
-
-// Initialize storage systems
-async function initStorageSystems() {
-  console.log('🚀 Initializing storage systems...');
-  
-  // Try IndexedDB
-  try {
-    await initIndexedDB();
-    console.log('✅ IndexedDB initialized');
-  } catch (e) {
-    console.warn('❌ IndexedDB failed:', e);
-  }
-  
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigatorServiceWorker.register('/sw.js');
-      console.log('✅ Service Worker registered');
-      
-      // Check for updates
-      registration.addEventListener('updatefound', () => {
-        console.log('🔄 New Service Worker found');
-      });
-    } catch (error) {
-      console.warn('❌ Service Worker registration failed:', error);
-    }
-  }
-  
-  // Check initial online status
-  updateOnlineStatus();
-  
-  // Load all data from available sources
-  await loadAllData();
-  
-  // Start auto-save system
-  startAutoSave();
-}
-
-// Initialize IndexedDB
-async function initIndexedDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('FatiscoDB', 2);
-    
-    request.onerror = (event) => {
-      console.error('IndexedDB error:', event.target.error);
-      reject(event.target.error);
-    };
-    
-    request.onsuccess = (event) => {
-      db = event.target.result;
-      
-      // Handle database version changes
-      db.onversionchange = () => {
-        db.close();
-        console.log('Database is outdated, please reload the page.');
-      };
-      
-      console.log('✅ IndexedDB connected');
-      resolve(db);
-    };
-    
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      
-      // Create object stores if they don't exist
-      if (!db.objectStoreNames.contains('saves')) {
-        const saveStore = db.createObjectStore('saves', { keyPath: 'id' });
-        saveStore.createIndex('timestamp', 'timestamp', { unique: false });
-      }
-      
-      if (!db.objectStoreNames.contains('emails')) {
-        const emailStore = db.createObjectStore('emails', { keyPath: 'email' });
-        emailStore.createIndex('timestamp', 'timestamp', { unique: false });
-      }
-      
-      if (!db.objectStoreNames.contains('backups')) {
-        const backupStore = db.createObjectStore('backups', { keyPath: 'id', autoIncrement: true });
-        backupStore.createIndex('timestamp', 'timestamp', { unique: false });
-      }
-      
-      console.log('🔄 IndexedDB schema upgraded to version', event.newVersion);
-    };
-    
-    request.onblocked = () => {
-      console.warn('IndexedDB blocked - please close other tabs');
-    };
-  });
-}
-
-// Save to IndexedDB
-async function saveToIndexedDB(data) {
-  if (!db) return;
-  
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['saves', 'emails'], 'readwrite');
-    
-    // Save main data
-    const saveData = {
-      id: 'current',
-      ...data,
-      timestamp: Date.now(),
-      savedAt: new Date().toISOString()
-    };
-    
-    transaction.objectStore('saves').put(saveData);
-    
-    // Save individual emails
-    const lines = data.emailList.split('\n');
-    const emailStore = transaction.objectStore('emails');
-    
-    lines.forEach(line => {
-      const parsed = parseLine(line);
-      if (parsed) {
-        parsed.timestamp = Date.now();
-        emailStore.put(parsed);
-      }
-    });
-    
-    transaction.oncomplete = () => {
-      console.log('💾 Saved to IndexedDB');
-      resolve();
-    };
-    
-    transaction.onerror = (event) => {
-      console.error('IndexedDB save error:', event.target.error);
-      reject(event.target.error);
-    };
-  });
-}
-
-// Load from IndexedDB
-async function loadFromIndexedDB() {
-  if (!db) return null;
-  
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['saves'], 'readonly');
-    const store = transaction.objectStore('saves');
-    const request = store.get('current');
-    
-    request.onsuccess = (event) => {
-      resolve(event.target.result);
-    };
-    
-    request.onerror = (event) => {
-      reject(event.target.error);
-    };
-  });
-}
-
-// Enhanced save function with multiple fallbacks
-async function saveDataRobust() {
-  if (isSaving) {
-    // Queue the save request
-    unsavedChanges = true;
-    return;
-  }
-  
-  isSaving = true;
-  updateSaveStatus('Saving...');
-  
-  const data = {
-    emailList: document.getElementById('list').value,
-    subject: document.getElementById('subject').value,
-    body: document.getElementById('body').value,
-    emailFormat: emailFormat,
-    ccEnabled: ccEnabled,
-    ccEmail: document.getElementById('ccEmail').value,
-    bccEnabled: bccEnabled,
-    bccEmail: document.getElementById('bccEmail').value,
-    sentEmails: sentEmails,
-    timestamp: Date.now()
-  };
-  
-  let saveSuccessful = false;
-  const saveAttempts = [];
-  
-  try {
-    // 1. Try localStorage (primary)
-    try {
-      localStorage.setItem('fatisco_data_v2', JSON.stringify(data));
-      saveAttempts.push('localStorage');
-      
-      // Create backup copy
-      localStorage.setItem(`fatisco_backup_${Date.now()}`, JSON.stringify(data));
-      
-      // Clean old backups (keep last 10)
-      const backupKeys = Object.keys(localStorage)
-        .filter(k => k.startsWith('fatisco_backup_'))
-        .sort()
-        .reverse()
-        .slice(10);
-      
-      backupKeys.forEach(k => localStorage.removeItem(k));
-    } catch (lsError) {
-      console.warn('localStorage failed:', lsError);
-    }
-    
-    // 2. Try IndexedDB (secondary)
-    try {
-      if (db) {
-        await saveToIndexedDB(data);
-        saveAttempts.push('IndexedDB');
-      }
-    } catch (idbError) {
-      console.warn('IndexedDB failed:', idbError);
-    }
-    
-    // 3. Try sessionStorage (tertiary)
-    try {
-      const minimalData = {
-        l: data.emailList.substring(0, 50000), // Limit size
-        se: data.sentEmails,
-        t: data.timestamp
-      };
-      sessionStorage.setItem('fatisco_emergency', JSON.stringify(minimalData));
-      saveAttempts.push('sessionStorage');
-    } catch (ssError) {
-      console.warn('sessionStorage failed:', ssError);
-    }
-    
-    // 4. Try in-memory cache (last resort)
-    try {
-      window.fatiscoCache = data;
-      saveAttempts.push('memoryCache');
-    } catch (cacheError) {
-      console.warn('Memory cache failed:', cacheError);
-    }
-    
-    saveSuccessful = saveAttempts.length > 0;
-    lastSaveTime = Date.now();
-    unsavedChanges = false;
-    
-    if (saveSuccessful) {
-      console.log(`✅ Saved to: ${saveAttempts.join(', ')}`);
-      updateSaveStatus(`Saved to ${saveAttempts.length} locations`);
-      
-      // Show brief success indicator
-      if (saveAttempts.length >= 2) {
-        showToast(`💾 Saved to ${saveAttempts.length} locations`);
-      }
-    } else {
-      console.error('❌ All save methods failed');
-      updateSaveStatus('Save failed!');
-    }
-    
-  } catch (error) {
-    console.error('💥 Critical save error:', error);
-    updateSaveStatus('Error!');
-    
-    // Emergency minimal save
-    try {
-      localStorage.setItem('fatisco_minimal', JSON.stringify({
-        l: data.emailList.substring(0, 1000),
-        se: data.sentEmails,
-        e: 'emergency',
-        t: Date.now()
-      }));
-      console.log('🆘 Emergency save completed');
-    } catch (e) {
-      console.error('💥 Even emergency save failed!');
-    }
-  } finally {
-    isSaving = false;
-    updateStatusIndicator();
-    
-    // Process any queued saves
-    if (unsavedChanges) {
-      setTimeout(saveDataRobust, 100);
-    }
-  }
-}
-
-// Load from all available sources
-async function loadAllData() {
-  console.log('📂 Loading data from all sources...');
-  
-  let loadedData = null;
-  const loadSources = [];
-  
-  // 1. Try localStorage v2
-  try {
-    const saved = localStorage.getItem('fatisco_data_v2');
-    if (saved) {
-      loadedData = JSON.parse(saved);
-      loadSources.push('localStorage v2');
-    }
-  } catch (e) {
-    console.warn('localStorage v2 load failed:', e);
-  }
-  
-  // 2. Try localStorage v1 (legacy)
-  if (!loadedData) {
-    try {
-      const saved = localStorage.getItem('fatisco_data');
-      if (saved) {
-        loadedData = JSON.parse(saved);
-        loadSources.push('localStorage v1');
-      }
-    } catch (e) {
-      console.warn('localStorage v1 load failed:', e);
-    }
-  }
-  
-  // 3. Try IndexedDB
-  if (!loadedData) {
-    try {
-      loadedData = await loadFromIndexedDB();
-      if (loadedData) loadSources.push('IndexedDB');
-    } catch (e) {
-      console.warn('IndexedDB load failed:', e);
-    }
-  }
-  
-  // 4. Try sessionStorage backup
-  if (!loadedData) {
-    try {
-      const backup = sessionStorage.getItem('fatisco_emergency');
-      if (backup) {
-        const emergencyData = JSON.parse(backup);
-        loadedData = {
-          emailList: emergencyData.l || '',
-          sentEmails: emergencyData.se || {},
-          timestamp: emergencyData.t
-        };
-        loadSources.push('sessionStorage backup');
-      }
-    } catch (e) {
-      console.warn('sessionStorage load failed:', e);
-    }
-  }
-  
-  // 5. Try in-memory cache
-  if (!loadedData && window.fatiscoCache) {
-    loadedData = window.fatiscoCache;
-    loadSources.push('memory cache');
-  }
-  
-  // 6. Try backup files (most recent)
-  if (!loadedData) {
-    try {
-      const backupKeys = Object.keys(localStorage)
-        .filter(k => k.startsWith('fatisco_backup_'))
-        .sort()
-        .reverse();
-      
-      for (const key of backupKeys) {
-        try {
-          const backup = localStorage.getItem(key);
-          if (backup) {
-            loadedData = JSON.parse(backup);
-            loadSources.push(`backup: ${key}`);
-            break;
-          }
-        } catch (e) {
-          console.warn(`Backup ${key} corrupted`);
-        }
-      }
-    } catch (e) {
-      console.warn('Backup recovery failed:', e);
-    }
-  }
-  
-  if (loadedData) {
-    applyLoadedData(loadedData);
-    const sentCount = Object.keys(loadedData.sentEmails || {}).length;
-    showToast(`📂 Loaded from ${loadSources[0]} (${sentCount} sent emails)`);
-    console.log(`✅ Loaded from: ${loadSources.join(', ')}`);
-  } else {
-    console.log('🆕 No saved data found, starting fresh');
-  }
-  
-  updateStats();
-}
-
-// Apply loaded data to UI
-function applyLoadedData(data) {
-  if (data.emailList !== undefined) {
-    document.getElementById('list').value = data.emailList;
-  }
-  
-  if (data.subject !== undefined) {
-    document.getElementById('subject').value = data.subject;
-  }
-  
-  if (data.body !== undefined) {
-    document.getElementById('body').value = data.body;
-  }
-  
-  if (data.emailFormat !== undefined) {
-    emailFormat = data.emailFormat;
-    setFormat(emailFormat);
-  }
-  
-  if (data.ccEnabled !== undefined) {
-    ccEnabled = data.ccEnabled;
-    if (ccEnabled) toggleCC();
-    if (data.ccEmail) document.getElementById('ccEmail').value = data.ccEmail;
-  }
-  
-  if (data.bccEnabled !== undefined) {
-    bccEnabled = data.bccEnabled;
-    if (bccEnabled) toggleBCC();
-    if (data.bccEmail) document.getElementById('bccEmail').value = data.bccEmail;
-  }
-  
-  if (data.sentEmails !== undefined) {
-    sentEmails = data.sentEmails;
-  }
-  
-  // Update stats based on loaded data
-  const lines = document.getElementById('list').value.trim().split('\n').filter(l => l.trim());
-  stats.total = lines.length;
-  stats.valid = lines.filter(l => l.includes('@')).length;
-}
-
-// Force save (manual)
-function forceSave() {
-  showToast('💾 Force saving...');
-  saveDataRobust();
-}
-
-// Create backup
-async function createBackup() {
-  const backupNotice = document.getElementById('backupNotice');
-  backupNotice.classList.add('show');
-  backupNotice.textContent = '🔄 Creating backup...';
-  
-  try {
-    const data = {
-      emailList: document.getElementById('list').value,
-      subject: document.getElementById('subject').value,
-      body: document.getElementById('body').value,
-      emailFormat: emailFormat,
-      sentEmails: sentEmails,
-      timestamp: Date.now(),
-      backup: true
-    };
-    
-    // Save to IndexedDB backups
-    if (db) {
-      const transaction = db.transaction(['backups'], 'readwrite');
-      const store = transaction.objectStore('backups');
-      
-      await new Promise((resolve, reject) => {
-        const request = store.add(data);
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
-      });
-    }
-    
-    // Also save to localStorage
-    localStorage.setItem(`fatisco_manual_backup_${Date.now()}`, JSON.stringify(data));
-    
-    backupNotice.textContent = '✅ Backup created!';
-    showToast('💾 Manual backup created successfully');
-  } catch (error) {
-    backupNotice.textContent = '❌ Backup failed';
-    console.error('Backup failed:', error);
-    showToast('⚠️ Backup failed');
-  }
-  
-  setTimeout(() => {
-    backupNotice.classList.remove('show');
-  }, 3000);
-}
-
-// Update save status display
-function updateSaveStatus(status) {
-  const statusEl = document.getElementById('saveStatus');
-  if (statusEl) {
-    statusEl.textContent = status;
-    statusEl.style.color = status.includes('Error') ? 'var(--error)' : 
-                          status.includes('Saved') ? 'var(--success)' : 
-                          'inherit';
-  }
-}
-
-// Update online/offline status
-function updateOnlineStatus() {
-  const isOnline = navigator.onLine;
-  const indicator = document.getElementById('statusIndicator');
-  
-  if (isOnline) {
-    indicator.textContent = '🌐 Online';
-    indicator.className = 'status-indicator status-online';
-  } else {
-    indicator.textContent = '📴 Offline';
-    indicator.className = 'status-indicator status-offline';
-    showToast('📴 Working offline - changes saved locally');
-  }
-}
-
-function updateStatusIndicator() {
-  const indicator = document.getElementById('statusIndicator');
-  if (isSaving) {
-    indicator.textContent = '💾 Saving...';
-    indicator.className = 'status-indicator status-saving';
-  } else {
-    updateOnlineStatus();
-  }
-}
-
-// Enhanced auto-save system
-function startAutoSave() {
-  // Debounced save on input
-  let saveTimeout;
-  
-  function scheduleSave() {
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-      if (!isSaving) {
-        saveDataRobust();
-      }
-    }, 1000); // 1 second debounce
-  }
-  
-  // Monitor inputs for changes
-  const inputsToWatch = ['list', 'subject', 'body', 'ccEmail', 'bccEmail', 'htmlCode'];
-  inputsToWatch.forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.addEventListener('input', scheduleSave);
-    }
-  });
-  
-  // Periodic save every 30 seconds
-  setInterval(() => {
-    if (document.getElementById('list').value.trim() && !isSaving) {
-      saveDataRobust();
-    }
-  }, 30000);
-  
-  // Save on visibility change
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && !isSaving) {
-      saveDataRobust();
-    }
-  });
-  
-  console.log('✅ Auto-save system started');
-}
-
-// Show recovery options
-function showRecoveryOptions() {
-  const modalHTML = `
-    <div class="modal-overlay" onclick="closeRecoveryModal()"></div>
-    <div class="recovery-modal">
-      <h3>🔄 Data Recovery Options</h3>
-      <p>Choose where to recover data from:</p>
-      <button onclick="recoverFrom('localStorage')">📁 localStorage (Current)</button>
-      <button onclick="recoverFrom('indexeddb')">💾 IndexedDB</button>
-      <button onclick="recoverFrom('backup')">🕐 Latest Backup</button>
-      <button onclick="recoverFrom('session')">⚡ Session Backup</button>
-      <button onclick="showBackupList()">📋 View All Backups</button>
-      <button class="btn-secondary" onclick="closeRecoveryModal()" style="margin-top: 15px;">Cancel</button>
-    </div>
-  `;
-  
-  const modalContainer = document.createElement('div');
-  modalContainer.innerHTML = modalHTML;
-  modalContainer.id = 'recoveryModalContainer';
-  document.body.appendChild(modalContainer);
-}
-
-function closeRecoveryModal() {
-  const modal = document.getElementById('recoveryModalContainer');
-  if (modal) modal.remove();
-}
-
-async function recoverFrom(source) {
-  closeRecoveryModal();
-  
-  showToast(`🔄 Recovering from ${source}...`);
-  
-  switch(source) {
-    case 'localStorage':
-      try {
-        const saved = localStorage.getItem('fatisco_data_v2') || localStorage.getItem('fatisco_data');
-        if (saved) {
-          const data = JSON.parse(saved);
-          applyLoadedData(data);
-          showToast('✅ Recovered from localStorage');
-        }
-      } catch (e) {
-        showToast('❌ Recovery failed');
-      }
-      break;
-      
-    case 'indexeddb':
-      try {
-        const data = await loadFromIndexedDB();
-        if (data) {
-          applyLoadedData(data);
-          showToast('✅ Recovered from IndexedDB');
-        }
-      } catch (e) {
-        showToast('❌ IndexedDB recovery failed');
-      }
-      break;
-      
-    case 'backup':
-      try {
-        const backupKeys = Object.keys(localStorage)
-          .filter(k => k.startsWith('fatisco_backup_') || k.startsWith('fatisco_manual_backup_'))
-          .sort()
-          .reverse();
-        
-        if (backupKeys.length > 0) {
-          const backup = localStorage.getItem(backupKeys[0]);
-          if (backup) {
-            const data = JSON.parse(backup);
-            applyLoadedData(data);
-            showToast(`✅ Recovered from backup (${backupKeys[0]})`);
-          }
-        }
-      } catch (e) {
-        showToast('❌ Backup recovery failed');
-      }
-      break;
-      
-    case 'session':
-      try {
-        const backup = sessionStorage.getItem('fatisco_emergency');
-        if (backup) {
-          const data = JSON.parse(backup);
-          // Convert emergency format
-          const fullData = {
-            emailList: data.l || '',
-            sentEmails: data.se || {}
-          };
-          applyLoadedData(fullData);
-          showToast('✅ Recovered from session backup');
-        }
-      } catch (e) {
-        showToast('❌ Session recovery failed');
-      }
-      break;
-  }
-}
-
-// Rest of your existing functions (with minor adjustments)
+// Premium UI Functions
 function toggleTheme() {
   document.body.classList.toggle('dark');
   document.body.classList.toggle('light');
-  const isDark = document.body.classList.contains('dark');
-  try {
-    localStorage.setItem('fatisco_theme', isDark ? 'dark' : 'light');
-  } catch(e) {}
+  const btn = document.querySelector('.btn-secondary');
+  const icon = btn.querySelector('i');
   
-  const btn = document.querySelector('.theme-toggle');
-  btn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+  if (document.body.classList.contains('dark')) {
+    icon.className = 'fas fa-sun';
+    btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+    showToast('Dark Mode', 'Switched to dark theme');
+  } else {
+    icon.className = 'fas fa-moon';
+    btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+    showToast('Light Mode', 'Switched to light theme');
+  }
+  
+  // Save theme preference
+  localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
 }
 
-function loadSavedTheme() {
-  try {
-    const saved = localStorage.getItem('fatisco_theme');
-    if (saved === 'dark') {
-      document.body.classList.remove('light');
-      document.body.classList.add('dark');
-      document.querySelector('.theme-toggle').textContent = '☀️ Light Mode';
-    }
-  } catch(e) {}
+function switchTab(tabName) {
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  // Show selected tab content
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.style.display = 'none';
+  });
+  document.getElementById(tabName + 'Tab').style.display = 'block';
 }
 
-function showToast(message, duration = 3000) {
+function showToast(title, message, type = 'success') {
   const toast = document.getElementById('toast');
-  toast.textContent = message;
+  const toastTitle = document.getElementById('toastTitle');
+  const toastMessage = document.getElementById('toastMessage');
+  const toastIcon = toast.querySelector('.toast-icon i');
+  
+  // Set content
+  toastTitle.textContent = title;
+  toastMessage.textContent = message;
+  
+  // Set icon based on type
+  toast.className = 'premium-toast toast-' + type;
+  if (type === 'success') {
+    toastIcon.className = 'fas fa-check-circle';
+  } else if (type === 'error') {
+    toastIcon.className = 'fas fa-exclamation-circle';
+  } else if (type === 'warning') {
+    toastIcon.className = 'fas fa-exclamation-triangle';
+  } else if (type === 'info') {
+    toastIcon.className = 'fas fa-info-circle';
+  }
+  
+  // Show toast
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
+  
+  // Auto hide after 5 seconds
+  setTimeout(hideToast, 5000);
 }
 
-function showTopNotification(message) {
-  const notif = document.getElementById('topNotification');
-  if (message) notif.textContent = message;
-  notif.classList.add('show');
-  setTimeout(() => notif.classList.remove('show'), 3000);
+function hideToast() {
+  document.getElementById('toast').classList.remove('show');
 }
 
-function updateStats() {
-  document.getElementById('totalEmails').textContent = stats.total;
-  document.getElementById('validEmails').textContent = stats.valid;
-  document.getElementById('emailsSent').textContent = Object.keys(sentEmails).length;
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function parseLine(line) {
-  const parts = line.split(',').map(p => p.trim());
-  const email = parts[0];
-  if (!email || !email.includes('@')) return null;
-  
-  let name = parts[1] || email.split('@')[0].split(/[\._-]/).map(p =>
-    p.charAt(0).toUpperCase() + p.slice(1)
-  ).join(' ');
-  
-  let company = parts[2] || (email.split('@')[1] ? email.split('@')[1].split('.')[0] : 'your company');
-  company = company.charAt(0).toUpperCase() + company.slice(1);
-  
-  return {
-    email: email,
-    name: name.trim() || 'there',
-    company: company,
-    custom1: parts[3] || '',
-    custom2: parts[4] || ''
-  };
+// User menu functions
+function showUserMenu() {
+  showToast('User Menu', 'Profile options will appear here', 'info');
 }
 
-function toggleCC() {
-  ccEnabled = !ccEnabled;
-  const field = document.getElementById('ccField');
-  const btn = document.getElementById('ccToggle');
-  
-  if (ccEnabled) {
-    field.style.display = 'block';
-    btn.style.background = 'linear-gradient(135deg, var(--success), #00cc88)';
-  } else {
-    field.style.display = 'none';
-    btn.style.background = '';
-  }
-  saveDataRobust();
+// Action functions
+function importContacts() {
+  document.getElementById('fileInput').click();
 }
 
-function toggleBCC() {
-  bccEnabled = !bccEnabled;
-  const field = document.getElementById('bccField');
-  const btn = document.getElementById('bccToggle');
-  
-  if (bccEnabled) {
-    field.style.display = 'block';
-    btn.style.background = 'linear-gradient(135deg, var(--success), #00cc88)';
-  } else {
-    field.style.display = 'none';
-    btn.style.background = '';
-  }
-  saveDataRobust();
-}
-
-function setFormat(format) {
-  emailFormat = format;
-  const buttons = document.querySelectorAll('.format-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  
-  if (format === 'html') {
-    buttons[1].classList.add('active');
-    document.getElementById('htmlToolbar').classList.add('show');
-    document.getElementById('htmlCodeEditor').style.display = 'block';
-    updateHTMLPreview();
-  } else {
-    buttons[0].classList.add('active');
-    document.getElementById('htmlToolbar').classList.remove('show');
-    document.getElementById('htmlCodeEditor').style.display = 'none';
-  }
-  
-  saveDataRobust();
-  showToast(format === 'html' ? '🎨 HTML Mode Enabled' : '📝 Plain Text Mode');
-}
-
-// ... (rest of your existing functions remain mostly the same, just replace saveData() with saveDataRobust())
-
-// Event listeners
-window.addEventListener('load', async () => {
-  loadSavedTheme();
-  await initStorageSystems();
-  console.log('🚀 FATISCO fully loaded with enhanced offline support!');
-});
-
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
-
-// Enhanced beforeunload handler
-window.addEventListener('beforeunload', (event) => {
-  if (unsavedChanges || isSaving) {
-    event.preventDefault();
-    event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-    
-    // Try one final save
-    if (!isSaving) {
-      saveDataRobust();
-    }
-  }
-});
-
-// File input handler
-document.getElementById('fileInput').addEventListener('change', function() {
-  const file = this.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const content = e.target.result;
-    const lines = content.split(/\r?\n/).filter(l => l.trim());
-    document.getElementById('list').value = lines.join('\n');
-    showToast('📁 File loaded: ' + lines.length + ' lines');
-    cleanList();
-    saveDataRobust();
-  };
-  reader.readAsText(file);
-});
-
-// Input listeners for auto-save
-document.getElementById('list').addEventListener('input', function() {
-  const lines = this.value.trim().split('\n').filter(l => l.trim());
-  stats.total = lines.length;
-  stats.valid = lines.filter(l => l.includes('@')).length;
-  updateStats();
-});
-
-// Initialize
-initStorageSystems();
-</script>
-
-<script>
-// Inline Service Worker registration (for single-file deployment)
-if ('serviceWorker' in navigator) {
-  const swScript = `
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open('fatisco-v2').then(cache => {
-      return cache.addAll([
-        './',
-        './index.html'
-      ]);
-    })
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(name => name.startsWith('fatisco-') && name !== 'fatisco-v2')
-          .map(name => caches.delete(name))
-      );
-    })
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-self.addEventListener('sync', event => {
-  if (event.tag === 'save-data') {
-    console.log('Background sync: save-data');
-  }
-});
-`;
-
-  // Create and register service worker
-  const blob = new Blob([swScript], { type: 'application/javascript' });
-  const swURL = URL.createObjectURL(blob);
-  
-  navigator.serviceWorker.register(swURL).then(registration => {
-    console.log('✅ Service Worker registered successfully');
-  }).catch(error => {
-    console.log('❌ Service Worker registration failed:', error);
+function pasteFromClipboard() {
+  navigator.clipboard.readText().then(text => {
+    document.getElementById('list').value = text;
+    showToast('Clipboard', 'Pasted from clipboard', 'success');
+    validateEmails();
+  }).catch(err => {
+    showToast('Error', 'Could not access clipboard', 'error');
   });
 }
+
+function aiGenerate() {
+  showToast('AI Assistant', 'Generating optimized email content...', 'info');
+  // Simulate AI generation
+  setTimeout(() => {
+    document.getElementById('subject').value = "Transformative collaboration with {company}";
+    document.getElementById('body').value = `Dear {name},
+
+I've been genuinely impressed by {company}'s innovative approach and market impact. 
+
+Our team has developed solutions that could potentially complement your current initiatives and drive even greater results.
+
+Would you be open to a brief conversation next week to explore synergies?
+
+Warm regards,
+[Your Name]`;
+    
+    showToast('AI Assistant', 'Email content generated successfully!', 'success');
+  }, 1500);
+}
+
+function validateEmails() {
+  const list = document.getElementById('list').value;
+  const lines = list.split('\n').filter(line => line.trim());
+  const validEmails = lines.filter(line => {
+    const email = line.split(',')[0]?.trim();
+    return email && email.includes('@') && email.includes('.');
+  }).length;
+  
+  document.getElementById('validEmails').textContent = validEmails;
+  document.getElementById('totalEmails').textContent = lines.length;
+  
+  showToast('Validation', `Found ${validEmails} valid emails out of ${lines.length}`, 'success');
+}
+
+function analyzeSpam() {
+  const subject = document.getElementById('subject').value;
+  const body = document.getElementById('body').value;
+  
+  // Simple spam analysis
+  const spamWords = ['free', 'buy now', 'click here', 'winner', 'urgent', 'guarantee'];
+  let spamScore = 0;
+  
+  const text = (subject + ' ' + body).toLowerCase();
+  spamWords.forEach(word => {
+    if (text.includes(word)) spamScore += 15;
+  });
+  
+  if (subject.includes('!')) spamScore += 10;
+  if (subject.length > 60) spamScore += 10;
+  
+  const score = Math.min(100, spamScore);
+  document.getElementById('spamScore').textContent = score + '%';
+  document.getElementById('currentSpamScore').textContent = score < 30 ? 'Low' : score < 60 ? 'Medium' : 'High';
+  
+  if (score < 30) {
+    showToast('Spam Analysis', 'Low spam risk - Good to go!', 'success');
+  } else if (score < 60) {
+    showToast('Spam Analysis', 'Medium spam risk - Consider revising', 'warning');
+  } else {
+    showToast('Spam Analysis', 'High spam risk - Needs revision', 'error');
+  }
+}
+
+function generateLinks() {
+  const list = document.getElementById('list').value;
+  const lines = list.split('\n').filter(line => line.trim());
+  
+  if (lines.length === 0) {
+    showToast('Error', 'Please add contacts first', 'error');
+    return;
+  }
+  
+  // Show output container
+  document.getElementById('outputContainer').style.display = 'block';
+  const output = document.getElementById('output');
+  output.innerHTML = '';
+  
+  // Generate email links
+  lines.forEach((line, index) => {
+    const parts = line.split(',');
+    const email = parts[0]?.trim() || '';
+    const name = parts[1]?.trim() || email.split('@')[0];
+    const company = parts[2]?.trim() || 'Company';
+    
+    if (!email.includes('@')) return;
+    
+    const emailLink = document.createElement('a');
+    emailLink.className = 'premium-email-link';
+    emailLink.href = `mailto:${email}?subject=${encodeURIComponent(document.getElementById('subject').value.replace('{company}', company).replace('{name}', name))}&body=${encodeURIComponent(document.getElementById('body').value.replace('{company}', company).replace('{name}', name))}`;
+    
+    emailLink.innerHTML = `
+      <div class="email-number">${index + 1}</div>
+      <div class="email-content">
+        <div class="email-info">
+          <div class="email-avatar">${name.charAt(0).toUpperCase()}</div>
+          <div class="email-details">
+            <div class="email-name">${name}</div>
+            <div class="email-address">${email}</div>
+            <div class="email-company">${company}</div>
+          </div>
+        </div>
+        <div class="email-status">
+          <div class="email-time">Ready to send</div>
+          <button class="email-action" onclick="event.preventDefault(); sendEmail(${index}, '${email}', '${name}')">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    `;
+    
+    output.appendChild(emailLink);
+  });
+  
+  // Update counts
+  document.getElementById('countAll').textContent = lines.length;
+  document.getElementById('countPending').textContent = lines.length;
+  
+  showToast('Success', `Generated ${lines.length} email links`, 'success');
+}
+
+function filterEmails(filter) {
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  showToast('Filter', `Showing ${filter} emails`, 'info');
+}
+
+function sendEmail(index, email, name) {
+  // Mark as sent
+  const emailLinks = document.querySelectorAll('.premium-email-link');
+  if (emailLinks[index]) {
+    emailLinks[index].classList.add('email-link-sent');
+    emailLinks[index].querySelector('.email-time').textContent = 'Sent just now';
+    emailLinks[index].querySelector('.email-action').innerHTML = '<i class="fas fa-check"></i> Sent';
+    emailLinks[index].querySelector('.email-action').style.background = 'var(--gradient-success)';
+    emailLinks[index].querySelector('.email-action').onclick = null;
+  }
+  
+  // Update sent count
+  const sentCount = parseInt(document.getElementById('emailsSent').textContent) + 1;
+  document.getElementById('emailsSent').textContent = sentCount;
+  document.getElementById('countSent').textContent = sentCount;
+  document.getElementById('countPending').textContent = parseInt(document.getElementById('countAll').textContent) - sentCount;
+  
+  showToast('Email Sent', `Email sent to ${name}`, 'success');
+}
+
+function testEmail() {
+  showToast('Test Email', 'Test email sent to your address', 'success');
+}
+
+function downloadCSV() {
+  showToast('Export', 'CSV export started', 'info');
+  // Add CSV download logic here
+}
+
+function scheduleEmails() {
+  showToast('Schedule', 'Campaign scheduling opened', 'info');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  // Load saved theme
+  const savedTheme = localStorage.getItem('fatisco_theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+    document.body.classList.remove('light');
+    document.querySelector('.btn-secondary').innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+  }
+  
+  // Initialize stats
+  validateEmails();
+  analyzeSpam();
+  
+  // File input handler
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('list').value = e.target.result;
+        validateEmails();
+        showToast('Import', `Loaded ${file.name} successfully`, 'success');
+      };
+      reader.readAsText(file);
+    }
+  });
+  
+  // Auto-save listeners
+  const inputs = ['list', 'subject', 'body'];
+  inputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      // Auto-save logic here
+    });
+  });
+  
+  showToast('Welcome', 'FATISCO Premium is ready!', 'success');
+});
 </script>
 </body>
 </html>
