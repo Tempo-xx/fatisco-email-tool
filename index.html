@@ -130,6 +130,17 @@ body.dark {
   color: #94a3b8;
 }
 
+.time-info {
+  font-size: 10px;
+  color: #666;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.dark .time-info {
+  color: #94a3b8;
+}
+
 /* Cards */
 .card {
   background: white;
@@ -420,6 +431,7 @@ body.dark {
   background: #f0fdf4;
   border-color: #bbf7d0;
   opacity: 0.7;
+  cursor: default;
 }
 
 .dark .email-link.sent {
@@ -503,10 +515,12 @@ body.dark {
 
 .email-link.sent .email-action {
   background: #10b981;
+  cursor: default;
 }
 
 .email-link.sent .email-action:hover {
-  background: #0da271;
+  background: #10b981;
+  transform: none;
 }
 
 /* Scroll Buttons */
@@ -704,8 +718,9 @@ body, .container, .card, .email-list-container {
       <div class="stat-label">Valid</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="emailsSent24h">0</div>
-      <div class="stat-label">Sent (24h)</div>
+      <div class="stat-value" id="emailsSentToday">0</div>
+      <div class="stat-label">Sent Today</div>
+      <div class="time-info" id="todayInfo">Since midnight</div>
     </div>
     <div class="stat-card">
       <div class="stat-value" id="emailsSentTotal">0</div>
@@ -817,9 +832,8 @@ let stats = {
 };
 
 let sentEmails = {}; // {email: timestamp}
-let last24hSent = new Set();
-let currentFilter = 'all';
 let emailData = {}; // Store email data for quick access
+let currentFilter = 'all';
 
 // Storage Keys
 const STORAGE_KEYS = {
@@ -829,6 +843,28 @@ const STORAGE_KEYS = {
   SENT_EMAILS: 'fatisco_sent_emails',
   THEME: 'fatisco_theme'
 };
+
+// Helper: Get today's midnight timestamp
+function getTodayMidnight() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return midnight.getTime();
+}
+
+// Helper: Get tomorrow's midnight timestamp
+function getTomorrowMidnight() {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return tomorrow.getTime();
+}
+
+// Helper: Get hours since midnight
+function getHoursSinceMidnight() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const hours = (now.getTime() - midnight.getTime()) / (1000 * 60 * 60);
+  return Math.floor(hours);
+}
 
 // Load saved data
 function loadAllData() {
@@ -913,25 +949,29 @@ function updateStatsFromList() {
 
 // Update sent stats
 function updateSentStats() {
-  const now = Date.now();
-  const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
+  const todayMidnight = getTodayMidnight();
   
   let sentTodayCount = 0;
-  last24hSent.clear();
+  let sentTotalCount = 0;
   
   for (const email in sentEmails) {
     const sentTime = sentEmails[email];
-    if (sentTime > twentyFourHoursAgo) {
+    sentTotalCount++;
+    
+    if (sentTime >= todayMidnight) {
       sentTodayCount++;
-      last24hSent.add(email);
     }
   }
   
   stats.sentToday = sentTodayCount;
-  stats.sentTotal = Object.keys(sentEmails).length;
+  stats.sentTotal = sentTotalCount;
   
-  document.getElementById('emailsSent24h').textContent = stats.sentToday;
+  document.getElementById('emailsSentToday').textContent = stats.sentToday;
   document.getElementById('emailsSentTotal').textContent = stats.sentTotal;
+  
+  // Update time info
+  const hours = getHoursSinceMidnight();
+  document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
 }
 
 // Clean list
@@ -1043,26 +1083,28 @@ function generateLinks() {
     
     const isSent = sentEmails.hasOwnProperty(parsed.email);
     
-    const emailLink = document.createElement('a');
+    const emailLink = document.createElement('div');
     emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
-    emailLink.href = mailtoLink;
     emailLink.setAttribute('data-email', parsed.email);
     emailLink.setAttribute('data-index', index);
     
-    // Add click handler for the entire card
-    emailLink.addEventListener('click', function(e) {
-      // If clicking the send button, let it handle separately
-      if (e.target.classList.contains('email-action')) {
-        return;
-      }
-      
-      // Mark as sent when card is clicked
-      if (!sentEmails[parsed.email]) {
+    if (!isSent) {
+      // For pending emails: clicking anywhere sends and opens Gmail
+      emailLink.addEventListener('click', function(e) {
+        if (e.target.classList.contains('email-action')) {
+          return; // Let button handle it
+        }
+        handleSendEmail(parsed.email, parsed.name, mailtoLink);
+      });
+    } else {
+      // For already sent emails: clicking shows message, NO Gmail
+      emailLink.addEventListener('click', function(e) {
         e.preventDefault();
-        markAsSentAndOpen(parsed.email, parsed.name, mailtoLink);
-      }
-      // If already sent, just open Gmail (default link behavior)
-    });
+        if (!e.target.classList.contains('email-action')) {
+          showToast(`Already sent to ${parsed.name} (cannot resend)`);
+        }
+      });
+    }
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
@@ -1108,23 +1150,31 @@ function attachSendButtonListeners() {
       const email = this.getAttribute('data-email');
       const name = this.getAttribute('data-name');
       const emailLink = this.closest('.email-link');
-      const mailtoLink = emailLink.href;
       
-      markAsSentAndOpen(email, name, mailtoLink);
+      if (sentEmails[email]) {
+        showToast(`Already sent to ${name} (cannot resend)`);
+        return;
+      }
+      
+      // Get mailto link
+      const subject = document.getElementById('subject').value
+        .replace(/{name}/g, name)
+        .replace(/{company}/g, emailData[email]?.company || 'Company');
+      
+      const body = document.getElementById('body').value
+        .replace(/{name}/g, name)
+        .replace(/{company}/g, emailData[email]?.company || 'Company');
+      
+      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      handleSendEmail(email, name, mailtoLink);
     });
   });
 }
 
-// Mark as sent AND open Gmail
-function markAsSentAndOpen(email, name, mailtoLink) {
-  console.log('Marking as sent and opening Gmail:', email);
-  
-  // If already sent, just open Gmail
-  if (sentEmails[email]) {
-    window.open(mailtoLink, '_blank');
-    showToast(`Already sent to ${name}`);
-    return;
-  }
+// Handle sending email (main function)
+function handleSendEmail(email, name, mailtoLink) {
+  console.log('Sending email:', email);
   
   // Mark as sent
   const now = Date.now();
@@ -1136,6 +1186,9 @@ function markAsSentAndOpen(email, name, mailtoLink) {
   // Update stats and counters
   updateSentStats();
   updateFilterCounts();
+  
+  // Apply current filter immediately (if on Pending, sent email disappears)
+  applyCurrentFilter();
   
   // Save data
   saveData();
@@ -1153,6 +1206,8 @@ function updateEmailUI(email) {
   const emailLink = document.querySelector(`[data-email="${email}"]`);
   if (!emailLink) return;
   
+  const name = emailData[email]?.name || 'Contact';
+  
   // Add sent class
   emailLink.classList.add('sent');
   
@@ -1167,35 +1222,45 @@ function updateEmailUI(email) {
   if (button) {
     button.textContent = '✓ Sent';
     button.style.background = '#10b981';
+    button.style.cursor = 'default';
     
-    // Update button click handler
+    // Update button click handler - NO GMAIL OPENING
     button.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      const name = this.getAttribute('data-name');
-      showToast(`Already sent to ${name}`);
-      
-      // Still open Gmail if they click
-      setTimeout(() => {
-        window.open(emailLink.href, '_blank');
-      }, 100);
+      showToast(`Already sent to ${name} (cannot resend)`);
     };
   }
   
-  // Update link click behavior
-  emailLink.onclick = function(e) {
-    if (e.target.classList.contains('email-action')) {
-      return;
+  // Remove existing click handler and add new one
+  const newEmailLink = emailLink.cloneNode(true);
+  emailLink.parentNode.replaceChild(newEmailLink, emailLink);
+  
+  // For sent emails: clicking shows message, NO Gmail
+  newEmailLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!e.target.classList.contains('email-action')) {
+      showToast(`Already sent to ${name} (cannot resend)`);
     }
+  });
+}
+
+// Apply current filter
+function applyCurrentFilter() {
+  const emailLinks = document.querySelectorAll('.email-link');
+  emailLinks.forEach(link => {
+    const isSent = link.classList.contains('sent');
     
-    const name = emailData[email]?.name || 'Contact';
-    showToast(`Already sent to ${name}`);
-    
-    // Still open Gmail
-    setTimeout(() => {
-      window.open(emailLink.href, '_blank');
-    }, 100);
-  };
+    if (currentFilter === 'all') {
+      link.style.display = 'flex';
+    } else if (currentFilter === 'sent') {
+      link.style.display = isSent ? 'flex' : 'none';
+    } else if (currentFilter === 'pending') {
+      link.style.display = !isSent ? 'flex' : 'none';
+    }
+  });
+  
+  updateFilterCounts();
 }
 
 // Filter emails
@@ -1208,19 +1273,8 @@ function filterEmails(filter) {
   });
   event.target.classList.add('active');
   
-  // Filter emails
-  const emailLinks = document.querySelectorAll('.email-link');
-  emailLinks.forEach(link => {
-    const isSent = link.classList.contains('sent');
-    
-    if (filter === 'all') {
-      link.style.display = 'flex';
-    } else if (filter === 'sent') {
-      link.style.display = isSent ? 'flex' : 'none';
-    } else if (filter === 'pending') {
-      link.style.display = !isSent ? 'flex' : 'none';
-    }
-  });
+  // Apply filter
+  applyCurrentFilter();
 }
 
 // Update filter counts
@@ -1234,8 +1288,6 @@ function updateFilterCounts() {
   document.getElementById('countAll').textContent = emailLinks.length;
   document.getElementById('countSent').textContent = sentCount;
   document.getElementById('countPending').textContent = pendingCount;
-  
-  console.log(`Counts updated: All=${emailLinks.length}, Sent=${sentCount}, Pending=${pendingCount}`);
 }
 
 // Download CSV
@@ -1247,13 +1299,16 @@ function downloadCSV() {
   }
   
   const lines = list.split('\n').filter(line => line.trim());
-  let csv = 'Email,Name,Company,Status\n';
+  let csv = 'Email,Name,Company,Status,Sent Time\n';
   
   lines.forEach(line => {
     const parsed = parseLine(line);
     if (parsed) {
       const status = sentEmails[parsed.email] ? 'Sent' : 'Pending';
-      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}"\n`;
+      const sentTime = sentEmails[parsed.email] 
+        ? new Date(sentEmails[parsed.email]).toLocaleString() 
+        : '';
+      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}","${sentTime}"\n`;
     }
   });
   
@@ -1342,10 +1397,20 @@ document.getElementById('list').addEventListener('input', function() {
 document.getElementById('subject').addEventListener('input', scheduleSave);
 document.getElementById('body').addEventListener('input', scheduleSave);
 
-// Save before page unload
-window.addEventListener('beforeunload', function() {
-  saveData();
-});
+// Check for midnight reset
+function checkMidnightReset() {
+  const now = Date.now();
+  const tomorrowMidnight = getTomorrowMidnight();
+  const timeUntilMidnight = tomorrowMidnight - now;
+  
+  // Set timeout for next midnight
+  setTimeout(() => {
+    updateSentStats(); // This will recalculate based on new day
+    checkMidnightReset(); // Reset for next day
+  }, timeUntilMidnight + 1000); // +1 second to be safe
+  
+  console.log(`Next midnight reset in ${Math.floor(timeUntilMidnight / 1000 / 60)} minutes`);
+}
 
 // Initialize
 window.addEventListener('load', function() {
@@ -1354,7 +1419,10 @@ window.addEventListener('load', function() {
   // Update sent stats every minute
   setInterval(updateSentStats, 60000);
   
-  console.log('FATISCO loaded');
+  // Setup midnight reset
+  checkMidnightReset();
+  
+  console.log('FATISCO loaded with midnight reset');
 });
 </script>
 </body>
