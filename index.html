@@ -243,7 +243,7 @@ body.dark {
   min-height: 120px;
 }
 
-.dark .textarea {
+.dark .text-area {
   background: #1e293b;
   border-color: #475569;
   color: #e2e8f0;
@@ -655,7 +655,7 @@ body.dark {
   }
   
   .scroll-bottom {
-    bottom: 20px;
+    bottom: 24px;
   }
 }
 
@@ -831,18 +831,66 @@ let stats = {
   sentTotal: 0
 };
 
-let sentEmails = {}; // {email: timestamp}
 let emailData = {}; // Store email data for quick access
 let currentFilter = 'all';
 
-// Storage Keys
+// ============================================
+// INDESTRUCTIBLE "SENT TODAY" COUNTER
+// ============================================
+
+// Storage Keys - PERMANENT "SENT TODAY" COUNTER
+const INDESTRUCTIBLE_KEYS = {
+  SENT_TODAY: 'fatisco_indestructible_sent_today', // NEVER deleted by user
+  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date' // Date check
+};
+
+// Regular storage keys (can be cleared)
 const STORAGE_KEYS = {
   EMAIL_LIST: 'fatisco_email_list',
   SUBJECT: 'fatisco_subject',
   BODY: 'fatisco_body',
-  SENT_EMAILS: 'fatisco_sent_emails',
+  SENT_TOTAL: 'fatisco_sent_total', // CAN be cleared
   THEME: 'fatisco_theme'
 };
+
+// Load ALL data
+function loadAllData() {
+  try {
+    // Load theme
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+      document.querySelector('.theme-toggle').textContent = '☀️';
+    }
+    
+    // Load email list
+    const savedList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
+    if (savedList) {
+      document.getElementById('list').value = savedList;
+    }
+    
+    // Load subject and body
+    const savedSubject = localStorage.getItem(STORAGE_KEYS.SUBJECT);
+    if (savedSubject) document.getElementById('subject').value = savedSubject;
+    
+    const savedBody = localStorage.getItem(STORAGE_KEYS.BODY);
+    if (savedBody) document.getElementById('body').value = savedBody;
+    
+    // Update stats
+    updateStatsFromList();
+    updateSentStats();
+    
+    console.log('Data loaded - Sent Today counter is indestructible');
+    
+  } catch (e) {
+    console.error('Error loading data:', e);
+  }
+}
+
+// Helper: Get today's date string
+function getTodayDateString() {
+  return new Date().toDateString(); // "Mon Jan 01 2024"
+}
 
 // Helper: Get today's midnight timestamp
 function getTodayMidnight() {
@@ -866,52 +914,110 @@ function getHoursSinceMidnight() {
   return Math.floor(hours);
 }
 
-// Load saved data
-function loadAllData() {
+// Update sent stats
+function updateSentStats() {
+  const todayDate = getTodayDateString();
+  
+  // ====================================
+  // INDESTRUCTIBLE "SENT TODAY" COUNTER
+  // ====================================
+  let sentTodayCount = 0;
   try {
-    // Load theme
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark');
-      document.querySelector('.theme-toggle').textContent = '☀️';
+    // Check if we have saved date
+    const savedDate = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE);
+    
+    if (savedDate === todayDate) {
+      // Same day - load the counter
+      const savedCount = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY);
+      sentTodayCount = parseInt(savedCount) || 0;
+    } else {
+      // New day - reset counter
+      sentTodayCount = 0;
+      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY, '0');
+      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE, todayDate);
+      console.log('New day - Sent Today counter reset to 0');
+    }
+  } catch (e) {
+    console.error('Error loading Sent Today counter:', e);
+  }
+  
+  // ====================================
+  // REGULAR "SENT TOTAL" COUNTER (can be cleared)
+  // ====================================
+  let sentTotalCount = 0;
+  try {
+    const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
+    if (savedTotal) {
+      sentTotalCount = parseInt(savedTotal) || 0;
+    }
+  } catch (e) {
+    console.error('Error loading Sent Total:', e);
+  }
+  
+  // Update stats
+  stats.sentToday = sentTodayCount;
+  stats.sentTotal = sentTotalCount;
+  
+  document.getElementById('emailsSentToday').textContent = stats.sentToday;
+  document.getElementById('emailsSentTotal').textContent = stats.sentTotal;
+  
+  // Update time info
+  const hours = getHoursSinceMidnight();
+  document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
+  
+  console.log(`Stats: Today=${sentTodayCount}, Total=${sentTotalCount}`);
+}
+
+// Increment counters when email is sent
+function incrementSentCounters() {
+  const todayDate = getTodayDateString();
+  
+  try {
+    // ====================================
+    // 1. INDESTRUCTIBLE "SENT TODAY" COUNTER
+    // ====================================
+    let sentTodayCount = 0;
+    const savedDate = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE);
+    
+    if (savedDate === todayDate) {
+      // Same day - increment
+      const savedCount = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY);
+      sentTodayCount = parseInt(savedCount) || 0;
+      sentTodayCount++;
+    } else {
+      // New day - start fresh
+      sentTodayCount = 1;
+      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE, todayDate);
     }
     
-    // Load email list
-    const savedList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
-    if (savedList) {
-      document.getElementById('list').value = savedList;
+    localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY, sentTodayCount.toString());
+    
+    // ====================================
+    // 2. REGULAR "SENT TOTAL" COUNTER (can be cleared)
+    // ====================================
+    let sentTotalCount = 0;
+    const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
+    if (savedTotal) {
+      sentTotalCount = parseInt(savedTotal) || 0;
     }
+    sentTotalCount++;
+    localStorage.setItem(STORAGE_KEYS.SENT_TOTAL, sentTotalCount.toString());
     
-    // Load subject and body
-    const savedSubject = localStorage.getItem(STORAGE_KEYS.SUBJECT);
-    if (savedSubject) document.getElementById('subject').value = savedSubject;
-    
-    const savedBody = localStorage.getItem(STORAGE_KEYS.BODY);
-    if (savedBody) document.getElementById('body').value = savedBody;
-    
-    // Load sent emails
-    const savedSent = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS);
-    if (savedSent) {
-      sentEmails = JSON.parse(savedSent);
-      console.log('Loaded sent emails:', Object.keys(sentEmails).length);
-    }
-    
-    // Update stats
-    updateStatsFromList();
-    updateSentStats();
+    console.log(`Counters updated: Today=${sentTodayCount}, Total=${sentTotalCount}`);
+    return true;
     
   } catch (e) {
-    console.error('Error loading data:', e);
+    console.error('Error updating counters:', e);
+    return false;
   }
 }
 
-// Save data
+// Save regular data
 function saveData() {
   try {
     localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, document.getElementById('list').value);
     localStorage.setItem(STORAGE_KEYS.SUBJECT, document.getElementById('subject').value);
     localStorage.setItem(STORAGE_KEYS.BODY, document.getElementById('body').value);
-    localStorage.setItem(STORAGE_KEYS.SENT_EMAILS, JSON.stringify(sentEmails));
     return true;
   } catch (e) {
     console.error('Save error:', e);
@@ -947,33 +1053,6 @@ function updateStatsFromList() {
   document.getElementById('validEmails').textContent = stats.valid;
 }
 
-// Update sent stats
-function updateSentStats() {
-  const todayMidnight = getTodayMidnight();
-  
-  let sentTodayCount = 0;
-  let sentTotalCount = 0;
-  
-  for (const email in sentEmails) {
-    const sentTime = sentEmails[email];
-    sentTotalCount++;
-    
-    if (sentTime >= todayMidnight) {
-      sentTodayCount++;
-    }
-  }
-  
-  stats.sentToday = sentTodayCount;
-  stats.sentTotal = sentTotalCount;
-  
-  document.getElementById('emailsSentToday').textContent = stats.sentToday;
-  document.getElementById('emailsSentTotal').textContent = stats.sentTotal;
-  
-  // Update time info
-  const hours = getHoursSinceMidnight();
-  document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
-}
-
 // Clean list
 function cleanList() {
   let lines = document.getElementById('list').value.split('\n').filter(line => line.trim());
@@ -1006,23 +1085,38 @@ function forceSave() {
   }
 }
 
-// Clear all data
+// Clear all data (but NOT "Sent Today" counter!)
 function clearAllData() {
-  if (confirm('Clear ALL data including sent emails?')) {
+  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter will NOT be cleared.\nIt is indestructible and only resets at midnight.\n"Sent (Total)" will be reset.')) {
+    // Clear only editable data
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
     document.getElementById('output').innerHTML = '';
     document.getElementById('outputContainer').style.display = 'none';
     
-    sentEmails = {};
     emailData = {};
     updateStatsFromList();
-    updateSentStats();
     updateFilterCounts();
     
-    localStorage.clear();
-    showToast('All data cleared');
+    // Clear regular storage (NOT indestructible counters!)
+    Object.keys(localStorage).forEach(key => {
+      // PRESERVE indestructible counters
+      if (key === INDESTRUCTIBLE_KEYS.SENT_TODAY || 
+          key === INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE) {
+        return; // Skip - do NOT delete
+      }
+      
+      // Delete everything else with fatisco_ prefix
+      if (key.startsWith('fatisco_')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Update stats to reflect cleared data
+    updateSentStats();
+    
+    showToast('Editable data cleared\n"Sent Today" counter preserved\n"Sent (Total)" reset');
   }
 }
 
@@ -1057,14 +1151,14 @@ function generateLinks() {
   const container = document.getElementById('outputContainer');
   
   output.innerHTML = '';
-  emailData = {}; // Clear previous data
+  emailData = {};
   container.style.display = 'block';
   
   lines.forEach((line, index) => {
     const parsed = parseLine(line);
     if (!parsed) return;
     
-    // Store email data for quick access
+    // Store email data
     emailData[parsed.email] = {
       name: parsed.name,
       company: parsed.company,
@@ -1081,30 +1175,18 @@ function generateLinks() {
     
     const mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    const isSent = sentEmails.hasOwnProperty(parsed.email);
-    
     const emailLink = document.createElement('div');
-    emailLink.className = `email-link ${isSent ? 'sent' : ''}`;
+    emailLink.className = 'email-link';
     emailLink.setAttribute('data-email', parsed.email);
     emailLink.setAttribute('data-index', index);
     
-    if (!isSent) {
-      // For pending emails: clicking anywhere sends and opens Gmail
-      emailLink.addEventListener('click', function(e) {
-        if (e.target.classList.contains('email-action')) {
-          return; // Let button handle it
-        }
-        handleSendEmail(parsed.email, parsed.name, mailtoLink);
-      });
-    } else {
-      // For already sent emails: clicking shows message, NO Gmail
-      emailLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (!e.target.classList.contains('email-action')) {
-          showToast(`Already sent to ${parsed.name} (cannot resend)`);
-        }
-      });
-    }
+    // For pending emails: clicking anywhere sends and opens Gmail
+    emailLink.addEventListener('click', function(e) {
+      if (e.target.classList.contains('email-action')) {
+        return;
+      }
+      handleSendEmail(parsed.email, parsed.name, mailtoLink);
+    });
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
@@ -1114,7 +1196,7 @@ function generateLinks() {
           <div class="email-address">${parsed.email}</div>
         </div>
         <button class="email-action" data-email="${parsed.email}" data-name="${parsed.name}">
-          ${isSent ? '✓ Sent' : 'Send'}
+          Send
         </button>
       </div>
     `;
@@ -1136,12 +1218,10 @@ function generateLinks() {
 // Attach event listeners to send buttons
 function attachSendButtonListeners() {
   document.querySelectorAll('.email-action').forEach(button => {
-    // Remove existing listeners
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
   });
   
-  // Add new listeners to all send buttons
   document.querySelectorAll('.email-action').forEach(button => {
     button.addEventListener('click', function(e) {
       e.preventDefault();
@@ -1150,11 +1230,6 @@ function attachSendButtonListeners() {
       const email = this.getAttribute('data-email');
       const name = this.getAttribute('data-name');
       const emailLink = this.closest('.email-link');
-      
-      if (sentEmails[email]) {
-        showToast(`Already sent to ${name} (cannot resend)`);
-        return;
-      }
       
       // Get mailto link
       const subject = document.getElementById('subject').value
@@ -1172,13 +1247,15 @@ function attachSendButtonListeners() {
   });
 }
 
-// Handle sending email (main function)
+// Handle sending email
 function handleSendEmail(email, name, mailtoLink) {
   console.log('Sending email:', email);
   
-  // Mark as sent
-  const now = Date.now();
-  sentEmails[email] = now;
+  // Update counters
+  if (!incrementSentCounters()) {
+    showToast('Error updating counters');
+    return;
+  }
   
   // Update UI immediately
   updateEmailUI(email);
@@ -1187,10 +1264,10 @@ function handleSendEmail(email, name, mailtoLink) {
   updateSentStats();
   updateFilterCounts();
   
-  // Apply current filter immediately (if on Pending, sent email disappears)
+  // Apply current filter immediately
   applyCurrentFilter();
   
-  // Save data
+  // Save regular data
   saveData();
   
   // Open Gmail in new tab
@@ -1224,7 +1301,6 @@ function updateEmailUI(email) {
     button.style.background = '#10b981';
     button.style.cursor = 'default';
     
-    // Update button click handler - NO GMAIL OPENING
     button.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1267,13 +1343,11 @@ function applyCurrentFilter() {
 function filterEmails(filter) {
   currentFilter = filter;
   
-  // Update filter buttons
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.remove('active');
   });
   event.target.classList.add('active');
   
-  // Apply filter
   applyCurrentFilter();
 }
 
@@ -1299,16 +1373,12 @@ function downloadCSV() {
   }
   
   const lines = list.split('\n').filter(line => line.trim());
-  let csv = 'Email,Name,Company,Status,Sent Time\n';
+  let csv = 'Email,Name,Company,Status\n';
   
   lines.forEach(line => {
     const parsed = parseLine(line);
     if (parsed) {
-      const status = sentEmails[parsed.email] ? 'Sent' : 'Pending';
-      const sentTime = sentEmails[parsed.email] 
-        ? new Date(sentEmails[parsed.email]).toLocaleString() 
-        : '';
-      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}","${sentTime}"\n`;
+      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","Pending"\n`;
     }
   });
   
@@ -1403,11 +1473,10 @@ function checkMidnightReset() {
   const tomorrowMidnight = getTomorrowMidnight();
   const timeUntilMidnight = tomorrowMidnight - now;
   
-  // Set timeout for next midnight
   setTimeout(() => {
-    updateSentStats(); // This will recalculate based on new day
-    checkMidnightReset(); // Reset for next day
-  }, timeUntilMidnight + 1000); // +1 second to be safe
+    updateSentStats(); // This will reset Sent Today counter if new day
+    checkMidnightReset();
+  }, timeUntilMidnight + 1000);
   
   console.log(`Next midnight reset in ${Math.floor(timeUntilMidnight / 1000 / 60)} minutes`);
 }
@@ -1422,7 +1491,7 @@ window.addEventListener('load', function() {
   // Setup midnight reset
   checkMidnightReset();
   
-  console.log('FATISCO loaded with midnight reset');
+  console.log('FATISCO loaded with indestructible "Sent Today" counter');
 });
 </script>
 </body>
