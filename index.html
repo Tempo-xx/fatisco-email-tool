@@ -243,7 +243,7 @@ body.dark {
   min-height: 120px;
 }
 
-.dark .text-area {
+.dark .textarea {
   background: #1e293b;
   border-color: #475569;
   color: #e2e8f0;
@@ -835,22 +835,26 @@ let emailData = {}; // Store email data for quick access
 let currentFilter = 'all';
 
 // ============================================
-// INDESTRUCTIBLE "SENT TODAY" COUNTER
+// PERMANENT SENT EMAILS TRACKING
 // ============================================
 
-// Storage Keys - PERMANENT "SENT TODAY" COUNTER
-const INDESTRUCTIBLE_KEYS = {
-  SENT_TODAY: 'fatisco_indestructible_sent_today', // NEVER deleted by user
-  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date' // Date check
-};
-
-// Regular storage keys (can be cleared)
+// Storage Keys
 const STORAGE_KEYS = {
+  // Regular data (can be cleared)
   EMAIL_LIST: 'fatisco_email_list',
   SUBJECT: 'fatisco_subject',
   BODY: 'fatisco_body',
+  THEME: 'fatisco_theme',
+  
+  // Counters
   SENT_TOTAL: 'fatisco_sent_total', // CAN be cleared
-  THEME: 'fatisco_theme'
+  
+  // INDESTRUCTIBLE "SENT TODAY" counter
+  SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
+  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date',
+  
+  // PERMANENT sent email tracking (never loses sent status)
+  SENT_EMAILS_HISTORY: 'fatisco_sent_emails_history' // List of ALL sent emails
 };
 
 // Load ALL data
@@ -880,7 +884,7 @@ function loadAllData() {
     updateStatsFromList();
     updateSentStats();
     
-    console.log('Data loaded - Sent Today counter is indestructible');
+    console.log('Data loaded - Sent emails remembered');
     
   } catch (e) {
     console.error('Error loading data:', e);
@@ -889,7 +893,7 @@ function loadAllData() {
 
 // Helper: Get today's date string
 function getTodayDateString() {
-  return new Date().toDateString(); // "Mon Jan 01 2024"
+  return new Date().toDateString();
 }
 
 // Helper: Get today's midnight timestamp
@@ -918,32 +922,25 @@ function getHoursSinceMidnight() {
 function updateSentStats() {
   const todayDate = getTodayDateString();
   
-  // ====================================
   // INDESTRUCTIBLE "SENT TODAY" COUNTER
-  // ====================================
   let sentTodayCount = 0;
   try {
-    // Check if we have saved date
-    const savedDate = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE);
+    const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
     
     if (savedDate === todayDate) {
-      // Same day - load the counter
-      const savedCount = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY);
+      const savedCount = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_COUNT);
       sentTodayCount = parseInt(savedCount) || 0;
     } else {
       // New day - reset counter
       sentTodayCount = 0;
-      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY, '0');
-      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE, todayDate);
-      console.log('New day - Sent Today counter reset to 0');
+      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, '0');
+      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_DATE, todayDate);
     }
   } catch (e) {
     console.error('Error loading Sent Today counter:', e);
   }
   
-  // ====================================
   // REGULAR "SENT TOTAL" COUNTER (can be cleared)
-  // ====================================
   let sentTotalCount = 0;
   try {
     const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
@@ -964,8 +961,41 @@ function updateSentStats() {
   // Update time info
   const hours = getHoursSinceMidnight();
   document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
-  
-  console.log(`Stats: Today=${sentTodayCount}, Total=${sentTotalCount}`);
+}
+
+// Get ALL sent emails from history (permanent record)
+function getSentEmailsHistory() {
+  try {
+    const savedHistory = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_HISTORY);
+    if (savedHistory) {
+      return JSON.parse(savedHistory);
+    }
+  } catch (e) {
+    console.error('Error loading sent emails history:', e);
+  }
+  return [];
+}
+
+// Save email to sent history (permanent record)
+function addToSentHistory(email) {
+  try {
+    const history = getSentEmailsHistory();
+    
+    // Add email if not already in history
+    if (!history.includes(email.toLowerCase())) {
+      history.push(email.toLowerCase());
+      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_HISTORY, JSON.stringify(history));
+      console.log('Added to sent history:', email);
+    }
+  } catch (e) {
+    console.error('Error saving to sent history:', e);
+  }
+}
+
+// Check if email has been sent (from permanent history)
+function isEmailSent(email) {
+  const history = getSentEmailsHistory();
+  return history.includes(email.toLowerCase());
 }
 
 // Increment counters when email is sent
@@ -973,28 +1003,22 @@ function incrementSentCounters() {
   const todayDate = getTodayDateString();
   
   try {
-    // ====================================
-    // 1. INDESTRUCTIBLE "SENT TODAY" COUNTER
-    // ====================================
+    // INDESTRUCTIBLE "SENT TODAY" COUNTER
     let sentTodayCount = 0;
-    const savedDate = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE);
+    const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
     
     if (savedDate === todayDate) {
-      // Same day - increment
-      const savedCount = localStorage.getItem(INDESTRUCTIBLE_KEYS.SENT_TODAY);
+      const savedCount = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_COUNT);
       sentTodayCount = parseInt(savedCount) || 0;
       sentTodayCount++;
     } else {
-      // New day - start fresh
       sentTodayCount = 1;
-      localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE, todayDate);
+      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_DATE, todayDate);
     }
     
-    localStorage.setItem(INDESTRUCTIBLE_KEYS.SENT_TODAY, sentTodayCount.toString());
+    localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, sentTodayCount.toString());
     
-    // ====================================
-    // 2. REGULAR "SENT TOTAL" COUNTER (can be cleared)
-    // ====================================
+    // REGULAR "SENT TOTAL" COUNTER (can be cleared)
     let sentTotalCount = 0;
     const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
     if (savedTotal) {
@@ -1003,7 +1027,6 @@ function incrementSentCounters() {
     sentTotalCount++;
     localStorage.setItem(STORAGE_KEYS.SENT_TOTAL, sentTotalCount.toString());
     
-    console.log(`Counters updated: Today=${sentTodayCount}, Total=${sentTotalCount}`);
     return true;
     
   } catch (e) {
@@ -1085,9 +1108,9 @@ function forceSave() {
   }
 }
 
-// Clear all data (but NOT "Sent Today" counter!)
+// Clear all data (but NOT "Sent Today" counter and sent history!)
 function clearAllData() {
-  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter will NOT be cleared.\nIt is indestructible and only resets at midnight.\n"Sent (Total)" will be reset.')) {
+  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter and sent email history will NOT be cleared.\nThey are indestructible and only reset at midnight.\n"Sent (Total)" will be reset.')) {
     // Clear only editable data
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
@@ -1099,11 +1122,12 @@ function clearAllData() {
     updateStatsFromList();
     updateFilterCounts();
     
-    // Clear regular storage (NOT indestructible counters!)
+    // Clear regular storage (NOT indestructible counters or history!)
     Object.keys(localStorage).forEach(key => {
-      // PRESERVE indestructible counters
-      if (key === INDESTRUCTIBLE_KEYS.SENT_TODAY || 
-          key === INDESTRUCTIBLE_KEYS.SENT_TODAY_DATE) {
+      // PRESERVE indestructible counters and sent history
+      if (key === STORAGE_KEYS.SENT_TODAY_COUNT || 
+          key === STORAGE_KEYS.SENT_TODAY_DATE ||
+          key === STORAGE_KEYS.SENT_EMAILS_HISTORY) {
         return; // Skip - do NOT delete
       }
       
@@ -1116,7 +1140,7 @@ function clearAllData() {
     // Update stats to reflect cleared data
     updateSentStats();
     
-    showToast('Editable data cleared\n"Sent Today" counter preserved\n"Sent (Total)" reset');
+    showToast('Editable data cleared\n"Sent Today" counter and sent history preserved\n"Sent (Total)" reset');
   }
 }
 
@@ -1138,7 +1162,7 @@ function parseLine(line) {
   return { email: email.toLowerCase(), name, company };
 }
 
-// Generate email links
+// Generate email links - FIXED VERSION
 function generateLinks() {
   const list = document.getElementById('list').value.trim();
   if (!list) {
@@ -1175,18 +1199,31 @@ function generateLinks() {
     
     const mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
+    // Check if email has already been sent (from PERMANENT history)
+    const hasBeenSent = isEmailSent(parsed.email);
+    
     const emailLink = document.createElement('div');
-    emailLink.className = 'email-link';
+    emailLink.className = `email-link ${hasBeenSent ? 'sent' : ''}`;
     emailLink.setAttribute('data-email', parsed.email);
     emailLink.setAttribute('data-index', index);
     
-    // For pending emails: clicking anywhere sends and opens Gmail
-    emailLink.addEventListener('click', function(e) {
-      if (e.target.classList.contains('email-action')) {
-        return;
-      }
-      handleSendEmail(parsed.email, parsed.name, mailtoLink);
-    });
+    if (!hasBeenSent) {
+      // For pending emails: clicking anywhere sends and opens Gmail
+      emailLink.addEventListener('click', function(e) {
+        if (e.target.classList.contains('email-action')) {
+          return;
+        }
+        handleSendEmail(parsed.email, parsed.name, mailtoLink);
+      });
+    } else {
+      // For already sent emails: clicking shows message, NO Gmail
+      emailLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!e.target.classList.contains('email-action')) {
+          showToast(`Already sent to ${parsed.name} (cannot resend)`);
+        }
+      });
+    }
     
     emailLink.innerHTML = `
       <div class="email-number">${index + 1}</div>
@@ -1196,7 +1233,7 @@ function generateLinks() {
           <div class="email-address">${parsed.email}</div>
         </div>
         <button class="email-action" data-email="${parsed.email}" data-name="${parsed.name}">
-          Send
+          ${hasBeenSent ? '✓ Sent' : 'Send'}
         </button>
       </div>
     `;
@@ -1231,6 +1268,12 @@ function attachSendButtonListeners() {
       const name = this.getAttribute('data-name');
       const emailLink = this.closest('.email-link');
       
+      // If already sent, show message
+      if (isEmailSent(email)) {
+        showToast(`Already sent to ${name} (cannot resend)`);
+        return;
+      }
+      
       // Get mailto link
       const subject = document.getElementById('subject').value
         .replace(/{name}/g, name)
@@ -1256,6 +1299,9 @@ function handleSendEmail(email, name, mailtoLink) {
     showToast('Error updating counters');
     return;
   }
+  
+  // Add to PERMANENT sent history
+  addToSentHistory(email);
   
   // Update UI immediately
   updateEmailUI(email);
@@ -1378,7 +1424,8 @@ function downloadCSV() {
   lines.forEach(line => {
     const parsed = parseLine(line);
     if (parsed) {
-      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","Pending"\n`;
+      const status = isEmailSent(parsed.email) ? 'Sent' : 'Pending';
+      csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}"\n`;
     }
   });
   
@@ -1477,8 +1524,6 @@ function checkMidnightReset() {
     updateSentStats(); // This will reset Sent Today counter if new day
     checkMidnightReset();
   }, timeUntilMidnight + 1000);
-  
-  console.log(`Next midnight reset in ${Math.floor(timeUntilMidnight / 1000 / 60)} minutes`);
 }
 
 // Initialize
@@ -1491,7 +1536,7 @@ window.addEventListener('load', function() {
   // Setup midnight reset
   checkMidnightReset();
   
-  console.log('FATISCO loaded with indestructible "Sent Today" counter');
+  console.log('FATISCO loaded - Sent emails remembered across content changes');
 });
 </script>
 </body>
