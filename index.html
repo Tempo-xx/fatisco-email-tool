@@ -275,6 +275,84 @@ body.dark {
   border-color: #4f46e5;
 }
 
+/* CC Toggle and Input */
+.cc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.cc-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dark .cc-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.cc-btn.active {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
+}
+
+.cc-input {
+  display: none;
+  margin-bottom: 16px;
+  padding-left: 16px;
+  border-left: 3px solid #4f46e5;
+}
+
+.cc-input.show {
+  display: block;
+}
+
+.cc-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: #333;
+}
+
+.dark .cc-field {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.cc-field:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.cc-hint {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.dark .cc-hint {
+  color: #94a3b8;
+}
+
 /* Buttons */
 .button-group {
   display: flex;
@@ -492,6 +570,22 @@ body.dark {
 
 .dark .email-address {
   color: #94a3b8;
+}
+
+.cc-badge {
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+.dark .cc-badge {
+  background: rgba(79, 70, 229, 0.3);
+  color: #818cf8;
 }
 
 .email-action {
@@ -764,6 +858,19 @@ bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
       <span class="card-title">Email Composer</span>
     </div>
     <div class="card-body">
+      <!-- CC Toggle Section -->
+      <div class="cc-toggle">
+        <button class="cc-btn" id="ccToggleBtn" onclick="toggleCC()">
+          📧 Add CC
+        </button>
+      </div>
+      
+      <div class="cc-input" id="ccInput">
+        <label class="label">CC Email Address</label>
+        <input class="cc-field" id="ccEmail" type="email" placeholder="cc@example.com">
+        <div class="cc-hint">Same CC for all emails</div>
+      </div>
+      
       <div class="input-group">
         <label class="label">Subject Line</label>
         <input class="input" id="subject" value="Opportunity for {company}">
@@ -833,10 +940,8 @@ let stats = {
 
 let emailData = {}; // Store email data for quick access
 let currentFilter = 'all';
-
-// ============================================
-// PERMANENT SENT EMAILS TRACKING
-// ============================================
+let ccEnabled = false; // CC toggle state
+let currentListHash = ''; // Track current list to reset sent history
 
 // Storage Keys
 const STORAGE_KEYS = {
@@ -845,16 +950,15 @@ const STORAGE_KEYS = {
   SUBJECT: 'fatisco_subject',
   BODY: 'fatisco_body',
   THEME: 'fatisco_theme',
+  CC_ENABLED: 'fatisco_cc_enabled',
+  CC_EMAIL: 'fatisco_cc_email',
   
   // Counters
   SENT_TOTAL: 'fatisco_sent_total', // CAN be cleared
   
   // INDESTRUCTIBLE "SENT TODAY" counter
   SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
-  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date',
-  
-  // PERMANENT sent email tracking (never loses sent status)
-  SENT_EMAILS_HISTORY: 'fatisco_sent_emails_history' // List of ALL sent emails
+  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date'
 };
 
 // Load ALL data
@@ -865,6 +969,19 @@ function loadAllData() {
     if (savedTheme === 'dark') {
       document.body.classList.add('dark');
       document.querySelector('.theme-toggle').textContent = '☀️';
+    }
+    
+    // Load CC settings
+    const savedCCEnabled = localStorage.getItem(STORAGE_KEYS.CC_ENABLED);
+    if (savedCCEnabled === 'true') {
+      ccEnabled = true;
+      document.getElementById('ccToggleBtn').classList.add('active');
+      document.getElementById('ccInput').classList.add('show');
+      
+      const savedCCEmail = localStorage.getItem(STORAGE_KEYS.CC_EMAIL);
+      if (savedCCEmail) {
+        document.getElementById('ccEmail').value = savedCCEmail;
+      }
     }
     
     // Load email list
@@ -884,7 +1001,7 @@ function loadAllData() {
     updateStatsFromList();
     updateSentStats();
     
-    console.log('Data loaded - Sent emails remembered');
+    console.log('Data loaded - CC feature enabled');
     
   } catch (e) {
     console.error('Error loading data:', e);
@@ -916,6 +1033,27 @@ function getHoursSinceMidnight() {
   const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const hours = (now.getTime() - midnight.getTime()) / (1000 * 60 * 60);
   return Math.floor(hours);
+}
+
+// Toggle CC
+function toggleCC() {
+  ccEnabled = !ccEnabled;
+  const toggleBtn = document.getElementById('ccToggleBtn');
+  const ccInput = document.getElementById('ccInput');
+  
+  if (ccEnabled) {
+    toggleBtn.classList.add('active');
+    ccInput.classList.add('show');
+  } else {
+    toggleBtn.classList.remove('active');
+    ccInput.classList.remove('show');
+  }
+  
+  // Save CC settings
+  localStorage.setItem(STORAGE_KEYS.CC_ENABLED, ccEnabled);
+  if (ccEnabled) {
+    localStorage.setItem(STORAGE_KEYS.CC_EMAIL, document.getElementById('ccEmail').value);
+  }
 }
 
 // Update sent stats
@@ -963,39 +1101,213 @@ function updateSentStats() {
   document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
 }
 
-// Get ALL sent emails from history (permanent record)
-function getSentEmailsHistory() {
-  try {
-    const savedHistory = localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_HISTORY);
-    if (savedHistory) {
-      return JSON.parse(savedHistory);
-    }
-  } catch (e) {
-    console.error('Error loading sent emails history:', e);
+// Get list hash to track changes
+function getListHash(listText) {
+  let hash = 0;
+  for (let i = 0; i < listText.length; i++) {
+    const char = listText.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
   }
-  return [];
+  return hash.toString();
 }
 
-// Save email to sent history (permanent record)
-function addToSentHistory(email) {
-  try {
-    const history = getSentEmailsHistory();
+// Generate email links - with RESET for new lists
+function generateLinks() {
+  const list = document.getElementById('list').value.trim();
+  if (!list) {
+    showToast('Please add emails first');
+    return;
+  }
+  
+  const newListHash = getListHash(list);
+  
+  // Check if this is a new list (different from previous)
+  const previousListHash = sessionStorage.getItem('fatisco_current_list_hash');
+  
+  if (newListHash !== previousListHash) {
+    // New list detected - reset sent history
+    console.log('New list detected - resetting sent history');
+    sessionStorage.removeItem('fatisco_current_sent_emails');
+    sessionStorage.setItem('fatisco_current_list_hash', newListHash);
+    showToast('New list loaded - sent history cleared');
+  }
+  
+  const lines = list.split('\n').filter(line => line.trim());
+  const output = document.getElementById('output');
+  const container = document.getElementById('outputContainer');
+  
+  output.innerHTML = '';
+  emailData = {};
+  container.style.display = 'block';
+  
+  lines.forEach((line, index) => {
+    const parsed = parseLine(line);
+    if (!parsed) return;
     
-    // Add email if not already in history
-    if (!history.includes(email.toLowerCase())) {
-      history.push(email.toLowerCase());
-      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_HISTORY, JSON.stringify(history));
-      console.log('Added to sent history:', email);
+    // Store email data
+    emailData[parsed.email] = {
+      name: parsed.name,
+      company: parsed.company,
+      index: index
+    };
+    
+    const subject = document.getElementById('subject').value
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company);
+    
+    const body = document.getElementById('body').value
+      .replace(/{name}/g, parsed.name)
+      .replace(/{company}/g, parsed.company);
+    
+    // Build mailto link with optional CC
+    let mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    if (ccEnabled) {
+      const ccEmail = document.getElementById('ccEmail').value.trim();
+      if (ccEmail) {
+        mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
+      }
     }
-  } catch (e) {
-    console.error('Error saving to sent history:', e);
-  }
+    
+    // Check if email has already been sent in THIS session
+    const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
+    const hasBeenSent = sentEmails.includes(parsed.email);
+    
+    const emailLink = document.createElement('div');
+    emailLink.className = `email-link ${hasBeenSent ? 'sent' : ''}`;
+    emailLink.setAttribute('data-email', parsed.email);
+    emailLink.setAttribute('data-index', index);
+    
+    if (!hasBeenSent) {
+      // For pending emails: clicking anywhere sends and opens Gmail
+      emailLink.addEventListener('click', function(e) {
+        if (e.target.classList.contains('email-action')) {
+          return;
+        }
+        handleSendEmail(parsed.email, parsed.name, mailtoLink);
+      });
+    } else {
+      // For already sent emails: clicking shows message, NO Gmail
+      emailLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!e.target.classList.contains('email-action')) {
+          showToast(`Already sent to ${parsed.name} (cannot resend)`);
+        }
+      });
+    }
+    
+    // Add CC badge if enabled
+    const ccBadge = ccEnabled && document.getElementById('ccEmail').value.trim() ? '<span class="cc-badge">CC</span>' : '';
+    
+    emailLink.innerHTML = `
+      <div class="email-number">${index + 1}</div>
+      <div class="email-content">
+        <div class="email-info">
+          <div class="email-name">${parsed.name}${ccBadge}</div>
+          <div class="email-address">${parsed.email}</div>
+        </div>
+        <button class="email-action" data-email="${parsed.email}" data-name="${parsed.name}">
+          ${hasBeenSent ? '✓ Sent' : 'Send'}
+        </button>
+      </div>
+    `;
+    
+    output.appendChild(emailLink);
+  });
+  
+  // Add event listeners to send buttons
+  attachSendButtonListeners();
+  
+  updateFilterCounts();
+  showToast(`Generated ${lines.length} email links`);
+  
+  // Show scroll buttons
+  document.getElementById('scrollTopBtn').style.display = 'flex';
+  document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
 
-// Check if email has been sent (from permanent history)
-function isEmailSent(email) {
-  const history = getSentEmailsHistory();
-  return history.includes(email.toLowerCase());
+// Attach event listeners to send buttons
+function attachSendButtonListeners() {
+  document.querySelectorAll('.email-action').forEach(button => {
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+  });
+  
+  document.querySelectorAll('.email-action').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const email = this.getAttribute('data-email');
+      const name = this.getAttribute('data-name');
+      
+      // Check if already sent
+      const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
+      if (sentEmails.includes(email)) {
+        showToast(`Already sent to ${name} (cannot resend)`);
+        return;
+      }
+      
+      // Get mailto link
+      const subject = document.getElementById('subject').value
+        .replace(/{name}/g, name)
+        .replace(/{company}/g, emailData[email]?.company || 'Company');
+      
+      const body = document.getElementById('body').value
+        .replace(/{name}/g, name)
+        .replace(/{company}/g, emailData[email]?.company || 'Company');
+      
+      let mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      if (ccEnabled) {
+        const ccEmail = document.getElementById('ccEmail').value.trim();
+        if (ccEmail) {
+          mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
+        }
+      }
+      
+      handleSendEmail(email, name, mailtoLink);
+    });
+  });
+}
+
+// Handle sending email
+function handleSendEmail(email, name, mailtoLink) {
+  console.log('Sending email:', email);
+  
+  // Update counters
+  if (!incrementSentCounters()) {
+    showToast('Error updating counters');
+    return;
+  }
+  
+  // Add to session sent emails (current list only)
+  const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
+  if (!sentEmails.includes(email)) {
+    sentEmails.push(email);
+    sessionStorage.setItem('fatisco_current_sent_emails', JSON.stringify(sentEmails));
+  }
+  
+  // Update UI immediately
+  updateEmailUI(email);
+  
+  // Update stats and counters
+  updateSentStats();
+  updateFilterCounts();
+  
+  // Apply current filter immediately
+  applyCurrentFilter();
+  
+  // Save regular data
+  saveData();
+  
+  // Open Gmail in new tab
+  setTimeout(() => {
+    window.open(mailtoLink, '_blank');
+  }, 100);
+  
+  showToast(`Opening Gmail for ${name}${ccEnabled ? ' (CC enabled)' : ''}`);
 }
 
 // Increment counters when email is sent
@@ -1035,12 +1347,62 @@ function incrementSentCounters() {
   }
 }
 
+// Update email UI
+function updateEmailUI(email) {
+  const emailLink = document.querySelector(`[data-email="${email}"]`);
+  if (!emailLink) return;
+  
+  const name = emailData[email]?.name || 'Contact';
+  
+  // Add sent class
+  emailLink.classList.add('sent');
+  
+  // Update number badge
+  const numberBadge = emailLink.querySelector('.email-number');
+  if (numberBadge) {
+    numberBadge.style.background = '#10b981';
+  }
+  
+  // Update button
+  const button = emailLink.querySelector('.email-action');
+  if (button) {
+    button.textContent = '✓ Sent';
+    button.style.background = '#10b981';
+    button.style.cursor = 'default';
+    
+    button.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showToast(`Already sent to ${name} (cannot resend)`);
+    };
+  }
+  
+  // Remove existing click handler and add new one
+  const newEmailLink = emailLink.cloneNode(true);
+  emailLink.parentNode.replaceChild(newEmailLink, emailLink);
+  
+  // For sent emails: clicking shows message, NO Gmail
+  newEmailLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (!e.target.classList.contains('email-action')) {
+      showToast(`Already sent to ${name} (cannot resend)`);
+    }
+  });
+}
+
 // Save regular data
 function saveData() {
   try {
     localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, document.getElementById('list').value);
     localStorage.setItem(STORAGE_KEYS.SUBJECT, document.getElementById('subject').value);
     localStorage.setItem(STORAGE_KEYS.BODY, document.getElementById('body').value);
+    
+    // Save CC settings
+    localStorage.setItem(STORAGE_KEYS.CC_ENABLED, ccEnabled);
+    if (ccEnabled) {
+      localStorage.setItem(STORAGE_KEYS.CC_EMAIL, document.getElementById('ccEmail').value);
+    }
+    
     return true;
   } catch (e) {
     console.error('Save error:', e);
@@ -1108,26 +1470,30 @@ function forceSave() {
   }
 }
 
-// Clear all data (but NOT "Sent Today" counter and sent history!)
+// Clear all data (but NOT "Sent Today" counter!)
 function clearAllData() {
-  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter and sent email history will NOT be cleared.\nThey are indestructible and only reset at midnight.\n"Sent (Total)" will be reset.')) {
+  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter will NOT be cleared.\nIt is indestructible and only resets at midnight.\n"Sent (Total)" will be reset.')) {
     // Clear only editable data
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
     document.getElementById('output').innerHTML = '';
     document.getElementById('outputContainer').style.display = 'none';
+    document.getElementById('ccEmail').value = '';
+    
+    ccEnabled = false;
+    document.getElementById('ccToggleBtn').classList.remove('active');
+    document.getElementById('ccInput').classList.remove('show');
     
     emailData = {};
     updateStatsFromList();
     updateFilterCounts();
     
-    // Clear regular storage (NOT indestructible counters or history!)
+    // Clear regular storage (NOT indestructible counters!)
     Object.keys(localStorage).forEach(key => {
-      // PRESERVE indestructible counters and sent history
+      // PRESERVE indestructible counters
       if (key === STORAGE_KEYS.SENT_TODAY_COUNT || 
-          key === STORAGE_KEYS.SENT_TODAY_DATE ||
-          key === STORAGE_KEYS.SENT_EMAILS_HISTORY) {
+          key === STORAGE_KEYS.SENT_TODAY_DATE) {
         return; // Skip - do NOT delete
       }
       
@@ -1137,10 +1503,13 @@ function clearAllData() {
       }
     });
     
+    // Clear session storage (current list data)
+    sessionStorage.clear();
+    
     // Update stats to reflect cleared data
     updateSentStats();
     
-    showToast('Editable data cleared\n"Sent Today" counter and sent history preserved\n"Sent (Total)" reset');
+    showToast('Editable data cleared\n"Sent Today" counter preserved');
   }
 }
 
@@ -1160,211 +1529,6 @@ function parseLine(line) {
   company = company.charAt(0).toUpperCase() + company.slice(1);
   
   return { email: email.toLowerCase(), name, company };
-}
-
-// Generate email links - FIXED VERSION
-function generateLinks() {
-  const list = document.getElementById('list').value.trim();
-  if (!list) {
-    showToast('Please add emails first');
-    return;
-  }
-  
-  const lines = list.split('\n').filter(line => line.trim());
-  const output = document.getElementById('output');
-  const container = document.getElementById('outputContainer');
-  
-  output.innerHTML = '';
-  emailData = {};
-  container.style.display = 'block';
-  
-  lines.forEach((line, index) => {
-    const parsed = parseLine(line);
-    if (!parsed) return;
-    
-    // Store email data
-    emailData[parsed.email] = {
-      name: parsed.name,
-      company: parsed.company,
-      index: index
-    };
-    
-    const subject = document.getElementById('subject').value
-      .replace(/{name}/g, parsed.name)
-      .replace(/{company}/g, parsed.company);
-    
-    const body = document.getElementById('body').value
-      .replace(/{name}/g, parsed.name)
-      .replace(/{company}/g, parsed.company);
-    
-    const mailtoLink = `mailto:${parsed.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Check if email has already been sent (from PERMANENT history)
-    const hasBeenSent = isEmailSent(parsed.email);
-    
-    const emailLink = document.createElement('div');
-    emailLink.className = `email-link ${hasBeenSent ? 'sent' : ''}`;
-    emailLink.setAttribute('data-email', parsed.email);
-    emailLink.setAttribute('data-index', index);
-    
-    if (!hasBeenSent) {
-      // For pending emails: clicking anywhere sends and opens Gmail
-      emailLink.addEventListener('click', function(e) {
-        if (e.target.classList.contains('email-action')) {
-          return;
-        }
-        handleSendEmail(parsed.email, parsed.name, mailtoLink);
-      });
-    } else {
-      // For already sent emails: clicking shows message, NO Gmail
-      emailLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (!e.target.classList.contains('email-action')) {
-          showToast(`Already sent to ${parsed.name} (cannot resend)`);
-        }
-      });
-    }
-    
-    emailLink.innerHTML = `
-      <div class="email-number">${index + 1}</div>
-      <div class="email-content">
-        <div class="email-info">
-          <div class="email-name">${parsed.name}</div>
-          <div class="email-address">${parsed.email}</div>
-        </div>
-        <button class="email-action" data-email="${parsed.email}" data-name="${parsed.name}">
-          ${hasBeenSent ? '✓ Sent' : 'Send'}
-        </button>
-      </div>
-    `;
-    
-    output.appendChild(emailLink);
-  });
-  
-  // Add event listeners to send buttons
-  attachSendButtonListeners();
-  
-  updateFilterCounts();
-  showToast(`Generated ${lines.length} email links`);
-  
-  // Show scroll buttons
-  document.getElementById('scrollTopBtn').style.display = 'flex';
-  document.getElementById('scrollBottomBtn').style.display = 'flex';
-}
-
-// Attach event listeners to send buttons
-function attachSendButtonListeners() {
-  document.querySelectorAll('.email-action').forEach(button => {
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
-  });
-  
-  document.querySelectorAll('.email-action').forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const email = this.getAttribute('data-email');
-      const name = this.getAttribute('data-name');
-      const emailLink = this.closest('.email-link');
-      
-      // If already sent, show message
-      if (isEmailSent(email)) {
-        showToast(`Already sent to ${name} (cannot resend)`);
-        return;
-      }
-      
-      // Get mailto link
-      const subject = document.getElementById('subject').value
-        .replace(/{name}/g, name)
-        .replace(/{company}/g, emailData[email]?.company || 'Company');
-      
-      const body = document.getElementById('body').value
-        .replace(/{name}/g, name)
-        .replace(/{company}/g, emailData[email]?.company || 'Company');
-      
-      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      handleSendEmail(email, name, mailtoLink);
-    });
-  });
-}
-
-// Handle sending email
-function handleSendEmail(email, name, mailtoLink) {
-  console.log('Sending email:', email);
-  
-  // Update counters
-  if (!incrementSentCounters()) {
-    showToast('Error updating counters');
-    return;
-  }
-  
-  // Add to PERMANENT sent history
-  addToSentHistory(email);
-  
-  // Update UI immediately
-  updateEmailUI(email);
-  
-  // Update stats and counters
-  updateSentStats();
-  updateFilterCounts();
-  
-  // Apply current filter immediately
-  applyCurrentFilter();
-  
-  // Save regular data
-  saveData();
-  
-  // Open Gmail in new tab
-  setTimeout(() => {
-    window.open(mailtoLink, '_blank');
-  }, 100);
-  
-  showToast(`Opening Gmail for ${name}`);
-}
-
-// Update email UI
-function updateEmailUI(email) {
-  const emailLink = document.querySelector(`[data-email="${email}"]`);
-  if (!emailLink) return;
-  
-  const name = emailData[email]?.name || 'Contact';
-  
-  // Add sent class
-  emailLink.classList.add('sent');
-  
-  // Update number badge
-  const numberBadge = emailLink.querySelector('.email-number');
-  if (numberBadge) {
-    numberBadge.style.background = '#10b981';
-  }
-  
-  // Update button
-  const button = emailLink.querySelector('.email-action');
-  if (button) {
-    button.textContent = '✓ Sent';
-    button.style.background = '#10b981';
-    button.style.cursor = 'default';
-    
-    button.onclick = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      showToast(`Already sent to ${name} (cannot resend)`);
-    };
-  }
-  
-  // Remove existing click handler and add new one
-  const newEmailLink = emailLink.cloneNode(true);
-  emailLink.parentNode.replaceChild(newEmailLink, emailLink);
-  
-  // For sent emails: clicking shows message, NO Gmail
-  newEmailLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (!e.target.classList.contains('email-action')) {
-      showToast(`Already sent to ${name} (cannot resend)`);
-    }
-  });
 }
 
 // Apply current filter
@@ -1424,7 +1588,8 @@ function downloadCSV() {
   lines.forEach(line => {
     const parsed = parseLine(line);
     if (parsed) {
-      const status = isEmailSent(parsed.email) ? 'Sent' : 'Pending';
+      const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
+      const status = sentEmails.includes(parsed.email) ? 'Sent' : 'Pending';
       csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}"\n`;
     }
   });
@@ -1513,6 +1678,7 @@ document.getElementById('list').addEventListener('input', function() {
 
 document.getElementById('subject').addEventListener('input', scheduleSave);
 document.getElementById('body').addEventListener('input', scheduleSave);
+document.getElementById('ccEmail').addEventListener('input', scheduleSave);
 
 // Check for midnight reset
 function checkMidnightReset() {
@@ -1536,7 +1702,7 @@ window.addEventListener('load', function() {
   // Setup midnight reset
   checkMidnightReset();
   
-  console.log('FATISCO loaded - Sent emails remembered across content changes');
+  console.log('FATISCO loaded - CC feature added, sent history resets with new lists');
 });
 </script>
 </body>
