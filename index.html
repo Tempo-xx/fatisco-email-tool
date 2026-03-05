@@ -941,11 +941,13 @@ let stats = {
 let emailData = {}; // Store email data for quick access
 let currentFilter = 'all';
 let ccEnabled = false; // CC toggle state
-let currentListHash = ''; // Track current list to reset sent history
 
-// Storage Keys
+// ============================================
+// PERMANENT STORAGE - SURVIVES BROWSER RESTARTS
+// ============================================
+
 const STORAGE_KEYS = {
-  // Regular data (can be cleared)
+  // Regular data
   EMAIL_LIST: 'fatisco_email_list',
   SUBJECT: 'fatisco_subject',
   BODY: 'fatisco_body',
@@ -953,12 +955,14 @@ const STORAGE_KEYS = {
   CC_ENABLED: 'fatisco_cc_enabled',
   CC_EMAIL: 'fatisco_cc_email',
   
+  // PERMANENT SENT EMAILS - NEVER LOST
+  SENT_EMAILS_BY_LIST: 'fatisco_permanent_sent_emails', // Stores sent emails per list
+  CURRENT_LIST_HASH: 'fatisco_current_list_hash', // Tracks current list
+  
   // Counters
   SENT_TOTAL: 'fatisco_sent_total', // CAN be cleared
-  
-  // INDESTRUCTIBLE "SENT TODAY" counter
-  SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
-  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date'
+  SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today', // NEVER cleared
+  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date' // Date tracking
 };
 
 // Load ALL data
@@ -1001,10 +1005,53 @@ function loadAllData() {
     updateStatsFromList();
     updateSentStats();
     
-    console.log('Data loaded - CC feature enabled');
+    console.log('Permanent storage loaded - sent emails will survive browser restarts');
     
   } catch (e) {
     console.error('Error loading data:', e);
+  }
+}
+
+// Helper: Get list hash to track changes
+function getListHash(listText) {
+  let hash = 0;
+  for (let i = 0; i < listText.length; i++) {
+    const char = listText.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString();
+}
+
+// Get PERMANENT sent emails for current list
+function getPermanentSentEmails() {
+  try {
+    const currentListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH) || '';
+    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+    return allSentData[currentListHash] || [];
+  } catch (e) {
+    console.error('Error loading permanent sent emails:', e);
+    return [];
+  }
+}
+
+// Save PERMANENT sent emails for current list
+function savePermanentSentEmail(email) {
+  try {
+    const currentListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH) || '';
+    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+    
+    if (!allSentData[currentListHash]) {
+      allSentData[currentListHash] = [];
+    }
+    
+    if (!allSentData[currentListHash].includes(email)) {
+      allSentData[currentListHash].push(email);
+      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
+      console.log('Email permanently saved:', email);
+    }
+  } catch (e) {
+    console.error('Error saving permanent sent email:', e);
   }
 }
 
@@ -1101,18 +1148,7 @@ function updateSentStats() {
   document.getElementById('todayInfo').textContent = `${hours}h since midnight`;
 }
 
-// Get list hash to track changes
-function getListHash(listText) {
-  let hash = 0;
-  for (let i = 0; i < listText.length; i++) {
-    const char = listText.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString();
-}
-
-// Generate email links - with RESET for new lists
+// Generate email links - WITH PERMANENT STORAGE
 function generateLinks() {
   const list = document.getElementById('list').value.trim();
   if (!list) {
@@ -1121,16 +1157,13 @@ function generateLinks() {
   }
   
   const newListHash = getListHash(list);
+  const previousListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH);
   
-  // Check if this is a new list (different from previous)
-  const previousListHash = sessionStorage.getItem('fatisco_current_list_hash');
-  
+  // Check if list has changed
   if (newListHash !== previousListHash) {
-    // New list detected - reset sent history
-    console.log('New list detected - resetting sent history');
-    sessionStorage.removeItem('fatisco_current_sent_emails');
-    sessionStorage.setItem('fatisco_current_list_hash', newListHash);
-    showToast('New list loaded - sent history cleared');
+    console.log('New list detected - will track sent emails separately');
+    localStorage.setItem(STORAGE_KEYS.CURRENT_LIST_HASH, newListHash);
+    showToast('New list loaded - sent status will be tracked permanently');
   }
   
   const lines = list.split('\n').filter(line => line.trim());
@@ -1140,6 +1173,9 @@ function generateLinks() {
   output.innerHTML = '';
   emailData = {};
   container.style.display = 'block';
+  
+  // Get PERMANENT sent emails for this list
+  const permanentSentEmails = getPermanentSentEmails();
   
   lines.forEach((line, index) => {
     const parsed = parseLine(line);
@@ -1170,9 +1206,8 @@ function generateLinks() {
       }
     }
     
-    // Check if email has already been sent in THIS session
-    const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
-    const hasBeenSent = sentEmails.includes(parsed.email);
+    // Check if email has been sent PERMANENTLY
+    const hasBeenSent = permanentSentEmails.includes(parsed.email);
     
     const emailLink = document.createElement('div');
     emailLink.className = `email-link ${hasBeenSent ? 'sent' : ''}`;
@@ -1242,9 +1277,9 @@ function attachSendButtonListeners() {
       const email = this.getAttribute('data-email');
       const name = this.getAttribute('data-name');
       
-      // Check if already sent
-      const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
-      if (sentEmails.includes(email)) {
+      // Check if already sent PERMANENTLY
+      const permanentSentEmails = getPermanentSentEmails();
+      if (permanentSentEmails.includes(email)) {
         showToast(`Already sent to ${name} (cannot resend)`);
         return;
       }
@@ -1282,12 +1317,8 @@ function handleSendEmail(email, name, mailtoLink) {
     return;
   }
   
-  // Add to session sent emails (current list only)
-  const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
-  if (!sentEmails.includes(email)) {
-    sentEmails.push(email);
-    sessionStorage.setItem('fatisco_current_sent_emails', JSON.stringify(sentEmails));
-  }
+  // Save to PERMANENT storage (survives browser restarts)
+  savePermanentSentEmail(email);
   
   // Update UI immediately
   updateEmailUI(email);
@@ -1470,9 +1501,9 @@ function forceSave() {
   }
 }
 
-// Clear all data (but NOT "Sent Today" counter!)
+// Clear all data
 function clearAllData() {
-  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE: "Sent Today" counter will NOT be cleared.\nIt is indestructible and only resets at midnight.\n"Sent (Total)" will be reset.')) {
+  if (confirm('Clear ALL editable data?\n\n⚠️ NOTE:\n- "Sent Today" counter will NOT be cleared (only resets at midnight)\n- "Sent (Total)" will be reset\n- Sent email status for current list will be preserved')) {
     // Clear only editable data
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
@@ -1489,11 +1520,12 @@ function clearAllData() {
     updateStatsFromList();
     updateFilterCounts();
     
-    // Clear regular storage (NOT indestructible counters!)
+    // Clear regular storage (NOT indestructible counters or sent emails)
     Object.keys(localStorage).forEach(key => {
-      // PRESERVE indestructible counters
+      // PRESERVE indestructible counters and sent emails
       if (key === STORAGE_KEYS.SENT_TODAY_COUNT || 
-          key === STORAGE_KEYS.SENT_TODAY_DATE) {
+          key === STORAGE_KEYS.SENT_TODAY_DATE ||
+          key === STORAGE_KEYS.SENT_EMAILS_BY_LIST) {
         return; // Skip - do NOT delete
       }
       
@@ -1503,13 +1535,10 @@ function clearAllData() {
       }
     });
     
-    // Clear session storage (current list data)
-    sessionStorage.clear();
-    
     // Update stats to reflect cleared data
     updateSentStats();
     
-    showToast('Editable data cleared\n"Sent Today" counter preserved');
+    showToast('Editable data cleared\nSent emails preserved');
   }
 }
 
@@ -1585,11 +1614,12 @@ function downloadCSV() {
   const lines = list.split('\n').filter(line => line.trim());
   let csv = 'Email,Name,Company,Status\n';
   
+  const permanentSentEmails = getPermanentSentEmails();
+  
   lines.forEach(line => {
     const parsed = parseLine(line);
     if (parsed) {
-      const sentEmails = JSON.parse(sessionStorage.getItem('fatisco_current_sent_emails') || '[]');
-      const status = sentEmails.includes(parsed.email) ? 'Sent' : 'Pending';
+      const status = permanentSentEmails.includes(parsed.email) ? 'Sent' : 'Pending';
       csv += `"${parsed.email}","${parsed.name}","${parsed.company}","${status}"\n`;
     }
   });
@@ -1702,7 +1732,7 @@ window.addEventListener('load', function() {
   // Setup midnight reset
   checkMidnightReset();
   
-  console.log('FATISCO loaded - CC feature added, sent history resets with new lists');
+  console.log('FATISCO loaded - Sent emails are PERMANENT and survive browser restarts');
 });
 </script>
 </body>
