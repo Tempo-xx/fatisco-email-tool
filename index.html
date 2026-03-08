@@ -449,6 +449,7 @@ body.dark {
   font-weight: 600;
   color: #333;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .dark .filter-btn {
@@ -956,7 +957,7 @@ Looking forward to connecting!</textarea>
 
 <script>
 // ============================================
-// CORE DATA - STRICT SENT EMAIL TRACKING
+// CORE DATA
 // ============================================
 let stats = {
   total: 0,
@@ -977,7 +978,7 @@ const ITEM_HEIGHT = 52;
 const BUFFER_SIZE = 10;
 
 // ============================================
-// PERMANENT STORAGE KEYS
+// STORAGE KEYS
 // ============================================
 const STORAGE_KEYS = {
   EMAIL_LIST: 'fatisco_email_list',
@@ -988,13 +989,12 @@ const STORAGE_KEYS = {
   CC_EMAIL: 'fatisco_cc_email',
   SENT_EMAILS_BY_LIST: 'fatisco_permanent_sent_emails',
   CURRENT_LIST_HASH: 'fatisco_current_list_hash',
-  SENT_TOTAL: 'fatisco_sent_total',
   SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
   SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date'
 };
 
 // ============================================
-// STRICT SENT EMAIL VERIFICATION FUNCTIONS
+// SENT EMAIL FUNCTIONS
 // ============================================
 
 // Get list hash
@@ -1014,7 +1014,7 @@ function getCurrentListHash() {
   return list ? getListHash(list) : '';
 }
 
-// STRICT: Check if email is sent (ALWAYS checks permanent storage)
+// Check if email is sent
 function isEmailSent(email) {
   try {
     const currentListHash = getCurrentListHash();
@@ -1029,7 +1029,7 @@ function isEmailSent(email) {
   }
 }
 
-// STRICT: Get all sent emails for current list
+// Get all sent emails for current list
 function getPermanentSentEmails() {
   try {
     const currentListHash = getCurrentListHash();
@@ -1043,7 +1043,7 @@ function getPermanentSentEmails() {
   }
 }
 
-// STRICT: Save email as sent (with verification)
+// Save email as sent
 function savePermanentSentEmail(email) {
   try {
     const currentListHash = getCurrentListHash();
@@ -1062,7 +1062,6 @@ function savePermanentSentEmail(email) {
     if (!allSentData[currentListHash].includes(emailLower)) {
       allSentData[currentListHash].push(emailLower);
       localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
-      console.log('Email permanently saved as sent:', email);
       return true;
     }
     return false;
@@ -1155,6 +1154,7 @@ function getHoursSinceMidnight() {
 function updateSentStats() {
   const todayDate = getTodayDateString();
   
+  // Sent Today - INDESTRUCTIBLE (only resets at midnight)
   let sentTodayCount = 0;
   try {
     const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
@@ -1171,15 +1171,8 @@ function updateSentStats() {
     console.error('Error loading Sent Today counter:', e);
   }
   
-  let sentTotalCount = 0;
-  try {
-    const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
-    if (savedTotal) {
-      sentTotalCount = parseInt(savedTotal) || 0;
-    }
-  } catch (e) {
-    console.error('Error loading Sent Total:', e);
-  }
+  // Sent Total - CALCULATED FROM CURRENT LIST (not permanent)
+  let sentTotalCount = emailData.filter(e => e.sent).length;
   
   stats.sentToday = sentTodayCount;
   stats.sentTotal = sentTotalCount;
@@ -1194,6 +1187,7 @@ function incrementSentCounters() {
   const todayDate = getTodayDateString();
   
   try {
+    // Increment Sent Today (permanent)
     let sentTodayCount = 0;
     const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
     
@@ -1207,14 +1201,6 @@ function incrementSentCounters() {
     }
     
     localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, sentTodayCount.toString());
-    
-    let sentTotalCount = 0;
-    const savedTotal = localStorage.getItem(STORAGE_KEYS.SENT_TOTAL);
-    if (savedTotal) {
-      sentTotalCount = parseInt(savedTotal) || 0;
-    }
-    sentTotalCount++;
-    localStorage.setItem(STORAGE_KEYS.SENT_TOTAL, sentTotalCount.toString());
     
     return true;
   } catch (e) {
@@ -1305,14 +1291,14 @@ function updateStatsFromList() {
 }
 
 // ============================================
-// STRICT SEND HANDLER - ALWAYS CHECKS SENT STATUS
+// SEND HANDLER
 // ============================================
 function handleSendEmail(email, name, mailtoLink, index) {
   console.log('Send attempt for:', email);
   
-  // STRICT CHECK #1: Double-check sent status from permanent storage
+  // Check if already sent
   if (isEmailSent(email)) {
-    console.log('BLOCKED: Email already sent (storage check)');
+    console.log('BLOCKED: Email already sent');
     showToast(`⚠️ Cannot resend: ${name} already sent`);
     
     // Update UI to show sent status
@@ -1332,14 +1318,8 @@ function handleSendEmail(email, name, mailtoLink, index) {
     return;
   }
   
-  // Proceed with sending
-  console.log('Sending email to:', email);
-  
-  // Update permanent storage
-  const saved = savePermanentSentEmail(email);
-  if (!saved) {
-    console.log('Email already in permanent storage');
-  }
+  // Save to permanent storage
+  savePermanentSentEmail(email);
   
   // Update counters
   incrementSentCounters();
@@ -1349,46 +1329,17 @@ function handleSendEmail(email, name, mailtoLink, index) {
     emailData[index].sent = true;
   }
   
-  // Update UI immediately
-  const element = document.querySelector(`.email-link[data-index="${index}"]`);
-  if (element) {
-    element.classList.add('sent');
-    const numberBadge = element.querySelector('.email-number');
-    if (numberBadge) numberBadge.style.background = '#10b981';
-    
-    const button = element.querySelector('.email-action');
-    if (button) {
-      button.textContent = '✓ Sent';
-      button.style.background = '#10b981';
-      button.style.cursor = 'not-allowed';
-      
-      // Remove all click handlers and add blocked one
-      const newButton = button.cloneNode(true);
-      button.parentNode.replaceChild(newButton, button);
-      
-      newButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        showToast(`⚠️ Cannot resend: ${name} already sent`);
-      });
-    }
-    
-    // Update element's click handler
-    const newElement = element.cloneNode(true);
-    element.parentNode.replaceChild(newElement, element);
-    
-    newElement.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!e.target.classList.contains('email-action')) {
-        showToast(`⚠️ Cannot resend: ${name} already sent`);
-      }
-    });
-  }
+  // Update UI
+  updateEmailElementAsSent(index, name);
   
-  // Update stats
+  // Update stats and filters
   updateSentStats();
   updateFilterCounts();
+  
+  // If filter is active, reapply it
+  if (currentFilter !== 'all') {
+    applyCurrentFilter();
+  }
   
   // Save data
   saveData();
@@ -1401,8 +1352,48 @@ function handleSendEmail(email, name, mailtoLink, index) {
   showToast(`📧 Opening Gmail for ${name}`);
 }
 
+// Update email element as sent
+function updateEmailElementAsSent(index, name) {
+  const element = document.querySelector(`.email-link[data-index="${index}"]`);
+  if (!element) return;
+  
+  element.classList.add('sent');
+  
+  const numberBadge = element.querySelector('.email-number');
+  if (numberBadge) numberBadge.style.background = '#10b981';
+  
+  const button = element.querySelector('.email-action');
+  if (button) {
+    button.textContent = '✓ Sent';
+    button.style.background = '#10b981';
+    button.style.cursor = 'not-allowed';
+    
+    // Replace button with blocked version
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+    
+    newButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showToast(`⚠️ Cannot resend: ${name} already sent`);
+    });
+  }
+  
+  // Replace element with blocked version
+  const newElement = element.cloneNode(true);
+  element.parentNode.replaceChild(newElement, element);
+  
+  newElement.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.target.classList.contains('email-action')) {
+      showToast(`⚠️ Cannot resend: ${name} already sent`);
+    }
+  });
+}
+
 // ============================================
-// GENERATE LINKS WITH STRICT SENT CHECKING
+// GENERATE LINKS
 // ============================================
 function generateLinks() {
   const list = document.getElementById('list').value.trim();
@@ -1432,22 +1423,20 @@ function generateLinks() {
     }
   });
   
-  // STRICT: Get sent emails from permanent storage
+  // Get sent emails from permanent storage
   const permanentSentEmails = getPermanentSentEmails();
-  console.log('Permanent sent emails:', permanentSentEmails);
   
-  // Mark sent status based on permanent storage
+  // Mark sent status
   emailData = emailData.map(email => ({
     ...email,
     sent: permanentSentEmails.includes(email.email)
   }));
   
-  console.log('Email data with sent status:', emailData.map(e => ({email: e.email, sent: e.sent})));
-  
   // Update stats
   stats.total = emailData.length;
   stats.valid = emailData.length;
   updateStatsFromList();
+  updateSentStats();
   updateFilterCounts();
   
   // Setup virtual scrolling
@@ -1461,13 +1450,59 @@ function generateLinks() {
 }
 
 // ============================================
+// FILTER FUNCTIONS
+// ============================================
+function filterEmails(filter) {
+  currentFilter = filter;
+  
+  // Update active button
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  // Apply filter
+  applyCurrentFilter();
+  
+  showToast(`Showing ${filter} emails`);
+}
+
+function applyCurrentFilter() {
+  // Clear visible emails
+  visibleEmails = [];
+  
+  // Re-render with filter
+  if (emailData.length > 0) {
+    setupVirtualScrolling();
+  }
+}
+
+function shouldShowEmail(email) {
+  if (currentFilter === 'all') return true;
+  if (currentFilter === 'sent') return email.sent;
+  if (currentFilter === 'pending') return !email.sent;
+  return true;
+}
+
+function updateFilterCounts() {
+  const sentCount = emailData.filter(e => e.sent).length;
+  const pendingCount = emailData.length - sentCount;
+  
+  document.getElementById('countAll').textContent = emailData.length;
+  document.getElementById('countSent').textContent = sentCount;
+  document.getElementById('countPending').textContent = pendingCount;
+}
+
+// ============================================
 // VIRTUAL SCROLLING
 // ============================================
 function setupVirtualScrolling() {
   const viewport = document.getElementById('virtualScrollViewport');
   const content = document.getElementById('virtualScrollContent');
   
-  const totalHeight = emailData.length * ITEM_HEIGHT;
+  // Calculate total height based on filtered emails
+  const filteredCount = emailData.filter(e => shouldShowEmail(e)).length;
+  const totalHeight = filteredCount * ITEM_HEIGHT;
   content.style.height = totalHeight + 'px';
   content.innerHTML = '';
   
@@ -1489,16 +1524,29 @@ function updateVisibleItems() {
   const scrollTop = viewport.scrollTop;
   const viewportHeight = viewport.clientHeight;
   
-  startIndex = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - BUFFER_SIZE);
-  endIndex = Math.min(emailData.length - 1, Math.ceil((scrollTop + viewportHeight) / ITEM_HEIGHT) + BUFFER_SIZE);
+  // Get filtered indices
+  const filteredIndices = emailData.reduce((acc, email, idx) => {
+    if (shouldShowEmail(email)) acc.push(idx);
+    return acc;
+  }, []);
+  
+  const totalFiltered = filteredIndices.length;
+  
+  // Calculate visible range
+  const visibleStart = Math.floor(scrollTop / ITEM_HEIGHT);
+  const visibleEnd = Math.ceil((scrollTop + viewportHeight) / ITEM_HEIGHT);
+  
+  startIndex = Math.max(0, visibleStart - BUFFER_SIZE);
+  endIndex = Math.min(totalFiltered - 1, visibleEnd + BUFFER_SIZE);
   
   const currentVisible = new Set(visibleEmails);
   const newVisible = [];
   
   // Create new elements
   for (let i = startIndex; i <= endIndex; i++) {
-    if (!currentVisible.has(i)) {
-      const element = createEmailElement(emailData[i], i);
+    if (!currentVisible.has(i) && i < filteredIndices.length) {
+      const realIndex = filteredIndices[i];
+      const element = createEmailElement(emailData[realIndex], realIndex, i);
       element.style.top = (i * ITEM_HEIGHT) + 'px';
       content.appendChild(element);
     }
@@ -1508,7 +1556,7 @@ function updateVisibleItems() {
   // Remove out-of-view elements
   for (let i of currentVisible) {
     if (i < startIndex || i > endIndex) {
-      const element = document.querySelector(`.email-link[data-index="${i}"]`);
+      const element = document.querySelector(`.email-link[data-virtual-index="${i}"]`);
       if (element) element.remove();
     }
   }
@@ -1516,10 +1564,8 @@ function updateVisibleItems() {
   visibleEmails = newVisible;
 }
 
-// ============================================
-// CREATE EMAIL ELEMENT WITH STRICT SENT CHECKING
-// ============================================
-function createEmailElement(email, index) {
+// Create email element
+function createEmailElement(email, realIndex, virtualIndex) {
   const subject = document.getElementById('subject').value
     .replace(/{name}/g, email.name)
     .replace(/{company}/g, email.company);
@@ -1540,11 +1586,11 @@ function createEmailElement(email, index) {
   const element = document.createElement('div');
   element.className = `email-link ${email.sent ? 'sent' : ''}`;
   element.setAttribute('data-email', email.email);
-  element.setAttribute('data-index', index);
+  element.setAttribute('data-index', realIndex);
+  element.setAttribute('data-virtual-index', virtualIndex);
   element.style.position = 'absolute';
-  element.style.top = (index * ITEM_HEIGHT) + 'px';
+  element.style.top = (virtualIndex * ITEM_HEIGHT) + 'px';
   
-  // STRICT: Handle click based on sent status
   if (email.sent) {
     // Block all clicks on sent emails
     element.addEventListener('click', function(e) {
@@ -1557,36 +1603,32 @@ function createEmailElement(email, index) {
     element.addEventListener('click', function(e) {
       if (e.target.classList.contains('email-action')) return;
       
-      // STRICT CHECK: Verify not sent before proceeding
       if (isEmailSent(email.email)) {
         showToast(`⚠️ Cannot resend: ${email.name} already sent`);
-        // Update UI to reflect sent status
-        this.classList.add('sent');
-        const numberBadge = this.querySelector('.email-number');
-        if (numberBadge) numberBadge.style.background = '#10b981';
+        updateEmailElementAsSent(realIndex, email.name);
         return;
       }
       
-      handleSendEmail(email.email, email.name, mailtoLink, index);
+      handleSendEmail(email.email, email.name, mailtoLink, realIndex);
     });
   }
   
   const ccBadge = ccEnabled && document.getElementById('ccEmail').value.trim() ? '<span class="cc-badge">CC</span>' : '';
   
   element.innerHTML = `
-    <div class="email-number">${index + 1}</div>
+    <div class="email-number">${realIndex + 1}</div>
     <div class="email-content">
       <div class="email-info">
         <div class="email-name">${email.name}${ccBadge}</div>
         <div class="email-address">${email.email}</div>
       </div>
-      <button class="email-action" data-email="${email.email}" data-name="${email.name}" data-index="${index}">
+      <button class="email-action" data-email="${email.email}" data-name="${email.name}" data-index="${realIndex}">
         ${email.sent ? '✓ Sent' : 'Send'}
       </button>
     </div>
   `;
   
-  // Add button listener with STRICT checking
+  // Add button listener
   const button = element.querySelector('.email-action');
   
   if (email.sent) {
@@ -1600,46 +1642,17 @@ function createEmailElement(email, index) {
       e.preventDefault();
       e.stopPropagation();
       
-      // STRICT CHECK: Verify not sent before proceeding
       if (isEmailSent(email.email)) {
         showToast(`⚠️ Cannot resend: ${email.name} already sent`);
-        // Update UI
-        element.classList.add('sent');
-        this.textContent = '✓ Sent';
-        this.style.background = '#10b981';
+        updateEmailElementAsSent(realIndex, email.name);
         return;
       }
       
-      handleSendEmail(email.email, email.name, mailtoLink, index);
+      handleSendEmail(email.email, email.name, mailtoLink, realIndex);
     });
   }
   
   return element;
-}
-
-// ============================================
-// FILTER FUNCTIONS
-// ============================================
-function filterEmails(filter) {
-  currentFilter = filter;
-  
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  event.target.classList.add('active');
-  
-  if (emailData.length > 0) {
-    setupVirtualScrolling();
-  }
-}
-
-function updateFilterCounts() {
-  const sentCount = emailData.filter(e => e.sent).length;
-  const pendingCount = emailData.length - sentCount;
-  
-  document.getElementById('countAll').textContent = emailData.length;
-  document.getElementById('countSent').textContent = sentCount;
-  document.getElementById('countPending').textContent = pendingCount;
 }
 
 // ============================================
@@ -1676,7 +1689,7 @@ function forceSave() {
 }
 
 function clearAllData() {
-  if (confirm('Clear ALL editable data?\n\nNOTE: Sent emails and today counter preserved')) {
+  if (confirm('Clear ALL data?\n\nNOTE: "Sent Today" counter will NOT be cleared (only resets at midnight)')) {
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
@@ -1690,12 +1703,12 @@ function clearAllData() {
     
     emailData = [];
     updateStatsFromList();
+    updateFilterCounts();
     
-    // Clear regular storage but preserve sent emails and today counter
+    // Clear regular storage but preserve sent today counter
     Object.keys(localStorage).forEach(key => {
       if (key !== STORAGE_KEYS.SENT_TODAY_COUNT && 
-          key !== STORAGE_KEYS.SENT_TODAY_DATE &&
-          key !== STORAGE_KEYS.SENT_EMAILS_BY_LIST) {
+          key !== STORAGE_KEYS.SENT_TODAY_DATE) {
         if (key.startsWith('fatisco_')) {
           localStorage.removeItem(key);
         }
@@ -1703,7 +1716,7 @@ function clearAllData() {
     });
     
     updateSentStats();
-    showToast('Editable data cleared');
+    showToast('All data cleared');
   }
 }
 
@@ -1809,7 +1822,7 @@ window.addEventListener('load', function() {
   loadAllData();
   setInterval(updateSentStats, 60000);
   checkMidnightReset();
-  console.log('FATISCO loaded with STRICT no-resend protection');
+  console.log('FATISCO loaded - Final version');
 });
 </script>
 </body>
