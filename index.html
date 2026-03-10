@@ -58,6 +58,7 @@ body.dark {
   gap: 8px;
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .logo-icon {
@@ -68,6 +69,7 @@ body.dark {
 .logo-text {
   font-size: 18px;
   font-weight: 700;
+  user-select: none;
 }
 
 .theme-toggle {
@@ -404,13 +406,168 @@ body.dark {
   background: #475569;
 }
 
-.btn-danger {
-  background: #dc2626;
+.btn-batch {
+  background: #8b5cf6;
   color: white;
 }
 
-.btn-danger:hover {
-  background: #b91c1c;
+.btn-batch:hover {
+  background: #7c3aed;
+}
+
+.btn-batch-sent {
+  background: #10b981;
+  color: white;
+  opacity: 0.7;
+  cursor: default;
+}
+
+.btn-batch-sent:hover {
+  background: #10b981;
+  transform: none;
+}
+
+/* Batch Mode Specific Styles */
+.batch-mode-badge {
+  display: inline-block;
+  background: #8b5cf6;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  letter-spacing: 0.5px;
+}
+
+.batch-controls {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  border-left: 4px solid #8b5cf6;
+}
+
+.dark .batch-controls {
+  background: #1e293b;
+}
+
+.batch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.batch-title {
+  font-weight: 700;
+  color: #8b5cf6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batch-size-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.batch-size-input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.dark .batch-size-input {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.batch-warning {
+  background: #fff3cd;
+  color: #856404;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  border-left: 3px solid #ffc107;
+}
+
+.dark .batch-warning {
+  background: #423d0b;
+  color: #ffd970;
+}
+
+.batch-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+}
+
+.dark .batch-list {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.batch-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dark .batch-item {
+  border-color: #334155;
+}
+
+.batch-item:last-child {
+  border-bottom: none;
+}
+
+.batch-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.batch-number {
+  font-weight: 700;
+  color: #8b5cf6;
+  min-width: 60px;
+}
+
+.batch-emails {
+  font-size: 13px;
+  color: #666;
+}
+
+.dark .batch-emails {
+  color: #94a3b8;
+}
+
+.batch-progress {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.dark .batch-progress {
+  border-color: #334155;
+}
+
+.batch-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
 }
 
 /* Virtual Scrolling Container */
@@ -710,7 +867,7 @@ body.dark {
   color: #94a3b8;
 }
 
-/* Media Queries for Mobile Optimization */
+/* Media Queries */
 @media (max-width: 768px) {
   html {
     font-size: 14px;
@@ -733,43 +890,18 @@ body.dark {
     font-size: 24px;
   }
   
-  .card {
-    margin-bottom: 12px;
-  }
-  
   .card-header, .card-body {
     padding: 12px;
   }
   
-  .button-group {
-    flex-direction: column;
-  }
-  
-  .btn {
-    width: 100%;
-  }
-  
-  .email-link {
-    padding: 6px;
-    margin-bottom: 4px;
-  }
-  
-  .scroll-btn {
-    width: 40px;
-    height: 40px;
-    right: 12px;
-  }
-  
-  .scroll-top {
-    bottom: 76px;
-  }
-  
-  .scroll-bottom {
-    bottom: 24px;
-  }
-  
   .virtual-scroll-viewport {
     height: 400px;
+  }
+  
+  .batch-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
 
@@ -790,18 +922,14 @@ body.dark {
     font-size: 22px;
   }
   
-  .email-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  
-  .email-action {
-    align-self: flex-end;
-  }
-  
   .virtual-scroll-viewport {
     height: 350px;
+  }
+  
+  .batch-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
@@ -816,7 +944,7 @@ body, .container, .card, .email-list-container {
 
 <div class="header">
   <div class="header-content">
-    <div class="logo">
+    <div class="logo" id="fatiscoLogo">
       <span class="logo-icon">F</span>
       <span class="logo-text">FATISCO</span>
     </div>
@@ -851,6 +979,7 @@ body, .container, .card, .email-list-container {
     <div class="card-header">
       <span class="card-icon">📧</span>
       <span class="card-title">Email List</span>
+      <span id="batchModeBadge" class="batch-mode-badge" style="display: none;">BATCH MODE</span>
     </div>
     <div class="card-body">
       <div class="file-upload">
@@ -909,18 +1038,54 @@ I noticed {company} is doing great work. I'd love to discuss collaboration oppor
 Looking forward to connecting!</textarea>
       </div>
       
-      <div class="button-group">
-        <button class="btn btn-primary" onclick="generateLinks()">
-          ⚡ Generate Links
-        </button>
-        <button class="btn btn-secondary" onclick="downloadCSV()">
-          📥 Export CSV
-        </button>
+      <!-- Normal Mode Controls (visible by default) -->
+      <div id="normalControls">
+        <div class="button-group">
+          <button class="btn btn-primary" onclick="generateLinks()">
+            ⚡ Generate Links
+          </button>
+          <button class="btn btn-secondary" onclick="downloadCSV()">
+            📥 Export CSV
+          </button>
+        </div>
+      </div>
+      
+      <!-- Batch Mode Controls (hidden by default) -->
+      <div id="batchControls" style="display: none;">
+        <div class="batch-controls">
+          <div class="batch-header">
+            <div class="batch-title">
+              <span>📦 BATCH SENDING (BCC)</span>
+            </div>
+            <div class="batch-size-control">
+              <span class="label" style="margin-bottom: 0;">Batch size:</span>
+              <input type="number" id="batchSize" class="batch-size-input" value="10" min="5" max="20" step="1" onchange="prepareBatches()">
+            </div>
+          </div>
+          
+          <div class="batch-warning">
+            ⚠️ <strong>Note:</strong> In batch mode, {'{'}name{'}'} and {'{'}company{'}'} placeholders will not work. The same email body is sent to everyone in the batch via BCC.
+          </div>
+          
+          <div id="batchListContainer" class="batch-list">
+            <!-- Batches will be generated here -->
+          </div>
+          
+          <div class="batch-progress" id="batchProgress" style="display: none;">
+            <div class="batch-stats">
+              <span>Progress: <span id="batchesSent">0</span>/<span id="totalBatches">0</span> batches</span>
+              <span>Emails: <span id="batchEmailsSent">0</span>/<span id="totalBatchEmails">0</span></span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="batchProgressFill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Email Output with Virtual Scrolling -->
+  <!-- Email Output -->
   <div class="email-list-container" id="outputContainer">
     <div class="email-list-header">
       <div class="email-filters">
@@ -936,9 +1101,7 @@ Looking forward to connecting!</textarea>
       </div>
     </div>
     <div class="virtual-scroll-viewport" id="virtualScrollViewport">
-      <div class="virtual-scroll-content" id="virtualScrollContent">
-        <!-- Email links will be dynamically inserted here -->
-      </div>
+      <div class="virtual-scroll-content" id="virtualScrollContent"></div>
     </div>
   </div>
 </div>
@@ -970,6 +1133,11 @@ let emailData = []; // Array of parsed emails with sent status
 let currentFilter = 'all';
 let ccEnabled = false;
 
+// Batch mode state
+let batchMode = false;
+let batches = [];
+let sentBatches = [];
+
 // Virtual Scrolling Variables
 let visibleEmails = [];
 let startIndex = 0;
@@ -990,86 +1158,10 @@ const STORAGE_KEYS = {
   SENT_EMAILS_BY_LIST: 'fatisco_permanent_sent_emails',
   CURRENT_LIST_HASH: 'fatisco_current_list_hash',
   SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
-  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date'
+  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date',
+  BATCH_MODE: 'fatisco_batch_mode', // Save batch mode preference
+  SENT_BATCHES: 'fatisco_sent_batches' // Save sent batches
 };
-
-// ============================================
-// SENT EMAIL FUNCTIONS
-// ============================================
-
-// Get list hash
-function getListHash(listText) {
-  let hash = 0;
-  for (let i = 0; i < listText.length; i++) {
-    const char = listText.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString();
-}
-
-// Get current list hash
-function getCurrentListHash() {
-  const list = document.getElementById('list').value.trim();
-  return list ? getListHash(list) : '';
-}
-
-// Check if email is sent
-function isEmailSent(email) {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) return false;
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    const sentEmails = allSentData[currentListHash] || [];
-    return sentEmails.includes(email.toLowerCase());
-  } catch (e) {
-    console.error('Error checking sent status:', e);
-    return false;
-  }
-}
-
-// Get all sent emails for current list
-function getPermanentSentEmails() {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) return [];
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    return allSentData[currentListHash] || [];
-  } catch (e) {
-    console.error('Error loading sent emails:', e);
-    return [];
-  }
-}
-
-// Save email as sent
-function savePermanentSentEmail(email) {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) {
-      console.error('No list hash found');
-      return false;
-    }
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    
-    if (!allSentData[currentListHash]) {
-      allSentData[currentListHash] = [];
-    }
-    
-    const emailLower = email.toLowerCase();
-    if (!allSentData[currentListHash].includes(emailLower)) {
-      allSentData[currentListHash].push(emailLower);
-      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.error('Error saving sent email:', e);
-    return false;
-  }
-}
 
 // ============================================
 // LOAD/SAVE DATA
@@ -1094,6 +1186,19 @@ function loadAllData() {
       }
     }
     
+    // Load batch mode preference
+    const savedBatchMode = localStorage.getItem(STORAGE_KEYS.BATCH_MODE);
+    if (savedBatchMode === 'true') {
+      batchMode = true;
+      toggleBatchMode(true);
+    }
+    
+    // Load sent batches
+    const savedSentBatches = localStorage.getItem(STORAGE_KEYS.SENT_BATCHES);
+    if (savedSentBatches) {
+      sentBatches = JSON.parse(savedSentBatches);
+    }
+    
     const savedList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
     if (savedList) {
       document.getElementById('list').value = savedList;
@@ -1113,19 +1218,250 @@ function loadAllData() {
   }
 }
 
-// Save regular data
 function saveData() {
   try {
     localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, document.getElementById('list').value);
     localStorage.setItem(STORAGE_KEYS.SUBJECT, document.getElementById('subject').value);
     localStorage.setItem(STORAGE_KEYS.BODY, document.getElementById('body').value);
     localStorage.setItem(STORAGE_KEYS.CC_ENABLED, ccEnabled);
+    localStorage.setItem(STORAGE_KEYS.BATCH_MODE, batchMode);
+    localStorage.setItem(STORAGE_KEYS.SENT_BATCHES, JSON.stringify(sentBatches));
     if (ccEnabled) {
       localStorage.setItem(STORAGE_KEYS.CC_EMAIL, document.getElementById('ccEmail').value);
     }
     return true;
   } catch (e) {
-    console.error('Save error:', e);
+    return false;
+  }
+}
+
+// ============================================
+// BATCH MODE TOGGLE (Hidden trigger on "FATISCO")
+// ============================================
+document.getElementById('fatiscoLogo').addEventListener('click', function() {
+  batchMode = !batchMode;
+  toggleBatchMode(batchMode);
+  saveData();
+  showToast(batchMode ? '🔒 Batch mode enabled' : '📧 Normal mode restored', 2000);
+});
+
+function toggleBatchMode(enable) {
+  const normalControls = document.getElementById('normalControls');
+  const batchControls = document.getElementById('batchControls');
+  const batchBadge = document.getElementById('batchModeBadge');
+  
+  if (enable) {
+    normalControls.style.display = 'none';
+    batchControls.style.display = 'block';
+    batchBadge.style.display = 'inline-block';
+    // Prepare batches if we have emails
+    if (emailData.length > 0) {
+      prepareBatches();
+    }
+  } else {
+    normalControls.style.display = 'block';
+    batchControls.style.display = 'none';
+    batchBadge.style.display = 'none';
+  }
+}
+
+// ============================================
+// BATCH PREPARATION
+// ============================================
+function prepareBatches() {
+  const pendingEmails = emailData.filter(e => !e.sent);
+  if (pendingEmails.length === 0) {
+    document.getElementById('batchListContainer').innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No pending emails to send</div>';
+    return;
+  }
+  
+  const batchSize = parseInt(document.getElementById('batchSize').value) || 10;
+  batches = [];
+  
+  for (let i = 0; i < pendingEmails.length; i += batchSize) {
+    const batchEmails = pendingEmails.slice(i, i + batchSize);
+    batches.push({
+      index: Math.floor(i / batchSize),
+      emails: batchEmails,
+      sent: sentBatches.includes(Math.floor(i / batchSize))
+    });
+  }
+  
+  renderBatches();
+  updateBatchProgress();
+}
+
+function renderBatches() {
+  const container = document.getElementById('batchListContainer');
+  if (batches.length === 0) {
+    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No batches to display</div>';
+    return;
+  }
+  
+  let html = '';
+  batches.forEach(batch => {
+    const emailList = batch.emails.map(e => e.email).join(', ');
+    const displayEmails = batch.emails.length > 3 
+      ? batch.emails.slice(0, 3).map(e => e.email).join(', ') + ` +${batch.emails.length - 3} more`
+      : emailList;
+    
+    html += `
+      <div class="batch-item">
+        <div class="batch-info">
+          <span class="batch-number">Batch ${batch.index + 1}</span>
+          <span class="batch-emails">${displayEmails}</span>
+        </div>
+        <button class="btn ${batch.sent ? 'btn-batch-sent' : 'btn-batch'}" 
+                onclick="sendBatch(${batch.index})"
+                ${batch.sent ? 'disabled' : ''}>
+          ${batch.sent ? '✓ Sent' : 'Send Batch'}
+        </button>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  document.getElementById('batchProgress').style.display = 'block';
+  updateBatchProgress();
+}
+
+function sendBatch(batchIndex) {
+  const batch = batches[batchIndex];
+  if (!batch || batch.sent) return;
+  
+  // Get subject and body (remove placeholders warning)
+  const subject = document.getElementById('subject').value
+    .replace(/{name}/g, '[NAME]')
+    .replace(/{company}/g, '[COMPANY]');
+  
+  const body = document.getElementById('body').value
+    .replace(/{name}/g, '[NAME]')
+    .replace(/{company}/g, '[COMPANY]');
+  
+  // Collect all emails in the batch
+  const bccEmails = batch.emails.map(e => e.email).join(',');
+  
+  // Create mailto link with BCC
+  let mailtoLink = `mailto:?bcc=${encodeURIComponent(bccEmails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+  // Add CC if enabled
+  if (ccEnabled) {
+    const ccEmail = document.getElementById('ccEmail').value.trim();
+    if (ccEmail) {
+      mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
+    }
+  }
+  
+  // Open email client
+  window.open(mailtoLink, '_blank');
+  
+  // Mark batch as sent
+  batch.sent = true;
+  if (!sentBatches.includes(batchIndex)) {
+    sentBatches.push(batchIndex);
+  }
+  
+  // Mark individual emails as sent
+  batch.emails.forEach(email => {
+    const emailIndex = emailData.findIndex(e => e.email === email.email);
+    if (emailIndex !== -1) {
+      emailData[emailIndex].sent = true;
+      savePermanentSentEmail(email.email);
+      updateEmailElementAsSent(emailIndex, email.name);
+    }
+  });
+  
+  // Update counters
+  incrementSentCounters();
+  updateSentStats();
+  updateFilterCounts();
+  
+  // Update UI
+  renderBatches();
+  updateBatchProgress();
+  saveData();
+  
+  showToast(`Batch ${batchIndex + 1} sent (${batch.emails.length} emails)`);
+}
+
+function updateBatchProgress() {
+  const totalBatches = batches.length;
+  const sentCount = batches.filter(b => b.sent).length;
+  const totalEmails = batches.reduce((sum, b) => sum + b.emails.length, 0);
+  const sentEmails = batches.filter(b => b.sent).reduce((sum, b) => sum + b.emails.length, 0);
+  
+  document.getElementById('batchesSent').textContent = sentCount;
+  document.getElementById('totalBatches').textContent = totalBatches;
+  document.getElementById('batchEmailsSent').textContent = sentEmails;
+  document.getElementById('totalBatchEmails').textContent = totalEmails;
+  
+  const progress = totalEmails > 0 ? (sentEmails / totalEmails) * 100 : 0;
+  document.getElementById('batchProgressFill').style.width = progress + '%';
+}
+
+// ============================================
+// SENT EMAIL FUNCTIONS
+// ============================================
+
+function getListHash(listText) {
+  let hash = 0;
+  for (let i = 0; i < listText.length; i++) {
+    const char = listText.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString();
+}
+
+function getCurrentListHash() {
+  const list = document.getElementById('list').value.trim();
+  return list ? getListHash(list) : '';
+}
+
+function isEmailSent(email) {
+  try {
+    const currentListHash = getCurrentListHash();
+    if (!currentListHash) return false;
+    
+    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+    const sentEmails = allSentData[currentListHash] || [];
+    return sentEmails.includes(email.toLowerCase());
+  } catch (e) {
+    return false;
+  }
+}
+
+function getPermanentSentEmails() {
+  try {
+    const currentListHash = getCurrentListHash();
+    if (!currentListHash) return [];
+    
+    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+    return allSentData[currentListHash] || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function savePermanentSentEmail(email) {
+  try {
+    const currentListHash = getCurrentListHash();
+    if (!currentListHash) return false;
+    
+    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+    
+    if (!allSentData[currentListHash]) {
+      allSentData[currentListHash] = [];
+    }
+    
+    const emailLower = email.toLowerCase();
+    if (!allSentData[currentListHash].includes(emailLower)) {
+      allSentData[currentListHash].push(emailLower);
+      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
+      return true;
+    }
+    return false;
+  } catch (e) {
     return false;
   }
 }
@@ -1150,11 +1486,9 @@ function getHoursSinceMidnight() {
   return Math.floor(hours);
 }
 
-// Update sent stats
 function updateSentStats() {
   const todayDate = getTodayDateString();
   
-  // Sent Today - INDESTRUCTIBLE (only resets at midnight)
   let sentTodayCount = 0;
   try {
     const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
@@ -1167,11 +1501,8 @@ function updateSentStats() {
       localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, '0');
       localStorage.setItem(STORAGE_KEYS.SENT_TODAY_DATE, todayDate);
     }
-  } catch (e) {
-    console.error('Error loading Sent Today counter:', e);
-  }
+  } catch (e) {}
   
-  // Sent Total - CALCULATED FROM CURRENT LIST (not permanent)
   let sentTotalCount = emailData.filter(e => e.sent).length;
   
   stats.sentToday = sentTodayCount;
@@ -1182,12 +1513,10 @@ function updateSentStats() {
   document.getElementById('todayInfo').textContent = `${getHoursSinceMidnight()}h since midnight`;
 }
 
-// Increment counters
 function incrementSentCounters() {
   const todayDate = getTodayDateString();
   
   try {
-    // Increment Sent Today (permanent)
     let sentTodayCount = 0;
     const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
     
@@ -1201,10 +1530,8 @@ function incrementSentCounters() {
     }
     
     localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, sentTodayCount.toString());
-    
     return true;
   } catch (e) {
-    console.error('Error updating counters:', e);
     return false;
   }
 }
@@ -1238,11 +1565,11 @@ function toggleCC() {
   }
 }
 
-function showToast(message) {
+function showToast(message, duration = 3000) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  setTimeout(() => toast.classList.remove('show'), duration);
 }
 
 // ============================================
@@ -1262,15 +1589,9 @@ function parseLine(line) {
   
   company = company.charAt(0).toUpperCase() + company.slice(1);
   
-  return { 
-    email: email.toLowerCase(), 
-    name, 
-    company,
-    sent: false // Will be updated from permanent storage
-  };
+  return { email: email.toLowerCase(), name, company, sent: false };
 }
 
-// Update stats from list
 function updateStatsFromList() {
   const list = document.getElementById('list').value;
   const lines = list.split('\n').filter(line => line.trim());
@@ -1291,111 +1612,14 @@ function updateStatsFromList() {
 }
 
 // ============================================
-// SEND HANDLER
+// GENERATE LINKS (Normal Mode)
 // ============================================
-function handleSendEmail(email, name, mailtoLink, index) {
-  console.log('Send attempt for:', email);
-  
-  // Check if already sent
-  if (isEmailSent(email)) {
-    console.log('BLOCKED: Email already sent');
-    showToast(`⚠️ Cannot resend: ${name} already sent`);
-    
-    // Update UI to show sent status
-    const element = document.querySelector(`.email-link[data-index="${index}"]`);
-    if (element && !element.classList.contains('sent')) {
-      element.classList.add('sent');
-      const numberBadge = element.querySelector('.email-number');
-      if (numberBadge) numberBadge.style.background = '#10b981';
-      
-      const button = element.querySelector('.email-action');
-      if (button) {
-        button.textContent = '✓ Sent';
-        button.style.background = '#10b981';
-        button.style.cursor = 'not-allowed';
-      }
-    }
+function generateLinks() {
+  if (batchMode) {
+    prepareBatches();
     return;
   }
   
-  // Save to permanent storage
-  savePermanentSentEmail(email);
-  
-  // Update counters
-  incrementSentCounters();
-  
-  // Update email data
-  if (emailData[index]) {
-    emailData[index].sent = true;
-  }
-  
-  // Update UI
-  updateEmailElementAsSent(index, name);
-  
-  // Update stats and filters
-  updateSentStats();
-  updateFilterCounts();
-  
-  // If filter is active, reapply it
-  if (currentFilter !== 'all') {
-    applyCurrentFilter();
-  }
-  
-  // Save data
-  saveData();
-  
-  // Open Gmail
-  setTimeout(() => {
-    window.open(mailtoLink, '_blank');
-  }, 100);
-  
-  showToast(`📧 Opening Gmail for ${name}`);
-}
-
-// Update email element as sent
-function updateEmailElementAsSent(index, name) {
-  const element = document.querySelector(`.email-link[data-index="${index}"]`);
-  if (!element) return;
-  
-  element.classList.add('sent');
-  
-  const numberBadge = element.querySelector('.email-number');
-  if (numberBadge) numberBadge.style.background = '#10b981';
-  
-  const button = element.querySelector('.email-action');
-  if (button) {
-    button.textContent = '✓ Sent';
-    button.style.background = '#10b981';
-    button.style.cursor = 'not-allowed';
-    
-    // Replace button with blocked version
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
-    
-    newButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      showToast(`⚠️ Cannot resend: ${name} already sent`);
-    });
-  }
-  
-  // Replace element with blocked version
-  const newElement = element.cloneNode(true);
-  element.parentNode.replaceChild(newElement, element);
-  
-  newElement.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!e.target.classList.contains('email-action')) {
-      showToast(`⚠️ Cannot resend: ${name} already sent`);
-    }
-  });
-}
-
-// ============================================
-// GENERATE LINKS
-// ============================================
-function generateLinks() {
   const list = document.getElementById('list').value.trim();
   if (!list) {
     showToast('Please add emails first');
@@ -1403,18 +1627,12 @@ function generateLinks() {
   }
   
   const newListHash = getListHash(list);
-  const previousListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH);
-  
-  if (newListHash !== previousListHash) {
-    console.log('New list detected');
-    localStorage.setItem(STORAGE_KEYS.CURRENT_LIST_HASH, newListHash);
-  }
+  localStorage.setItem(STORAGE_KEYS.CURRENT_LIST_HASH, newListHash);
   
   const lines = list.split('\n').filter(line => line.trim());
   const container = document.getElementById('outputContainer');
   container.style.display = 'block';
   
-  // Parse all emails
   emailData = [];
   lines.forEach((line) => {
     const parsed = parseLine(line);
@@ -1423,28 +1641,23 @@ function generateLinks() {
     }
   });
   
-  // Get sent emails from permanent storage
   const permanentSentEmails = getPermanentSentEmails();
   
-  // Mark sent status
   emailData = emailData.map(email => ({
     ...email,
     sent: permanentSentEmails.includes(email.email)
   }));
   
-  // Update stats
   stats.total = emailData.length;
   stats.valid = emailData.length;
   updateStatsFromList();
   updateSentStats();
   updateFilterCounts();
   
-  // Setup virtual scrolling
   setupVirtualScrolling();
   
   showToast(`Generated ${emailData.length} emails`);
   
-  // Show scroll buttons
   document.getElementById('scrollTopBtn').style.display = 'flex';
   document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
@@ -1455,23 +1668,16 @@ function generateLinks() {
 function filterEmails(filter) {
   currentFilter = filter;
   
-  // Update active button
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.remove('active');
   });
   event.target.classList.add('active');
   
-  // Apply filter
   applyCurrentFilter();
-  
-  showToast(`Showing ${filter} emails`);
 }
 
 function applyCurrentFilter() {
-  // Clear visible emails
   visibleEmails = [];
-  
-  // Re-render with filter
   if (emailData.length > 0) {
     setupVirtualScrolling();
   }
@@ -1494,15 +1700,18 @@ function updateFilterCounts() {
 }
 
 // ============================================
-// VIRTUAL SCROLLING
+// VIRTUAL SCROLLING (Normal Mode)
 // ============================================
 function setupVirtualScrolling() {
   const viewport = document.getElementById('virtualScrollViewport');
   const content = document.getElementById('virtualScrollContent');
   
-  // Calculate total height based on filtered emails
-  const filteredCount = emailData.filter(e => shouldShowEmail(e)).length;
-  const totalHeight = filteredCount * ITEM_HEIGHT;
+  const filteredIndices = emailData.reduce((acc, email, idx) => {
+    if (shouldShowEmail(email)) acc.push(idx);
+    return acc;
+  }, []);
+  
+  const totalHeight = filteredIndices.length * ITEM_HEIGHT;
   content.style.height = totalHeight + 'px';
   content.innerHTML = '';
   
@@ -1524,7 +1733,6 @@ function updateVisibleItems() {
   const scrollTop = viewport.scrollTop;
   const viewportHeight = viewport.clientHeight;
   
-  // Get filtered indices
   const filteredIndices = emailData.reduce((acc, email, idx) => {
     if (shouldShowEmail(email)) acc.push(idx);
     return acc;
@@ -1532,7 +1740,6 @@ function updateVisibleItems() {
   
   const totalFiltered = filteredIndices.length;
   
-  // Calculate visible range
   const visibleStart = Math.floor(scrollTop / ITEM_HEIGHT);
   const visibleEnd = Math.ceil((scrollTop + viewportHeight) / ITEM_HEIGHT);
   
@@ -1542,7 +1749,6 @@ function updateVisibleItems() {
   const currentVisible = new Set(visibleEmails);
   const newVisible = [];
   
-  // Create new elements
   for (let i = startIndex; i <= endIndex; i++) {
     if (!currentVisible.has(i) && i < filteredIndices.length) {
       const realIndex = filteredIndices[i];
@@ -1553,7 +1759,6 @@ function updateVisibleItems() {
     newVisible.push(i);
   }
   
-  // Remove out-of-view elements
   for (let i of currentVisible) {
     if (i < startIndex || i > endIndex) {
       const element = document.querySelector(`.email-link[data-virtual-index="${i}"]`);
@@ -1564,25 +1769,7 @@ function updateVisibleItems() {
   visibleEmails = newVisible;
 }
 
-// Create email element
 function createEmailElement(email, realIndex, virtualIndex) {
-  const subject = document.getElementById('subject').value
-    .replace(/{name}/g, email.name)
-    .replace(/{company}/g, email.company);
-  
-  const body = document.getElementById('body').value
-    .replace(/{name}/g, email.name)
-    .replace(/{company}/g, email.company);
-  
-  let mailtoLink = `mailto:${email.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  
-  if (ccEnabled) {
-    const ccEmail = document.getElementById('ccEmail').value.trim();
-    if (ccEmail) {
-      mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
-    }
-  }
-  
   const element = document.createElement('div');
   element.className = `email-link ${email.sent ? 'sent' : ''}`;
   element.setAttribute('data-email', email.email);
@@ -1591,25 +1778,32 @@ function createEmailElement(email, realIndex, virtualIndex) {
   element.style.position = 'absolute';
   element.style.top = (virtualIndex * ITEM_HEIGHT) + 'px';
   
-  if (email.sent) {
-    // Block all clicks on sent emails
-    element.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      showToast(`⚠️ Cannot resend: ${email.name} already sent`);
-    });
-  } else {
-    // Allow sending for pending emails
+  if (!email.sent) {
     element.addEventListener('click', function(e) {
       if (e.target.classList.contains('email-action')) return;
       
-      if (isEmailSent(email.email)) {
-        showToast(`⚠️ Cannot resend: ${email.name} already sent`);
-        updateEmailElementAsSent(realIndex, email.name);
-        return;
+      const subject = document.getElementById('subject').value
+        .replace(/{name}/g, email.name)
+        .replace(/{company}/g, email.company);
+      
+      const body = document.getElementById('body').value
+        .replace(/{name}/g, email.name)
+        .replace(/{company}/g, email.company);
+      
+      let mailtoLink = `mailto:${email.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      if (ccEnabled) {
+        const ccEmail = document.getElementById('ccEmail').value.trim();
+        if (ccEmail) {
+          mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
+        }
       }
       
-      handleSendEmail(email.email, email.name, mailtoLink, realIndex);
+      window.open(mailtoLink, '_blank');
+      
+      if (confirm(`Did you send to ${email.name}?`)) {
+        markAsSent(email.email, email.name);
+      }
     });
   }
   
@@ -1628,31 +1822,81 @@ function createEmailElement(email, realIndex, virtualIndex) {
     </div>
   `;
   
-  // Add button listener
   const button = element.querySelector('.email-action');
   
   if (email.sent) {
     button.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      showToast(`⚠️ Cannot resend: ${email.name} already sent`);
+      showToast(`Already sent to ${email.name}`);
     });
   } else {
     button.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       
-      if (isEmailSent(email.email)) {
-        showToast(`⚠️ Cannot resend: ${email.name} already sent`);
-        updateEmailElementAsSent(realIndex, email.name);
-        return;
+      const subject = document.getElementById('subject').value
+        .replace(/{name}/g, email.name)
+        .replace(/{company}/g, email.company);
+      
+      const body = document.getElementById('body').value
+        .replace(/{name}/g, email.name)
+        .replace(/{company}/g, email.company);
+      
+      let mailtoLink = `mailto:${email.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      if (ccEnabled) {
+        const ccEmail = document.getElementById('ccEmail').value.trim();
+        if (ccEmail) {
+          mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
+        }
       }
       
-      handleSendEmail(email.email, email.name, mailtoLink, realIndex);
+      window.open(mailtoLink, '_blank');
+      
+      if (confirm(`Did you send to ${email.name}?`)) {
+        markAsSent(email.email, email.name);
+      }
     });
   }
   
   return element;
+}
+
+function markAsSent(email, name) {
+  savePermanentSentEmail(email);
+  
+  const index = emailData.findIndex(e => e.email === email);
+  if (index !== -1) {
+    emailData[index].sent = true;
+    updateEmailElementAsSent(index, name);
+  }
+  
+  incrementSentCounters();
+  updateSentStats();
+  updateFilterCounts();
+  saveData();
+  
+  // If in batch mode, refresh batches
+  if (batchMode) {
+    prepareBatches();
+  }
+}
+
+function updateEmailElementAsSent(index, name) {
+  const element = document.querySelector(`.email-link[data-index="${index}"]`);
+  if (!element) return;
+  
+  element.classList.add('sent');
+  
+  const numberBadge = element.querySelector('.email-number');
+  if (numberBadge) numberBadge.style.background = '#10b981';
+  
+  const button = element.querySelector('.email-action');
+  if (button) {
+    button.textContent = '✓ Sent';
+    button.style.background = '#10b981';
+  }
 }
 
 // ============================================
@@ -1689,7 +1933,7 @@ function forceSave() {
 }
 
 function clearAllData() {
-  if (confirm('Clear ALL data?\n\nNOTE: "Sent Today" counter will NOT be cleared (only resets at midnight)')) {
+  if (confirm('Clear ALL data?\n\nNOTE: "Sent Today" counter will NOT be cleared')) {
     document.getElementById('list').value = '';
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
@@ -1702,13 +1946,15 @@ function clearAllData() {
     document.getElementById('ccInput').classList.remove('show');
     
     emailData = [];
+    batches = [];
+    sentBatches = [];
     updateStatsFromList();
     updateFilterCounts();
     
-    // Clear regular storage but preserve sent today counter
     Object.keys(localStorage).forEach(key => {
       if (key !== STORAGE_KEYS.SENT_TODAY_COUNT && 
-          key !== STORAGE_KEYS.SENT_TODAY_DATE) {
+          key !== STORAGE_KEYS.SENT_TODAY_DATE &&
+          key !== STORAGE_KEYS.BATCH_MODE) {
         if (key.startsWith('fatisco_')) {
           localStorage.removeItem(key);
         }
@@ -1752,28 +1998,6 @@ function scrollToBottom() {
   viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
 }
 
-// Show/hide scroll buttons
-document.getElementById('virtualScrollViewport').addEventListener('scroll', function() {
-  const scrollTop = this.scrollTop;
-  const scrollHeight = this.scrollHeight;
-  const clientHeight = this.clientHeight;
-  
-  const topBtn = document.getElementById('scrollTopBtn');
-  const bottomBtn = document.getElementById('scrollBottomBtn');
-  
-  if (scrollTop > 100) {
-    topBtn.style.display = 'flex';
-  } else {
-    topBtn.style.display = 'none';
-  }
-  
-  if (scrollHeight - scrollTop - clientHeight > 100) {
-    bottomBtn.style.display = 'flex';
-  } else {
-    bottomBtn.style.display = 'none';
-  }
-});
-
 // File input
 document.getElementById('fileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
@@ -1804,6 +2028,24 @@ document.getElementById('list').addEventListener('input', function() {
 document.getElementById('subject').addEventListener('input', scheduleSave);
 document.getElementById('body').addEventListener('input', scheduleSave);
 document.getElementById('ccEmail').addEventListener('input', scheduleSave);
+document.getElementById('batchSize').addEventListener('input', function() {
+  if (batchMode && emailData.length > 0) {
+    prepareBatches();
+  }
+});
+
+// Scroll button visibility
+document.getElementById('virtualScrollViewport').addEventListener('scroll', function() {
+  const scrollTop = this.scrollTop;
+  const scrollHeight = this.scrollHeight;
+  const clientHeight = this.clientHeight;
+  
+  const topBtn = document.getElementById('scrollTopBtn');
+  const bottomBtn = document.getElementById('scrollBottomBtn');
+  
+  topBtn.style.display = scrollTop > 100 ? 'flex' : 'none';
+  bottomBtn.style.display = (scrollHeight - scrollTop - clientHeight) > 100 ? 'flex' : 'none';
+});
 
 // Midnight reset
 function checkMidnightReset() {
@@ -1822,7 +2064,7 @@ window.addEventListener('load', function() {
   loadAllData();
   setInterval(updateSentStats, 60000);
   checkMidnightReset();
-  console.log('FATISCO loaded - Final version');
+  console.log('FATISCO loaded with hidden batch mode');
 });
 </script>
 </body>
