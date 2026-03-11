@@ -1872,10 +1872,10 @@ function forceSave() {
 }
 
 // ============================================
-// FIXED: CLEAR ALL DATA (Preserves Sent Today)
+// FIXED: CLEAR ALL DATA (Now clears batch data too)
 // ============================================
 function clearAllData() {
-  if (confirm('Clear ALL data?\n\n✅ Total, Valid, Sent (Total) will reset to 0\n✅ Email list will be cleared\n✅ Subject/body reset to default\n❌ Sent Today counter will NOT be cleared')) {
+  if (confirm('Clear ALL data?\n\n✅ Total, Valid, Sent (Total) will reset to 0\n✅ Email list will be cleared\n✅ Subject/body reset to default\n✅ Batch progress cleared\n❌ Sent Today counter will NOT be cleared')) {
     
     // Clear email list
     document.getElementById('list').value = '';
@@ -1884,14 +1884,20 @@ function clearAllData() {
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
     
-    // Clear data
+    // Clear data arrays
     emailData = [];
-    batches = [];
-    sentBatches = [];
+    batches = [];           // ✅ Clear batch array
+    sentBatches = [];       // ✅ Clear sent batches array
     
     // Clear display
     document.getElementById('outputContainer').style.display = 'none';
     document.getElementById('virtualScrollContent').innerHTML = '';
+    
+    // Clear batch controls if visible
+    const batchControls = document.getElementById('batchControls');
+    if (batchControls) {
+      batchControls.innerHTML = '';
+    }
     
     // Reset stats (except Sent Today)
     stats.total = 0;
@@ -1914,7 +1920,9 @@ function clearAllData() {
       localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
     }
     
+    // Clear batch data from storage
     localStorage.removeItem(STORAGE_KEYS.CURRENT_LIST_HASH);
+    localStorage.removeItem(STORAGE_KEYS.SENT_BATCHES);  // ✅ Clear stored batches
     
     saveData();
     updateSentStats(); // Preserves Sent Today
