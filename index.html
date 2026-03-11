@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>FATISCO | Email Automation</title>
 <style>
-/* Reset & Base */
+/* Original styles - keeping it clean */
 * {
   margin: 0;
   padding: 0;
@@ -31,7 +31,6 @@ body.dark {
   color: #e2e8f0;
 }
 
-/* Header */
 .header {
   background: #4f46e5;
   padding: 12px 16px;
@@ -82,13 +81,11 @@ body.dark {
   cursor: pointer;
 }
 
-/* Main Container */
 .container {
   max-width: 100%;
   padding: 16px;
 }
 
-/* Stats */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -143,7 +140,6 @@ body.dark {
   color: #94a3b8;
 }
 
-/* Cards */
 .card {
   background: white;
   border-radius: 12px;
@@ -182,7 +178,6 @@ body.dark {
   padding: 16px;
 }
 
-/* File Upload */
 .file-upload {
   margin-bottom: 16px;
 }
@@ -215,7 +210,6 @@ body.dark {
   border-color: #4f46e5;
 }
 
-/* Inputs */
 .input-group {
   margin-bottom: 16px;
 }
@@ -277,7 +271,6 @@ body.dark {
   border-color: #4f46e5;
 }
 
-/* CC Toggle and Input */
 .cc-toggle {
   display: flex;
   align-items: center;
@@ -355,7 +348,6 @@ body.dark {
   color: #94a3b8;
 }
 
-/* Buttons */
 .button-group {
   display: flex;
   flex-wrap: wrap;
@@ -406,71 +398,47 @@ body.dark {
   background: #475569;
 }
 
-.btn-batch {
-  background: #8b5cf6;
+.btn-danger {
+  background: #dc2626;
   color: white;
 }
 
-.btn-batch:hover {
-  background: #7c3aed;
+.btn-danger:hover {
+  background: #b91c1c;
 }
 
-.btn-batch-sent {
-  background: #10b981;
-  color: white;
-  opacity: 0.7;
-  cursor: default;
-}
-
-.btn-batch-sent:hover {
-  background: #10b981;
-  transform: none;
-}
-
-/* Batch Mode Specific Styles */
-.batch-mode-badge {
-  display: inline-block;
-  background: #8b5cf6;
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 12px;
-  margin-left: 8px;
-  letter-spacing: 0.5px;
-}
-
+/* Minimal batch controls - only appears when triggered */
 .batch-controls {
   margin-top: 20px;
   padding: 16px;
-  background: #f1f5f9;
-  border-radius: 12px;
-  border-left: 4px solid #8b5cf6;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 .dark .batch-controls {
   background: #1e293b;
+  border-color: #334155;
 }
 
 .batch-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .batch-title {
-  font-weight: 700;
-  color: #8b5cf6;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: 600;
+  color: #4f46e5;
 }
 
 .batch-size-control {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .batch-size-input {
@@ -494,7 +462,6 @@ body.dark {
   border-radius: 6px;
   font-size: 12px;
   margin-bottom: 16px;
-  border-left: 3px solid #ffc107;
 }
 
 .dark .batch-warning {
@@ -505,9 +472,9 @@ body.dark {
 .batch-list {
   max-height: 300px;
   overflow-y: auto;
-  margin-bottom: 16px;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
   background: white;
 }
 
@@ -520,7 +487,7 @@ body.dark {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -535,12 +502,13 @@ body.dark {
 .batch-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .batch-number {
-  font-weight: 700;
-  color: #8b5cf6;
+  font-weight: 600;
+  color: #4f46e5;
   min-width: 60px;
 }
 
@@ -553,9 +521,29 @@ body.dark {
   color: #94a3b8;
 }
 
+.btn-batch {
+  background: #4f46e5;
+  color: white;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn-batch:hover {
+  background: #4338ca;
+}
+
+.btn-batch-sent {
+  background: #10b981;
+  color: white;
+  padding: 6px 12px;
+  font-size: 12px;
+  opacity: 0.7;
+  cursor: default;
+}
+
 .batch-progress {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
   border-top: 1px solid #e2e8f0;
 }
 
@@ -566,11 +554,24 @@ body.dark {
 .batch-stats {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 13px;
 }
 
-/* Virtual Scrolling Container */
+.progress-bar {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4f46e5;
+  width: 0%;
+  transition: width 0.3s;
+}
+
 .email-list-container {
   display: none;
   background: white;
@@ -606,7 +607,6 @@ body.dark {
   font-weight: 600;
   color: #333;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .dark .filter-btn {
@@ -629,7 +629,6 @@ body.dark {
   margin-left: 4px;
 }
 
-/* Virtual Scroll Viewport */
 .virtual-scroll-viewport {
   height: 500px;
   overflow-y: auto;
@@ -642,7 +641,6 @@ body.dark {
   width: 100%;
 }
 
-/* Email Links - COMPACT */
 .email-link {
   position: absolute;
   left: 8px;
@@ -661,7 +659,6 @@ body.dark {
   cursor: pointer;
   transition: all 0.2s;
   will-change: transform;
-  pointer-events: auto !important;
 }
 
 .dark .email-link {
@@ -680,8 +677,7 @@ body.dark {
   background: #f0fdf4;
   border-color: #bbf7d0;
   opacity: 0.7;
-  cursor: not-allowed !important;
-  pointer-events: auto !important;
+  cursor: not-allowed;
 }
 
 .dark .email-link.sent {
@@ -755,11 +751,6 @@ body.dark {
   display: inline-block;
 }
 
-.dark .cc-badge {
-  background: rgba(79, 70, 229, 0.3);
-  color: #818cf8;
-}
-
 .email-action {
   padding: 4px 10px;
   background: #4f46e5;
@@ -771,7 +762,6 @@ body.dark {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
-  pointer-events: auto !important;
 }
 
 .email-action:hover {
@@ -780,17 +770,15 @@ body.dark {
 }
 
 .email-link.sent .email-action {
-  background: #10b981 !important;
-  cursor: not-allowed !important;
-  pointer-events: auto !important;
+  background: #10b981;
+  cursor: default;
 }
 
 .email-link.sent .email-action:hover {
-  background: #10b981 !important;
+  background: #10b981;
   transform: none;
 }
 
-/* Scroll Buttons */
 .scroll-btn {
   position: fixed;
   right: 16px;
@@ -821,7 +809,6 @@ body.dark {
   bottom: 24px;
 }
 
-/* Toast */
 .toast {
   position: fixed;
   bottom: 20px;
@@ -846,7 +833,6 @@ body.dark {
   opacity: 1;
 }
 
-/* Footer */
 .footer {
   position: fixed;
   bottom: 0;
@@ -867,73 +853,23 @@ body.dark {
   color: #94a3b8;
 }
 
-/* Media Queries */
 @media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-  
-  .container {
-    padding: 12px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  
-  .stat-card {
-    padding: 12px;
-  }
-  
-  .stat-value {
-    font-size: 24px;
-  }
-  
-  .card-header, .card-body {
-    padding: 12px;
-  }
-  
-  .virtual-scroll-viewport {
-    height: 400px;
-  }
-  
-  .batch-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
+  .container { padding: 12px; }
+  .stats-grid { gap: 8px; }
+  .stat-value { font-size: 24px; }
+  .card-header, .card-body { padding: 12px; }
+  .virtual-scroll-viewport { height: 400px; }
+  .batch-info { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 10px 12px;
-  }
-  
-  .container {
-    padding: 10px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .stat-value {
-    font-size: 22px;
-  }
-  
-  .virtual-scroll-viewport {
-    height: 350px;
-  }
-  
-  .batch-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  .header { padding: 10px 12px; }
+  .container { padding: 10px; }
+  .stat-value { font-size: 22px; }
+  .virtual-scroll-viewport { height: 350px; }
+  .batch-header { flex-direction: column; align-items: flex-start; }
 }
 
-/* Prevent horizontal scroll */
 body, .container, .card, .email-list-container {
   max-width: 100vw;
   overflow-x: hidden;
@@ -979,7 +915,6 @@ body, .container, .card, .email-list-container {
     <div class="card-header">
       <span class="card-icon">📧</span>
       <span class="card-title">Email List</span>
-      <span id="batchModeBadge" class="batch-mode-badge" style="display: none;">BATCH MODE</span>
     </div>
     <div class="card-body">
       <div class="file-upload">
@@ -1038,7 +973,7 @@ I noticed {company} is doing great work. I'd love to discuss collaboration oppor
 Looking forward to connecting!</textarea>
       </div>
       
-      <!-- Normal Mode Controls (visible by default) -->
+      <!-- Normal Mode Controls (always visible) -->
       <div id="normalControls">
         <div class="button-group">
           <button class="btn btn-primary" onclick="generateLinks()">
@@ -1050,38 +985,8 @@ Looking forward to connecting!</textarea>
         </div>
       </div>
       
-      <!-- Batch Mode Controls (hidden by default) -->
-      <div id="batchControls" style="display: none;">
-        <div class="batch-controls">
-          <div class="batch-header">
-            <div class="batch-title">
-              <span>📦 BATCH SENDING (BCC)</span>
-            </div>
-            <div class="batch-size-control">
-              <span class="label" style="margin-bottom: 0;">Batch size:</span>
-              <input type="number" id="batchSize" class="batch-size-input" value="10" min="5" max="20" step="1" onchange="prepareBatches()">
-            </div>
-          </div>
-          
-          <div class="batch-warning">
-            ⚠️ <strong>Note:</strong> In batch mode, {'{'}name{'}'} and {'{'}company{'}'} placeholders will not work. The same email body is sent to everyone in the batch via BCC.
-          </div>
-          
-          <div id="batchListContainer" class="batch-list">
-            <!-- Batches will be generated here -->
-          </div>
-          
-          <div class="batch-progress" id="batchProgress" style="display: none;">
-            <div class="batch-stats">
-              <span>Progress: <span id="batchesSent">0</span>/<span id="totalBatches">0</span> batches</span>
-              <span>Emails: <span id="batchEmailsSent">0</span>/<span id="totalBatchEmails">0</span></span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="batchProgressFill" style="width: 0%;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Batch Mode Controls (hidden by default, appears when triggered) -->
+      <div id="batchControls" style="display: none;"></div>
     </div>
   </div>
 
@@ -1129,7 +1034,7 @@ let stats = {
   sentTotal: 0
 };
 
-let emailData = []; // Array of parsed emails with sent status
+let emailData = [];
 let currentFilter = 'all';
 let ccEnabled = false;
 
@@ -1138,16 +1043,14 @@ let batchMode = false;
 let batches = [];
 let sentBatches = [];
 
-// Virtual Scrolling Variables
+// Virtual Scrolling
 let visibleEmails = [];
 let startIndex = 0;
 let endIndex = 0;
 const ITEM_HEIGHT = 52;
 const BUFFER_SIZE = 10;
 
-// ============================================
-// STORAGE KEYS
-// ============================================
+// Storage Keys
 const STORAGE_KEYS = {
   EMAIL_LIST: 'fatisco_email_list',
   SUBJECT: 'fatisco_subject',
@@ -1159,8 +1062,8 @@ const STORAGE_KEYS = {
   CURRENT_LIST_HASH: 'fatisco_current_list_hash',
   SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
   SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date',
-  BATCH_MODE: 'fatisco_batch_mode', // Save batch mode preference
-  SENT_BATCHES: 'fatisco_sent_batches' // Save sent batches
+  BATCH_MODE: 'fatisco_batch_mode',
+  SENT_BATCHES: 'fatisco_sent_batches'
 };
 
 // ============================================
@@ -1190,7 +1093,6 @@ function loadAllData() {
     const savedBatchMode = localStorage.getItem(STORAGE_KEYS.BATCH_MODE);
     if (savedBatchMode === 'true') {
       batchMode = true;
-      toggleBatchMode(true);
     }
     
     // Load sent batches
@@ -1240,29 +1142,64 @@ function saveData() {
 // ============================================
 document.getElementById('fatiscoLogo').addEventListener('click', function() {
   batchMode = !batchMode;
-  toggleBatchMode(batchMode);
+  updateBatchModeUI();
   saveData();
   showToast(batchMode ? '🔒 Batch mode enabled' : '📧 Normal mode restored', 2000);
 });
 
-function toggleBatchMode(enable) {
-  const normalControls = document.getElementById('normalControls');
+function updateBatchModeUI() {
   const batchControls = document.getElementById('batchControls');
-  const batchBadge = document.getElementById('batchModeBadge');
   
-  if (enable) {
-    normalControls.style.display = 'none';
+  if (batchMode) {
+    // Create and show batch controls
     batchControls.style.display = 'block';
-    batchBadge.style.display = 'inline-block';
+    batchControls.innerHTML = getBatchControlsHTML();
+    
+    // Add event listeners for batch controls
+    document.getElementById('batchSize').addEventListener('input', function() {
+      if (emailData.length > 0) prepareBatches();
+    });
+    
     // Prepare batches if we have emails
     if (emailData.length > 0) {
       prepareBatches();
+    } else {
+      batchControls.innerHTML = getBatchControlsHTML() + '<div style="padding: 20px; text-align: center; color: #666;">Load emails to start batching</div>';
     }
   } else {
-    normalControls.style.display = 'block';
     batchControls.style.display = 'none';
-    batchBadge.style.display = 'none';
+    batchControls.innerHTML = '';
   }
+}
+
+function getBatchControlsHTML() {
+  return `
+    <div class="batch-controls">
+      <div class="batch-header">
+        <div class="batch-title">📦 BATCH SENDING (BCC)</div>
+        <div class="batch-size-control">
+          <span class="label">Batch size:</span>
+          <input type="number" id="batchSize" class="batch-size-input" value="10" min="5" max="20" step="1">
+        </div>
+      </div>
+      
+      <div class="batch-warning">
+        ⚠️ In batch mode, {name} and {company} won't work. Same email sent to all via BCC.
+      </div>
+      
+      <div id="batchListContainer" class="batch-list"></div>
+      
+      <div class="batch-progress" id="batchProgress" style="display: none;">
+        <div class="batch-stats">
+          <span><span id="batchesSent">0</span>/<span id="totalBatches">0</span> batches</span>
+          <span><span id="batchEmailsSent">0</span>/<span id="totalBatchEmails">0</span> emails</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="batchProgressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // ============================================
@@ -1270,8 +1207,13 @@ function toggleBatchMode(enable) {
 // ============================================
 function prepareBatches() {
   const pendingEmails = emailData.filter(e => !e.sent);
+  const batchListContainer = document.getElementById('batchListContainer');
+  
+  if (!batchListContainer) return;
+  
   if (pendingEmails.length === 0) {
-    document.getElementById('batchListContainer').innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No pending emails to send</div>';
+    batchListContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No pending emails to send</div>';
+    document.getElementById('batchProgress').style.display = 'none';
     return;
   }
   
@@ -1293,6 +1235,8 @@ function prepareBatches() {
 
 function renderBatches() {
   const container = document.getElementById('batchListContainer');
+  if (!container) return;
+  
   if (batches.length === 0) {
     container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No batches to display</div>';
     return;
@@ -1300,10 +1244,9 @@ function renderBatches() {
   
   let html = '';
   batches.forEach(batch => {
-    const emailList = batch.emails.map(e => e.email).join(', ');
-    const displayEmails = batch.emails.length > 3 
-      ? batch.emails.slice(0, 3).map(e => e.email).join(', ') + ` +${batch.emails.length - 3} more`
-      : emailList;
+    const displayEmails = batch.emails.length > 2 
+      ? batch.emails.slice(0, 2).map(e => e.email).join(', ') + ` +${batch.emails.length - 2} more`
+      : batch.emails.map(e => e.email).join(', ');
     
     html += `
       <div class="batch-item">
@@ -1314,7 +1257,7 @@ function renderBatches() {
         <button class="btn ${batch.sent ? 'btn-batch-sent' : 'btn-batch'}" 
                 onclick="sendBatch(${batch.index})"
                 ${batch.sent ? 'disabled' : ''}>
-          ${batch.sent ? '✓ Sent' : 'Send Batch'}
+          ${batch.sent ? '✓ Sent' : 'Send'}
         </button>
       </div>
     `;
@@ -1322,14 +1265,12 @@ function renderBatches() {
   
   container.innerHTML = html;
   document.getElementById('batchProgress').style.display = 'block';
-  updateBatchProgress();
 }
 
 function sendBatch(batchIndex) {
   const batch = batches[batchIndex];
   if (!batch || batch.sent) return;
   
-  // Get subject and body (remove placeholders warning)
   const subject = document.getElementById('subject').value
     .replace(/{name}/g, '[NAME]')
     .replace(/{company}/g, '[COMPANY]');
@@ -1338,13 +1279,10 @@ function sendBatch(batchIndex) {
     .replace(/{name}/g, '[NAME]')
     .replace(/{company}/g, '[COMPANY]');
   
-  // Collect all emails in the batch
   const bccEmails = batch.emails.map(e => e.email).join(',');
   
-  // Create mailto link with BCC
   let mailtoLink = `mailto:?bcc=${encodeURIComponent(bccEmails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   
-  // Add CC if enabled
   if (ccEnabled) {
     const ccEmail = document.getElementById('ccEmail').value.trim();
     if (ccEmail) {
@@ -1352,31 +1290,28 @@ function sendBatch(batchIndex) {
     }
   }
   
-  // Open email client
   window.open(mailtoLink, '_blank');
   
-  // Mark batch as sent
+  // Mark as sent
   batch.sent = true;
   if (!sentBatches.includes(batchIndex)) {
     sentBatches.push(batchIndex);
   }
   
-  // Mark individual emails as sent
   batch.emails.forEach(email => {
+    savePermanentSentEmail(email.email);
+    
     const emailIndex = emailData.findIndex(e => e.email === email.email);
     if (emailIndex !== -1) {
       emailData[emailIndex].sent = true;
-      savePermanentSentEmail(email.email);
       updateEmailElementAsSent(emailIndex, email.name);
     }
   });
   
-  // Update counters
   incrementSentCounters();
   updateSentStats();
   updateFilterCounts();
   
-  // Update UI
   renderBatches();
   updateBatchProgress();
   saveData();
@@ -1385,6 +1320,8 @@ function sendBatch(batchIndex) {
 }
 
 function updateBatchProgress() {
+  if (!document.getElementById('batchProgress')) return;
+  
   const totalBatches = batches.length;
   const sentCount = batches.filter(b => b.sent).length;
   const totalEmails = batches.reduce((sum, b) => sum + b.emails.length, 0);
@@ -1402,7 +1339,6 @@ function updateBatchProgress() {
 // ============================================
 // SENT EMAIL FUNCTIONS
 // ============================================
-
 function getListHash(listText) {
   let hash = 0;
   for (let i = 0; i < listText.length; i++) {
@@ -1700,7 +1636,7 @@ function updateFilterCounts() {
 }
 
 // ============================================
-// VIRTUAL SCROLLING (Normal Mode)
+// VIRTUAL SCROLLING
 // ============================================
 function setupVirtualScrolling() {
   const viewport = document.getElementById('virtualScrollViewport');
@@ -1801,9 +1737,11 @@ function createEmailElement(email, realIndex, virtualIndex) {
       
       window.open(mailtoLink, '_blank');
       
-      if (confirm(`Did you send to ${email.name}?`)) {
-        markAsSent(email.email, email.name);
-      }
+      setTimeout(() => {
+        if (confirm(`Did you send to ${email.name}?`)) {
+          markAsSent(email.email, email.name);
+        }
+      }, 5000);
     });
   }
   
@@ -1854,9 +1792,11 @@ function createEmailElement(email, realIndex, virtualIndex) {
       
       window.open(mailtoLink, '_blank');
       
-      if (confirm(`Did you send to ${email.name}?`)) {
-        markAsSent(email.email, email.name);
-      }
+      setTimeout(() => {
+        if (confirm(`Did you send to ${email.name}?`)) {
+          markAsSent(email.email, email.name);
+        }
+      }, 5000);
     });
   }
   
@@ -1877,7 +1817,6 @@ function markAsSent(email, name) {
   updateFilterCounts();
   saveData();
   
-  // If in batch mode, refresh batches
   if (batchMode) {
     prepareBatches();
   }
@@ -1932,37 +1871,55 @@ function forceSave() {
   }
 }
 
+// ============================================
+// FIXED: CLEAR ALL DATA (Preserves Sent Today)
+// ============================================
 function clearAllData() {
-  if (confirm('Clear ALL data?\n\nNOTE: "Sent Today" counter will NOT be cleared')) {
+  if (confirm('Clear ALL data?\n\n✅ Total, Valid, Sent (Total) will reset to 0\n✅ Email list will be cleared\n✅ Subject/body reset to default\n❌ Sent Today counter will NOT be cleared')) {
+    
+    // Clear email list
     document.getElementById('list').value = '';
+    
+    // Reset subject/body
     document.getElementById('subject').value = 'Opportunity for {company}';
     document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
-    document.getElementById('output').innerHTML = '';
-    document.getElementById('outputContainer').style.display = 'none';
-    document.getElementById('ccEmail').value = '';
     
-    ccEnabled = false;
-    document.getElementById('ccToggleBtn').classList.remove('active');
-    document.getElementById('ccInput').classList.remove('show');
-    
+    // Clear data
     emailData = [];
     batches = [];
     sentBatches = [];
-    updateStatsFromList();
-    updateFilterCounts();
     
-    Object.keys(localStorage).forEach(key => {
-      if (key !== STORAGE_KEYS.SENT_TODAY_COUNT && 
-          key !== STORAGE_KEYS.SENT_TODAY_DATE &&
-          key !== STORAGE_KEYS.BATCH_MODE) {
-        if (key.startsWith('fatisco_')) {
-          localStorage.removeItem(key);
-        }
-      }
-    });
+    // Clear display
+    document.getElementById('outputContainer').style.display = 'none';
+    document.getElementById('virtualScrollContent').innerHTML = '';
     
-    updateSentStats();
-    showToast('All data cleared');
+    // Reset stats (except Sent Today)
+    stats.total = 0;
+    stats.valid = 0;
+    stats.sentTotal = 0;
+    
+    document.getElementById('totalEmails').textContent = '0';
+    document.getElementById('validEmails').textContent = '0';
+    document.getElementById('emailsSentTotal').textContent = '0';
+    
+    document.getElementById('countAll').textContent = '0';
+    document.getElementById('countSent').textContent = '0';
+    document.getElementById('countPending').textContent = '0';
+    
+    // Clear sent emails from storage
+    const currentListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH);
+    if (currentListHash) {
+      const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
+      delete allSentData[currentListHash];
+      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
+    }
+    
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_LIST_HASH);
+    
+    saveData();
+    updateSentStats(); // Preserves Sent Today
+    
+    showToast('✅ All data cleared (Sent Today preserved)');
   }
 }
 
@@ -2028,11 +1985,6 @@ document.getElementById('list').addEventListener('input', function() {
 document.getElementById('subject').addEventListener('input', scheduleSave);
 document.getElementById('body').addEventListener('input', scheduleSave);
 document.getElementById('ccEmail').addEventListener('input', scheduleSave);
-document.getElementById('batchSize').addEventListener('input', function() {
-  if (batchMode && emailData.length > 0) {
-    prepareBatches();
-  }
-});
 
 // Scroll button visibility
 document.getElementById('virtualScrollViewport').addEventListener('scroll', function() {
@@ -2064,7 +2016,13 @@ window.addEventListener('load', function() {
   loadAllData();
   setInterval(updateSentStats, 60000);
   checkMidnightReset();
-  console.log('FATISCO loaded with hidden batch mode');
+  
+  // Initialize batch mode UI if needed
+  if (batchMode) {
+    updateBatchModeUI();
+  }
+  
+  console.log('FATISCO loaded - clean original design');
 });
 </script>
 </body>
