@@ -1,888 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FATISCO | Email Automation</title>
-<style>
-/* Original styles - keeping it clean */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f7fa;
-  color: #333;
-  line-height: 1.4;
-  overflow-x: hidden;
-  padding-bottom: 60px;
-}
-
-body.dark {
-  background: #0f172a;
-  color: #e2e8f0;
-}
-
-.header {
-  background: #4f46e5;
-  padding: 12px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.dark .header {
-  background: #1e1b4b;
-}
-
-.header-content {
-  max-width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.logo-icon {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 700;
-  user-select: none;
-}
-
-.theme-toggle {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.container {
-  max-width: 100%;
-  padding: 16px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.dark .stat-card {
-  background: #1e293b;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 800;
-  color: #4f46e5;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.dark .stat-value {
-  color: #818cf8;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.dark .stat-label {
-  color: #94a3b8;
-}
-
-.time-info {
-  font-size: 10px;
-  color: #666;
-  margin-top: 4px;
-  font-style: italic;
-}
-
-.dark .time-info {
-  color: #94a3b8;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-.dark .card {
-  background: #1e293b;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.card-header {
-  padding: 16px;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dark .card-header {
-  border-color: #334155;
-}
-
-.card-icon {
-  font-size: 18px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.card-body {
-  padding: 16px;
-}
-
-.file-upload {
-  margin-bottom: 16px;
-}
-
-.file-input {
-  display: none;
-}
-
-.file-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  background: #f8fafc;
-  border: 2px dashed #cbd5e1;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.dark .file-label {
-  background: #1e293b;
-  border-color: #475569;
-  color: #cbd5e1;
-}
-
-.file-label:hover {
-  border-color: #4f46e5;
-}
-
-.input-group {
-  margin-bottom: 16px;
-}
-
-.label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-.dark .label {
-  color: #e2e8f0;
-}
-
-.textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  background: white;
-  color: #333;
-  resize: vertical;
-  min-height: 120px;
-}
-
-.dark .textarea {
-  background: #1e293b;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.textarea:focus {
-  outline: none;
-  border-color: #4f46e5;
-}
-
-.input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
-  color: #333;
-}
-
-.dark .input {
-  background: #1e293b;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #4f46e5;
-}
-
-.cc-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.cc-btn {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #333;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.dark .cc-btn {
-  background: #334155;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.cc-btn.active {
-  background: #4f46e5;
-  color: white;
-  border-color: #4f46e5;
-}
-
-.cc-input {
-  display: none;
-  margin-bottom: 16px;
-  padding-left: 16px;
-  border-left: 3px solid #4f46e5;
-}
-
-.cc-input.show {
-  display: block;
-}
-
-.cc-field {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
-  color: #333;
-}
-
-.dark .cc-field {
-  background: #1e293b;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.cc-field:focus {
-  outline: none;
-  border-color: #4f46e5;
-}
-
-.cc-hint {
-  font-size: 11px;
-  color: #666;
-  margin-top: 4px;
-  font-style: italic;
-}
-
-.dark .cc-hint {
-  color: #94a3b8;
-}
-
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn-primary {
-  background: #4f46e5;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #4338ca;
-}
-
-.btn-secondary {
-  background: #f1f5f9;
-  color: #333;
-  border: 1px solid #cbd5e1;
-}
-
-.dark .btn-secondary {
-  background: #334155;
-  color: #e2e8f0;
-  border-color: #475569;
-}
-
-.btn-secondary:hover {
-  background: #e2e8f0;
-}
-
-.dark .btn-secondary:hover {
-  background: #475569;
-}
-
-.btn-danger {
-  background: #dc2626;
-  color: white;
-}
-
-.btn-danger:hover {
-  background: #b91c1c;
-}
-
-/* Minimal batch controls - only appears when triggered */
-.batch-controls {
-  margin-top: 20px;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-}
-
-.dark .batch-controls {
-  background: #1e293b;
-  border-color: #334155;
-}
-
-.batch-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.batch-title {
-  font-weight: 600;
-  color: #4f46e5;
-}
-
-.batch-size-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.batch-size-input {
-  width: 70px;
-  padding: 6px 8px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.dark .batch-size-input {
-  background: #1e293b;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.batch-warning {
-  background: #fff3cd;
-  color: #856404;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  margin-bottom: 16px;
-}
-
-.dark .batch-warning {
-  background: #423d0b;
-  color: #ffd970;
-}
-
-.batch-list {
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  background: white;
-}
-
-.dark .batch-list {
-  background: #0f172a;
-  border-color: #334155;
-}
-
-.batch-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.dark .batch-item {
-  border-color: #334155;
-}
-
-.batch-item:last-child {
-  border-bottom: none;
-}
-
-.batch-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.batch-number {
-  font-weight: 600;
-  color: #4f46e5;
-  min-width: 60px;
-}
-
-.batch-emails {
-  font-size: 13px;
-  color: #666;
-}
-
-.dark .batch-emails {
-  color: #94a3b8;
-}
-
-.btn-batch {
-  background: #4f46e5;
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-batch:hover {
-  background: #4338ca;
-}
-
-.btn-batch-sent {
-  background: #10b981;
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-  opacity: 0.7;
-  cursor: default;
-}
-
-.batch-progress {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.dark .batch-progress {
-  border-color: #334155;
-}
-
-.batch-stats {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-  font-size: 13px;
-}
-
-.progress-bar {
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: #4f46e5;
-  width: 0%;
-  transition: width 0.3s;
-}
-
-.email-list-container {
-  display: none;
-  background: white;
-  border-radius: 12px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.dark .email-list-container {
-  background: #1e293b;
-}
-
-.email-list-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.dark .email-list-header {
-  border-color: #334155;
-}
-
-.email-filters {
-  display: flex;
-  gap: 8px;
-}
-
-.filter-btn {
-  padding: 6px 12px;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #333;
-  cursor: pointer;
-}
-
-.dark .filter-btn {
-  background: #334155;
-  border-color: #475569;
-  color: #e2e8f0;
-}
-
-.filter-btn.active {
-  background: #4f46e5;
-  color: white;
-  border-color: #4f46e5;
-}
-
-.filter-count {
-  background: rgba(255,255,255,0.2);
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-size: 10px;
-  margin-left: 4px;
-}
-
-.virtual-scroll-viewport {
-  height: 500px;
-  overflow-y: auto;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-}
-
-.virtual-scroll-content {
-  position: relative;
-  width: 100%;
-}
-
-.email-link {
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  text-decoration: none;
-  color: inherit;
-  font-size: 12px;
-  min-height: 44px;
-  cursor: pointer;
-  transition: all 0.2s;
-  will-change: transform;
-}
-
-.dark .email-link {
-  background: #1e293b;
-  border-color: #334155;
-}
-
-.email-link:hover {
-  border-color: #4f46e5;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  z-index: 10;
-}
-
-.email-link.sent {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.dark .email-link.sent {
-  background: #064e3b;
-  border-color: #047857;
-}
-
-.email-number {
-  min-width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #4f46e5;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  margin-right: 8px;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-
-.email-link.sent .email-number {
-  background: #10b981;
-}
-
-.email-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-}
-
-.email-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.email-name {
-  font-weight: 600;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px;
-}
-
-.email-address {
-  font-size: 11px;
-  color: #666;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dark .email-address {
-  color: #94a3b8;
-}
-
-.cc-badge {
-  background: rgba(79, 70, 229, 0.1);
-  color: #4f46e5;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 600;
-  margin-left: 6px;
-  display: inline-block;
-}
-
-.email-action {
-  padding: 4px 10px;
-  background: #4f46e5;
-  color: white;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.email-action:hover {
-  background: #4338ca;
-  transform: translateY(-1px);
-}
-
-.email-link.sent .email-action {
-  background: #10b981;
-  cursor: default;
-}
-
-.email-link.sent .email-action:hover {
-  background: #10b981;
-  transform: none;
-}
-
-.scroll-btn {
-  position: fixed;
-  right: 16px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #4f46e5;
-  color: white;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  z-index: 1000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
-
-.scroll-btn:hover {
-  background: #4338ca;
-}
-
-.scroll-top {
-  bottom: 80px;
-}
-
-.scroll-bottom {
-  bottom: 24px;
-}
-
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: #1e293b;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 1000;
-  opacity: 0;
-  transition: all 0.3s;
-  max-width: 90%;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 12px 16px;
-  border-top: 1px solid #e2e8f0;
-  text-align: center;
-  font-size: 12px;
-  color: #666;
-  z-index: 99;
-}
-
-.dark .footer {
-  background: #1e293b;
-  border-color: #334155;
-  color: #94a3b8;
-}
-
-@media (max-width: 768px) {
-  .container { padding: 12px; }
-  .stats-grid { gap: 8px; }
-  .stat-value { font-size: 24px; }
-  .card-header, .card-body { padding: 12px; }
-  .virtual-scroll-viewport { height: 400px; }
-  .batch-info { flex-direction: column; align-items: flex-start; gap: 4px; }
-}
-
-@media (max-width: 480px) {
-  .header { padding: 10px 12px; }
-  .container { padding: 10px; }
-  .stat-value { font-size: 22px; }
-  .virtual-scroll-viewport { height: 350px; }
-  .batch-header { flex-direction: column; align-items: flex-start; }
-}
-
-body, .container, .card, .email-list-container {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fatisco · Fast Email</title>
+  <style>
+    /* ==================== FAST & MINIMAL ==================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #1e293b;
+      line-height: 1.4;
+      padding-bottom: 70px;
+    }
+
+    body.dark {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    /* ==================== HEADER ==================== */
+    .header {
+      background: #4f46e5;
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .theme-toggle {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ==================== CONTAINER ==================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+
+    /* ==================== STATS ==================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+      border: 1px solid #e9eef2;
+    }
+
+    .dark .stat-card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .stat-number {
+      font-size: 22px;
+      font-weight: 800;
+      color: #4f46e5;
+    }
+
+    .stat-small {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ==================== CARDS ==================== */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #e9eef2;
+    }
+
+    .dark .card {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* ==================== FILE UPLOAD ==================== */
+    .file-upload {
+      margin-bottom: 12px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .dark .file-label {
+      background: #1e293b;
+      border-color: #475569;
+    }
+
+    /* ==================== INPUTS ==================== */
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d9e6;
+      border-radius: 12px;
+      font-size: 14px;
+      background: white;
+      margin-bottom: 12px;
+    }
+
+    .dark textarea, .dark input {
+      background: #0f172a;
+      border-color: #334155;
+      color: #e2e8f0;
+    }
+
+    /* ==================== BUTTONS ==================== */
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: white;
+      border: 1px solid #d1d9e6;
+      flex: 1 1 auto;
+    }
+
+    .dark .btn {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+      color: white;
+      border: none;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+      border: none;
+    }
+
+    /* ==================== FILTER TABS ==================== */
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 16px 0 12px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: #f1f5f9;
+      border: 1px solid #d1d9e6;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .filter-btn.active {
+      background: #4f46e5;
+      color: white;
+      border-color: #4f46e5;
+    }
+
+    .filter-count {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 6px;
+      border-radius: 20px;
+      font-size: 10px;
+    }
+
+    /* ==================== COMPACT EMAIL LIST ==================== */
+    .email-scroll-container {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e9eef2;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .dark .email-scroll-container {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    .email-list {
+      padding: 6px;
+    }
+
+    /* SUPER COMPACT EMAIL ITEMS */
+    .email-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .dark .email-item {
+      background: #0f172a;
+      border-color: #334155;
+    }
+
+    .email-item.sent {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      opacity: 0.8;
+    }
+
+    .dark .email-item.sent {
+      background: #064e3b;
+      border-color: #047857;
+    }
+
+    .email-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #4f46e5;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .email-item.sent .email-number {
+      background: #10b981;
+    }
+
+    .email-details {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .email-addr {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .email-name {
+      color: #64748b;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 80px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status-dot.sent { background: #22c55e; }
+    .status-dot.pending { background: #f59e0b; }
+
+    .email-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .action-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      border: 1px solid #e2e8f0;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dark .action-btn {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+
+    .action-btn:hover {
+      background: #4f46e5;
+      color: white;
+    }
+
+    /* ==================== SCROLL BUTTONS ==================== */
+    .scroll-buttons {
+      position: fixed;
+      right: 15px;
+      bottom: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scroll-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(79,70,229,0.3);
+    }
+
+    .scroll-btn.hidden {
+      display: none;
+    }
+
+    /* ==================== FOOTER ==================== */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 12px;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .dark .footer {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .email-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      
+      .email-addr, .email-name {
+        max-width: 100px;
+      }
+    }
+  </style>
 </head>
 <body class="light">
 
 <div class="header">
   <div class="header-content">
     <div class="logo" id="fatiscoLogo">
-      <span class="logo-icon">F</span>
-      <span class="logo-text">FATISCO</span>
+      <span class="logo-text">⚡ fatisco</span>
     </div>
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
   </div>
@@ -892,715 +458,241 @@ body, .container, .card, .email-list-container {
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-value" id="totalEmails">0</div>
       <div class="stat-label">Total</div>
+      <div class="stat-number" id="statTotal">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="validEmails">0</div>
       <div class="stat-label">Valid</div>
+      <div class="stat-number" id="statValid">0</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="emailsSentToday">0</div>
-      <div class="stat-label">Sent Today</div>
-      <div class="time-info" id="todayInfo">Since midnight</div>
+      <div class="stat-label">Sent (24h)</div>
+      <div class="stat-number" id="statSent24h">0</div>
+      <div class="stat-small" id="timeSinceMidnight"></div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="emailsSentTotal">0</div>
       <div class="stat-label">Sent (Total)</div>
+      <div class="stat-number" id="statSentTotal">0</div>
     </div>
   </div>
 
-  <!-- Email List Card -->
+  <!-- Input Card -->
   <div class="card">
     <div class="card-header">
-      <span class="card-icon">📧</span>
-      <span class="card-title">Email List</span>
+      <span>📧</span> Email List
     </div>
-    <div class="card-body">
-      <div class="file-upload">
-        <input type="file" id="fileInput" class="file-input" accept=".csv,.txt">
-        <label for="fileInput" class="file-label">
-          📁 Upload CSV/TXT
-        </label>
-      </div>
-      
-      <div class="input-group">
-        <label class="label">Paste Emails (email,name,company)</label>
-        <textarea class="textarea" id="list" placeholder="john@acme.com,John Doe,Acme Corp
-jane@startup.io,Jane Smith,Startup Inc
-bob@tech.ng,Bob Johnson,Tech Nigeria"></textarea>
-      </div>
-      
-      <div class="button-group">
-        <button class="btn btn-secondary" onclick="cleanList()">🧹 Clean</button>
-        <button class="btn btn-secondary" onclick="forceSave()">💾 Save</button>
-        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear</button>
-      </div>
+    
+    <div class="file-upload">
+      <input type="file" id="fileInput" class="file-input" accept=".csv,.txt">
+      <label for="fileInput" class="file-label">📁 Upload CSV/TXT</label>
+    </div>
+    
+    <textarea id="emailInput" rows="3" placeholder="email,name,company">john@acme.com,John Doe,Acme Corp
+jane@startup.io,Jane Smith,Startup Inc</textarea>
+    
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="processEmails()">⚡ Generate</button>
+      <button class="btn" onclick="exportCSV()">📥 Export</button>
+      <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear</button>
     </div>
   </div>
 
-  <!-- Email Composer Card -->
+  <!-- Composer Card -->
   <div class="card">
     <div class="card-header">
-      <span class="card-icon">✉️</span>
-      <span class="card-title">Email Composer</span>
+      <span>✉️</span> Composer
     </div>
-    <div class="card-body">
-      <!-- CC Toggle Section -->
-      <div class="cc-toggle">
-        <button class="cc-btn" id="ccToggleBtn" onclick="toggleCC()">
-          📧 Add CC
-        </button>
-      </div>
-      
-      <div class="cc-input" id="ccInput">
-        <label class="label">CC Email Address</label>
-        <input class="cc-field" id="ccEmail" type="email" placeholder="cc@example.com">
-        <div class="cc-hint">Same CC for all emails</div>
-      </div>
-      
-      <div class="input-group">
-        <label class="label">Subject Line</label>
-        <input class="input" id="subject" value="Opportunity for {company}">
-      </div>
-      
-      <div class="input-group">
-        <label class="label">Message Body</label>
-        <textarea class="textarea" id="body" rows="6">Hi {name},
-
-I noticed {company} is doing great work. I'd love to discuss collaboration opportunities.
-
-Looking forward to connecting!</textarea>
-      </div>
-      
-      <!-- Normal Mode Controls (always visible) -->
-      <div id="normalControls">
-        <div class="button-group">
-          <button class="btn btn-primary" onclick="generateLinks()">
-            ⚡ Generate Links
-          </button>
-          <button class="btn btn-secondary" onclick="downloadCSV()">
-            📥 Export CSV
-          </button>
-        </div>
-      </div>
-      
-      <!-- Batch Mode Controls (hidden by default, appears when triggered) -->
-      <div id="batchControls" style="display: none;"></div>
+    
+    <input type="text" id="subject" placeholder="Subject" value="Opportunity for {company}">
+    <textarea id="body" rows="2" placeholder="Body...">Hi {name}, I noticed {company}...</textarea>
+    
+    <div style="display: flex; gap: 8px; margin: 8px 0;">
+      <button class="btn" id="ccBtn" onclick="toggleCC()" style="padding: 6px 12px;">📧 CC</button>
+    </div>
+    
+    <div id="ccField" style="display: none;">
+      <input type="email" id="ccEmail" placeholder="cc@example.com">
     </div>
   </div>
 
-  <!-- Email Output -->
-  <div class="email-list-container" id="outputContainer">
-    <div class="email-list-header">
-      <div class="email-filters">
-        <button class="filter-btn active" onclick="filterEmails('all')">
-          All <span class="filter-count" id="countAll">0</span>
-        </button>
-        <button class="filter-btn" onclick="filterEmails('pending')">
-          Pending <span class="filter-count" id="countPending">0</span>
-        </button>
-        <button class="filter-btn" onclick="filterEmails('sent')">
-          Sent <span class="filter-count" id="countSent">0</span>
-        </button>
-      </div>
-    </div>
-    <div class="virtual-scroll-viewport" id="virtualScrollViewport">
-      <div class="virtual-scroll-content" id="virtualScrollContent"></div>
-    </div>
+  <!-- Filters -->
+  <div class="filter-tabs">
+    <button class="filter-btn active" onclick="filterEmails('all')">
+      All <span class="filter-count" id="countAll">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterEmails('pending')">
+      Pending <span class="filter-count" id="countPending">0</span>
+    </button>
+    <button class="filter-btn" onclick="filterEmails('sent')">
+      Sent <span class="filter-count" id="countSent">0</span>
+    </button>
   </div>
+
+  <!-- Scrollable Email List (COMPACT) -->
+  <div class="email-scroll-container" id="emailScrollContainer">
+    <div class="email-list" id="emailList"></div>
+  </div>
+
+  <!-- Batch Panel (hidden) -->
+  <div id="batchPanel" style="display: none; margin-top: 16px;"></div>
 </div>
 
 <!-- Scroll Buttons -->
-<button class="scroll-btn scroll-top" onclick="scrollToTop()" id="scrollTopBtn">↑</button>
-<button class="scroll-btn scroll-bottom" onclick="scrollToBottom()" id="scrollBottomBtn">↓</button>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="scroll-buttons">
+  <button class="scroll-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+  <button class="scroll-btn" id="scrollBottomBtn" onclick="scrollToBottom()">↓</button>
+</div>
 
 <!-- Footer -->
 <div class="footer">
-  <div>Built by Fatai Ajani | FATISCO © 2026</div>
+  <span>Built by Fatai Ajani · fatisco © 2026</span>
 </div>
 
 <script>
-// ============================================
-// CORE DATA
-// ============================================
-let stats = {
-  total: 0,
-  valid: 0,
-  sentToday: 0,
-  sentTotal: 0
-};
-
-let emailData = [];
+// ==================== FAST CORE ====================
+let emailRecords = [];
+let sentEmails = {}; // {email: timestamp}
 let currentFilter = 'all';
 let ccEnabled = false;
 
-// Batch mode state
-let batchMode = false;
-let batches = [];
-let sentBatches = [];
-
-// Virtual Scrolling
-let visibleEmails = [];
-let startIndex = 0;
-let endIndex = 0;
-const ITEM_HEIGHT = 52;
-const BUFFER_SIZE = 10;
-
-// Storage Keys
-const STORAGE_KEYS = {
-  EMAIL_LIST: 'fatisco_email_list',
-  SUBJECT: 'fatisco_subject',
-  BODY: 'fatisco_body',
-  THEME: 'fatisco_theme',
-  CC_ENABLED: 'fatisco_cc_enabled',
-  CC_EMAIL: 'fatisco_cc_email',
-  SENT_EMAILS_BY_LIST: 'fatisco_permanent_sent_emails',
-  CURRENT_LIST_HASH: 'fatisco_current_list_hash',
-  SENT_TODAY_COUNT: 'fatisco_indestructible_sent_today',
-  SENT_TODAY_DATE: 'fatisco_indestructible_sent_today_date',
-  BATCH_MODE: 'fatisco_batch_mode',
-  SENT_BATCHES: 'fatisco_sent_batches'
-};
-
-// ============================================
-// LOAD/SAVE DATA
-// ============================================
-function loadAllData() {
-  try {
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark');
-      document.querySelector('.theme-toggle').textContent = '☀️';
-    }
-    
-    const savedCCEnabled = localStorage.getItem(STORAGE_KEYS.CC_ENABLED);
-    if (savedCCEnabled === 'true') {
-      ccEnabled = true;
-      document.getElementById('ccToggleBtn').classList.add('active');
-      document.getElementById('ccInput').classList.add('show');
-      
-      const savedCCEmail = localStorage.getItem(STORAGE_KEYS.CC_EMAIL);
-      if (savedCCEmail) {
-        document.getElementById('ccEmail').value = savedCCEmail;
-      }
-    }
-    
-    // Load batch mode preference
-    const savedBatchMode = localStorage.getItem(STORAGE_KEYS.BATCH_MODE);
-    if (savedBatchMode === 'true') {
-      batchMode = true;
-    }
-    
-    // Load sent batches
-    const savedSentBatches = localStorage.getItem(STORAGE_KEYS.SENT_BATCHES);
-    if (savedSentBatches) {
-      sentBatches = JSON.parse(savedSentBatches);
-    }
-    
-    const savedList = localStorage.getItem(STORAGE_KEYS.EMAIL_LIST);
-    if (savedList) {
-      document.getElementById('list').value = savedList;
-    }
-    
-    const savedSubject = localStorage.getItem(STORAGE_KEYS.SUBJECT);
-    if (savedSubject) document.getElementById('subject').value = savedSubject;
-    
-    const savedBody = localStorage.getItem(STORAGE_KEYS.BODY);
-    if (savedBody) document.getElementById('body').value = savedBody;
-    
-    updateStatsFromList();
-    updateSentStats();
-    
-  } catch (e) {
-    console.error('Error loading data:', e);
-  }
-}
-
-function saveData() {
-  try {
-    localStorage.setItem(STORAGE_KEYS.EMAIL_LIST, document.getElementById('list').value);
-    localStorage.setItem(STORAGE_KEYS.SUBJECT, document.getElementById('subject').value);
-    localStorage.setItem(STORAGE_KEYS.BODY, document.getElementById('body').value);
-    localStorage.setItem(STORAGE_KEYS.CC_ENABLED, ccEnabled);
-    localStorage.setItem(STORAGE_KEYS.BATCH_MODE, batchMode);
-    localStorage.setItem(STORAGE_KEYS.SENT_BATCHES, JSON.stringify(sentBatches));
-    if (ccEnabled) {
-      localStorage.setItem(STORAGE_KEYS.CC_EMAIL, document.getElementById('ccEmail').value);
-    }
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-// ============================================
-// BATCH MODE TOGGLE (Hidden trigger on "FATISCO")
-// ============================================
-document.getElementById('fatiscoLogo').addEventListener('click', function() {
-  batchMode = !batchMode;
-  updateBatchModeUI();
-  saveData();
-  showToast(batchMode ? '🔒 Batch mode enabled' : '📧 Normal mode restored', 2000);
-});
-
-function updateBatchModeUI() {
-  const batchControls = document.getElementById('batchControls');
-  
-  if (batchMode) {
-    // Create and show batch controls
-    batchControls.style.display = 'block';
-    batchControls.innerHTML = getBatchControlsHTML();
-    
-    // Add event listeners for batch controls
-    document.getElementById('batchSize').addEventListener('input', function() {
-      if (emailData.length > 0) prepareBatches();
-    });
-    
-    // Prepare batches if we have emails
-    if (emailData.length > 0) {
-      prepareBatches();
-    } else {
-      batchControls.innerHTML = getBatchControlsHTML() + '<div style="padding: 20px; text-align: center; color: #666;">Load emails to start batching</div>';
-    }
-  } else {
-    batchControls.style.display = 'none';
-    batchControls.innerHTML = '';
-  }
-}
-
-function getBatchControlsHTML() {
-  return `
-    <div class="batch-controls">
-      <div class="batch-header">
-        <div class="batch-title">📦 BATCH SENDING (BCC)</div>
-        <div class="batch-size-control">
-          <span class="label">Batch size:</span>
-          <input type="number" id="batchSize" class="batch-size-input" value="10" min="5" max="20" step="1">
-        </div>
-      </div>
-      
-      <div class="batch-warning">
-        ⚠️ In batch mode, {name} and {company} won't work. Same email sent to all via BCC.
-      </div>
-      
-      <div id="batchListContainer" class="batch-list"></div>
-      
-      <div class="batch-progress" id="batchProgress" style="display: none;">
-        <div class="batch-stats">
-          <span><span id="batchesSent">0</span>/<span id="totalBatches">0</span> batches</span>
-          <span><span id="batchEmailsSent">0</span>/<span id="totalBatchEmails">0</span> emails</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="batchProgressFill" style="width: 0%;"></div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ============================================
-// BATCH PREPARATION
-// ============================================
-function prepareBatches() {
-  const pendingEmails = emailData.filter(e => !e.sent);
-  const batchListContainer = document.getElementById('batchListContainer');
-  
-  if (!batchListContainer) return;
-  
-  if (pendingEmails.length === 0) {
-    batchListContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No pending emails to send</div>';
-    document.getElementById('batchProgress').style.display = 'none';
-    return;
-  }
-  
-  const batchSize = parseInt(document.getElementById('batchSize').value) || 10;
-  batches = [];
-  
-  for (let i = 0; i < pendingEmails.length; i += batchSize) {
-    const batchEmails = pendingEmails.slice(i, i + batchSize);
-    batches.push({
-      index: Math.floor(i / batchSize),
-      emails: batchEmails,
-      sent: sentBatches.includes(Math.floor(i / batchSize))
-    });
-  }
-  
-  renderBatches();
-  updateBatchProgress();
-}
-
-function renderBatches() {
-  const container = document.getElementById('batchListContainer');
-  if (!container) return;
-  
-  if (batches.length === 0) {
-    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No batches to display</div>';
-    return;
-  }
-  
-  let html = '';
-  batches.forEach(batch => {
-    const displayEmails = batch.emails.length > 2 
-      ? batch.emails.slice(0, 2).map(e => e.email).join(', ') + ` +${batch.emails.length - 2} more`
-      : batch.emails.map(e => e.email).join(', ');
-    
-    html += `
-      <div class="batch-item">
-        <div class="batch-info">
-          <span class="batch-number">Batch ${batch.index + 1}</span>
-          <span class="batch-emails">${displayEmails}</span>
-        </div>
-        <button class="btn ${batch.sent ? 'btn-batch-sent' : 'btn-batch'}" 
-                onclick="sendBatch(${batch.index})"
-                ${batch.sent ? 'disabled' : ''}>
-          ${batch.sent ? '✓ Sent' : 'Send'}
-        </button>
-      </div>
-    `;
-  });
-  
-  container.innerHTML = html;
-  document.getElementById('batchProgress').style.display = 'block';
-}
-
-function sendBatch(batchIndex) {
-  const batch = batches[batchIndex];
-  if (!batch || batch.sent) return;
-  
-  const subject = document.getElementById('subject').value
-    .replace(/{name}/g, '[NAME]')
-    .replace(/{company}/g, '[COMPANY]');
-  
-  const body = document.getElementById('body').value
-    .replace(/{name}/g, '[NAME]')
-    .replace(/{company}/g, '[COMPANY]');
-  
-  const bccEmails = batch.emails.map(e => e.email).join(',');
-  
-  let mailtoLink = `mailto:?bcc=${encodeURIComponent(bccEmails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  
-  if (ccEnabled) {
-    const ccEmail = document.getElementById('ccEmail').value.trim();
-    if (ccEmail) {
-      mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
-    }
-  }
-  
-  window.open(mailtoLink, '_blank');
-  
-  // Mark as sent
-  batch.sent = true;
-  if (!sentBatches.includes(batchIndex)) {
-    sentBatches.push(batchIndex);
-  }
-  
-  batch.emails.forEach(email => {
-    savePermanentSentEmail(email.email);
-    
-    const emailIndex = emailData.findIndex(e => e.email === email.email);
-    if (emailIndex !== -1) {
-      emailData[emailIndex].sent = true;
-      updateEmailElementAsSent(emailIndex, email.name);
-    }
-  });
-  
-  incrementSentCounters();
-  updateSentStats();
-  updateFilterCounts();
-  
-  renderBatches();
-  updateBatchProgress();
-  saveData();
-  
-  showToast(`Batch ${batchIndex + 1} sent (${batch.emails.length} emails)`);
-}
-
-function updateBatchProgress() {
-  if (!document.getElementById('batchProgress')) return;
-  
-  const totalBatches = batches.length;
-  const sentCount = batches.filter(b => b.sent).length;
-  const totalEmails = batches.reduce((sum, b) => sum + b.emails.length, 0);
-  const sentEmails = batches.filter(b => b.sent).reduce((sum, b) => sum + b.emails.length, 0);
-  
-  document.getElementById('batchesSent').textContent = sentCount;
-  document.getElementById('totalBatches').textContent = totalBatches;
-  document.getElementById('batchEmailsSent').textContent = sentEmails;
-  document.getElementById('totalBatchEmails').textContent = totalEmails;
-  
-  const progress = totalEmails > 0 ? (sentEmails / totalEmails) * 100 : 0;
-  document.getElementById('batchProgressFill').style.width = progress + '%';
-}
-
-// ============================================
-// SENT EMAIL FUNCTIONS
-// ============================================
-function getListHash(listText) {
-  let hash = 0;
-  for (let i = 0; i < listText.length; i++) {
-    const char = listText.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString();
-}
-
-function getCurrentListHash() {
-  const list = document.getElementById('list').value.trim();
-  return list ? getListHash(list) : '';
-}
-
-function isEmailSent(email) {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) return false;
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    const sentEmails = allSentData[currentListHash] || [];
-    return sentEmails.includes(email.toLowerCase());
-  } catch (e) {
-    return false;
-  }
-}
-
-function getPermanentSentEmails() {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) return [];
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    return allSentData[currentListHash] || [];
-  } catch (e) {
-    return [];
-  }
-}
-
-function savePermanentSentEmail(email) {
-  try {
-    const currentListHash = getCurrentListHash();
-    if (!currentListHash) return false;
-    
-    const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-    
-    if (!allSentData[currentListHash]) {
-      allSentData[currentListHash] = [];
-    }
-    
-    const emailLower = email.toLowerCase();
-    if (!allSentData[currentListHash].includes(emailLower)) {
-      allSentData[currentListHash].push(emailLower);
-      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
-      return true;
-    }
-    return false;
-  } catch (e) {
-    return false;
-  }
-}
-
-// ============================================
-// DATE UTILITIES
-// ============================================
-function getTodayDateString() {
-  return new Date().toDateString();
-}
-
-function getTomorrowMidnight() {
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  return tomorrow.getTime();
+// ==================== 24H TRACKING ====================
+function getTodayMidnight() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
 function getHoursSinceMidnight() {
   const now = new Date();
   const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const hours = (now.getTime() - midnight.getTime()) / (1000 * 60 * 60);
-  return Math.floor(hours);
+  return Math.floor((now - midnight) / (1000 * 60 * 60));
 }
 
-function updateSentStats() {
-  const todayDate = getTodayDateString();
-  
-  let sentTodayCount = 0;
+// ==================== STORAGE ====================
+function loadStorage() {
   try {
-    const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
-    
-    if (savedDate === todayDate) {
-      const savedCount = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_COUNT);
-      sentTodayCount = parseInt(savedCount) || 0;
-    } else {
-      sentTodayCount = 0;
-      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, '0');
-      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_DATE, todayDate);
+    const saved = localStorage.getItem('fatisco_fast');
+    if (saved) {
+      const data = JSON.parse(saved);
+      emailRecords = data.records || [];
+      sentEmails = data.sent || {};
     }
   } catch (e) {}
-  
-  let sentTotalCount = emailData.filter(e => e.sent).length;
-  
-  stats.sentToday = sentTodayCount;
-  stats.sentTotal = sentTotalCount;
-  
-  document.getElementById('emailsSentToday').textContent = stats.sentToday;
-  document.getElementById('emailsSentTotal').textContent = stats.sentTotal;
-  document.getElementById('todayInfo').textContent = `${getHoursSinceMidnight()}h since midnight`;
 }
 
-function incrementSentCounters() {
-  const todayDate = getTodayDateString();
-  
-  try {
-    let sentTodayCount = 0;
-    const savedDate = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_DATE);
-    
-    if (savedDate === todayDate) {
-      const savedCount = localStorage.getItem(STORAGE_KEYS.SENT_TODAY_COUNT);
-      sentTodayCount = parseInt(savedCount) || 0;
-      sentTodayCount++;
-    } else {
-      sentTodayCount = 1;
-      localStorage.setItem(STORAGE_KEYS.SENT_TODAY_DATE, todayDate);
-    }
-    
-    localStorage.setItem(STORAGE_KEYS.SENT_TODAY_COUNT, sentTodayCount.toString());
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-// ============================================
-// UI FUNCTIONS
-// ============================================
-function toggleTheme() {
-  const isDark = document.body.classList.toggle('dark');
-  const btn = document.querySelector('.theme-toggle');
-  btn.textContent = isDark ? '☀️' : '🌙';
-  localStorage.setItem(STORAGE_KEYS.THEME, isDark ? 'dark' : 'light');
-}
-
-function toggleCC() {
-  ccEnabled = !ccEnabled;
-  const toggleBtn = document.getElementById('ccToggleBtn');
-  const ccInput = document.getElementById('ccInput');
-  
-  if (ccEnabled) {
-    toggleBtn.classList.add('active');
-    ccInput.classList.add('show');
-  } else {
-    toggleBtn.classList.remove('active');
-    ccInput.classList.remove('show');
-  }
-  
-  localStorage.setItem(STORAGE_KEYS.CC_ENABLED, ccEnabled);
-  if (ccEnabled) {
-    localStorage.setItem(STORAGE_KEYS.CC_EMAIL, document.getElementById('ccEmail').value);
-  }
-}
-
-function showToast(message, duration = 3000) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
-}
-
-// ============================================
-// EMAIL PARSING
-// ============================================
-function parseLine(line) {
-  const parts = line.split(',').map(p => p.trim());
-  const email = parts[0];
-  if (!email || !email.includes('@')) return null;
-  
-  let name = parts[1] || email.split('@')[0];
-  let company = parts[2] || email.split('@')[1]?.split('.')[0] || 'Company';
-  
-  name = name.split(' ').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' ');
-  
-  company = company.charAt(0).toUpperCase() + company.slice(1);
-  
-  return { email: email.toLowerCase(), name, company, sent: false };
-}
-
-function updateStatsFromList() {
-  const list = document.getElementById('list').value;
-  const lines = list.split('\n').filter(line => line.trim());
-  
-  let validCount = 0;
-  lines.forEach(line => {
-    const email = line.split(',')[0]?.trim();
-    if (email && email.includes('@') && email.includes('.')) {
-      validCount++;
-    }
-  });
-  
-  stats.total = lines.length;
-  stats.valid = validCount;
-  
-  document.getElementById('totalEmails').textContent = stats.total;
-  document.getElementById('validEmails').textContent = stats.valid;
-}
-
-// ============================================
-// GENERATE LINKS (Normal Mode)
-// ============================================
-function generateLinks() {
-  if (batchMode) {
-    prepareBatches();
-    return;
-  }
-  
-  const list = document.getElementById('list').value.trim();
-  if (!list) {
-    showToast('Please add emails first');
-    return;
-  }
-  
-  const newListHash = getListHash(list);
-  localStorage.setItem(STORAGE_KEYS.CURRENT_LIST_HASH, newListHash);
-  
-  const lines = list.split('\n').filter(line => line.trim());
-  const container = document.getElementById('outputContainer');
-  container.style.display = 'block';
-  
-  emailData = [];
-  lines.forEach((line) => {
-    const parsed = parseLine(line);
-    if (parsed) {
-      emailData.push(parsed);
-    }
-  });
-  
-  const permanentSentEmails = getPermanentSentEmails();
-  
-  emailData = emailData.map(email => ({
-    ...email,
-    sent: permanentSentEmails.includes(email.email)
+function saveStorage() {
+  localStorage.setItem('fatisco_fast', JSON.stringify({
+    records: emailRecords,
+    sent: sentEmails
   }));
-  
-  stats.total = emailData.length;
-  stats.valid = emailData.length;
-  updateStatsFromList();
-  updateSentStats();
-  updateFilterCounts();
-  
-  setupVirtualScrolling();
-  
-  showToast(`Generated ${emailData.length} emails`);
-  
-  document.getElementById('scrollTopBtn').style.display = 'flex';
-  document.getElementById('scrollBottomBtn').style.display = 'flex';
 }
 
-// ============================================
-// FILTER FUNCTIONS
-// ============================================
+// ==================== PROCESS EMAILS (NO SCORING - INSTANT) ====================
+function processEmails() {
+  const raw = document.getElementById('emailInput').value;
+  const lines = raw.split('\n').filter(l => l.trim());
+  
+  emailRecords = [];
+  
+  lines.forEach(line => {
+    const parts = line.split(',').map(p => p.trim());
+    const email = parts[0];
+    if (!email || !email.includes('@')) return;
+    
+    const name = parts[1] || email.split('@')[0];
+    const company = parts[2] || email.split('@')[1]?.split('.')[0] || '';
+    
+    emailRecords.push({
+      email,
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      company: company.charAt(0).toUpperCase() + company.slice(1)
+    });
+  });
+  
+  saveStorage();
+  renderEmails();
+  updateStats();
+  showToast(`Loaded ${emailRecords.length} emails`);
+}
+
+// ==================== RENDER COMPACT EMAILS ====================
+function renderEmails() {
+  let filtered = emailRecords;
+  
+  if (currentFilter === 'sent') {
+    filtered = emailRecords.filter(r => sentEmails[r.email]);
+  } else if (currentFilter === 'pending') {
+    filtered = emailRecords.filter(r => !sentEmails[r.email]);
+  }
+  
+  let html = '';
+  
+  filtered.forEach((r, index) => {
+    const sent = !!sentEmails[r.email];
+    
+    html += `
+      <div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}">
+        <div class="email-number">${index + 1}</div>
+        <div class="email-details">
+          <span class="email-addr">${r.email}</span>
+          <span class="email-name">${r.name}</span>
+        </div>
+        <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
+        <div class="email-actions">
+          <button class="action-btn" onclick="sendEmail('${r.email}', '${r.name}', '${r.company}', event)">✉️</button>
+          ${!sent ? `<button class="action-btn" onclick="markSent('${r.email}', event)">✓</button>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('emailList').innerHTML = html || '<div style="padding: 20px; text-align: center;">No emails</div>';
+  updateFilterCounts();
+}
+
+// ==================== SEND (NO DOUBLE SEND) ====================
+function sendEmail(email, name, company, event) {
+  event.stopPropagation();
+  
+  // STRICT CHECK: Cannot resend
+  if (sentEmails[email]) {
+    showToast('⚠️ Already sent');
+    return;
+  }
+  
+  const subject = document.getElementById('subject').value
+    .replace(/{name}/g, name)
+    .replace(/{company}/g, company);
+    
+  const body = document.getElementById('body').value
+    .replace(/{name}/g, name)
+    .replace(/{company}/g, company);
+  
+  let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+  if (ccEnabled) {
+    const cc = document.getElementById('ccEmail').value.trim();
+    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+  }
+  
+  window.open(mailto, '_blank');
+  
+  // Mark as sent with timestamp
+  markSent(email, event);
+}
+
+function markSent(email, event) {
+  if (event) event.stopPropagation();
+  
+  // STRICT: Cannot remark if already sent
+  if (sentEmails[email]) return;
+  
+  sentEmails[email] = Date.now(); // Store timestamp
+  saveStorage();
+  renderEmails();
+  updateStats();
+}
+
+// ==================== FILTERS ====================
 function filterEmails(filter) {
   currentFilter = filter;
   
@@ -1609,429 +701,147 @@ function filterEmails(filter) {
   });
   event.target.classList.add('active');
   
-  applyCurrentFilter();
-}
-
-function applyCurrentFilter() {
-  visibleEmails = [];
-  if (emailData.length > 0) {
-    setupVirtualScrolling();
-  }
-}
-
-function shouldShowEmail(email) {
-  if (currentFilter === 'all') return true;
-  if (currentFilter === 'sent') return email.sent;
-  if (currentFilter === 'pending') return !email.sent;
-  return true;
+  renderEmails();
 }
 
 function updateFilterCounts() {
-  const sentCount = emailData.filter(e => e.sent).length;
-  const pendingCount = emailData.length - sentCount;
+  const total = emailRecords.length;
+  const sent = emailRecords.filter(r => sentEmails[r.email]).length;
+  const pending = total - sent;
   
-  document.getElementById('countAll').textContent = emailData.length;
-  document.getElementById('countSent').textContent = sentCount;
-  document.getElementById('countPending').textContent = pendingCount;
+  document.getElementById('countAll').textContent = total;
+  document.getElementById('countSent').textContent = sent;
+  document.getElementById('countPending').textContent = pending;
 }
 
-// ============================================
-// VIRTUAL SCROLLING
-// ============================================
-function setupVirtualScrolling() {
-  const viewport = document.getElementById('virtualScrollViewport');
-  const content = document.getElementById('virtualScrollContent');
+// ==================== STATS ====================
+function updateStats() {
+  const total = emailRecords.length;
+  const valid = emailRecords.length; // All emails considered valid (no scoring)
+  const now = Date.now();
+  const oneDayAgo = now - (24 * 60 * 60 * 1000);
   
-  const filteredIndices = emailData.reduce((acc, email, idx) => {
-    if (shouldShowEmail(email)) acc.push(idx);
-    return acc;
-  }, []);
-  
-  const totalHeight = filteredIndices.length * ITEM_HEIGHT;
-  content.style.height = totalHeight + 'px';
-  content.innerHTML = '';
-  
-  visibleEmails = [];
-  updateVisibleItems();
-  
-  viewport.removeEventListener('scroll', handleScroll);
-  viewport.addEventListener('scroll', handleScroll);
-}
-
-function handleScroll() {
-  window.requestAnimationFrame(updateVisibleItems);
-}
-
-function updateVisibleItems() {
-  const viewport = document.getElementById('virtualScrollViewport');
-  const content = document.getElementById('virtualScrollContent');
-  
-  const scrollTop = viewport.scrollTop;
-  const viewportHeight = viewport.clientHeight;
-  
-  const filteredIndices = emailData.reduce((acc, email, idx) => {
-    if (shouldShowEmail(email)) acc.push(idx);
-    return acc;
-  }, []);
-  
-  const totalFiltered = filteredIndices.length;
-  
-  const visibleStart = Math.floor(scrollTop / ITEM_HEIGHT);
-  const visibleEnd = Math.ceil((scrollTop + viewportHeight) / ITEM_HEIGHT);
-  
-  startIndex = Math.max(0, visibleStart - BUFFER_SIZE);
-  endIndex = Math.min(totalFiltered - 1, visibleEnd + BUFFER_SIZE);
-  
-  const currentVisible = new Set(visibleEmails);
-  const newVisible = [];
-  
-  for (let i = startIndex; i <= endIndex; i++) {
-    if (!currentVisible.has(i) && i < filteredIndices.length) {
-      const realIndex = filteredIndices[i];
-      const element = createEmailElement(emailData[realIndex], realIndex, i);
-      element.style.top = (i * ITEM_HEIGHT) + 'px';
-      content.appendChild(element);
-    }
-    newVisible.push(i);
-  }
-  
-  for (let i of currentVisible) {
-    if (i < startIndex || i > endIndex) {
-      const element = document.querySelector(`.email-link[data-virtual-index="${i}"]`);
-      if (element) element.remove();
-    }
-  }
-  
-  visibleEmails = newVisible;
-}
-
-function createEmailElement(email, realIndex, virtualIndex) {
-  const element = document.createElement('div');
-  element.className = `email-link ${email.sent ? 'sent' : ''}`;
-  element.setAttribute('data-email', email.email);
-  element.setAttribute('data-index', realIndex);
-  element.setAttribute('data-virtual-index', virtualIndex);
-  element.style.position = 'absolute';
-  element.style.top = (virtualIndex * ITEM_HEIGHT) + 'px';
-  
-  if (!email.sent) {
-    element.addEventListener('click', function(e) {
-      if (e.target.classList.contains('email-action')) return;
-      
-      const subject = document.getElementById('subject').value
-        .replace(/{name}/g, email.name)
-        .replace(/{company}/g, email.company);
-      
-      const body = document.getElementById('body').value
-        .replace(/{name}/g, email.name)
-        .replace(/{company}/g, email.company);
-      
-      let mailtoLink = `mailto:${email.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      if (ccEnabled) {
-        const ccEmail = document.getElementById('ccEmail').value.trim();
-        if (ccEmail) {
-          mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
-        }
-      }
-      
-      window.open(mailtoLink, '_blank');
-      
-      setTimeout(() => {
-        if (confirm(`Did you send to ${email.name}?`)) {
-          markAsSent(email.email, email.name);
-        }
-      }, 5000);
-    });
-  }
-  
-  const ccBadge = ccEnabled && document.getElementById('ccEmail').value.trim() ? '<span class="cc-badge">CC</span>' : '';
-  
-  element.innerHTML = `
-    <div class="email-number">${realIndex + 1}</div>
-    <div class="email-content">
-      <div class="email-info">
-        <div class="email-name">${email.name}${ccBadge}</div>
-        <div class="email-address">${email.email}</div>
-      </div>
-      <button class="email-action" data-email="${email.email}" data-name="${email.name}" data-index="${realIndex}">
-        ${email.sent ? '✓ Sent' : 'Send'}
-      </button>
-    </div>
-  `;
-  
-  const button = element.querySelector('.email-action');
-  
-  if (email.sent) {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      showToast(`Already sent to ${email.name}`);
-    });
-  } else {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const subject = document.getElementById('subject').value
-        .replace(/{name}/g, email.name)
-        .replace(/{company}/g, email.company);
-      
-      const body = document.getElementById('body').value
-        .replace(/{name}/g, email.name)
-        .replace(/{company}/g, email.company);
-      
-      let mailtoLink = `mailto:${email.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      if (ccEnabled) {
-        const ccEmail = document.getElementById('ccEmail').value.trim();
-        if (ccEmail) {
-          mailtoLink += `&cc=${encodeURIComponent(ccEmail)}`;
-        }
-      }
-      
-      window.open(mailtoLink, '_blank');
-      
-      setTimeout(() => {
-        if (confirm(`Did you send to ${email.name}?`)) {
-          markAsSent(email.email, email.name);
-        }
-      }, 5000);
-    });
-  }
-  
-  return element;
-}
-
-function markAsSent(email, name) {
-  savePermanentSentEmail(email);
-  
-  const index = emailData.findIndex(e => e.email === email);
-  if (index !== -1) {
-    emailData[index].sent = true;
-    updateEmailElementAsSent(index, name);
-  }
-  
-  incrementSentCounters();
-  updateSentStats();
-  updateFilterCounts();
-  saveData();
-  
-  if (batchMode) {
-    prepareBatches();
-  }
-}
-
-function updateEmailElementAsSent(index, name) {
-  const element = document.querySelector(`.email-link[data-index="${index}"]`);
-  if (!element) return;
-  
-  element.classList.add('sent');
-  
-  const numberBadge = element.querySelector('.email-number');
-  if (numberBadge) numberBadge.style.background = '#10b981';
-  
-  const button = element.querySelector('.email-action');
-  if (button) {
-    button.textContent = '✓ Sent';
-    button.style.background = '#10b981';
-  }
-}
-
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
-function cleanList() {
-  let lines = document.getElementById('list').value.split('\n').filter(line => line.trim());
-  const originalCount = lines.length;
-  
-  const uniqueLines = [];
-  const seen = new Set();
-  
-  lines.forEach(line => {
-    const email = line.split(',')[0]?.trim().toLowerCase();
-    if (email && !seen.has(email)) {
-      seen.add(email);
-      uniqueLines.push(line);
-    }
+  // Count sent in last 24h
+  let sent24h = 0;
+  Object.values(sentEmails).forEach(ts => {
+    if (ts > oneDayAgo) sent24h++;
   });
   
-  document.getElementById('list').value = uniqueLines.join('\n');
-  updateStatsFromList();
-  saveData();
+  const sentTotal = Object.keys(sentEmails).length;
   
-  showToast(`Cleaned: ${originalCount - uniqueLines.length} duplicates removed`);
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statValid').textContent = valid;
+  document.getElementById('statSent24h').textContent = sent24h;
+  document.getElementById('statSentTotal').textContent = sentTotal;
+  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
 }
 
-function forceSave() {
-  if (saveData()) {
-    showToast('Data saved successfully');
-  } else {
-    showToast('Save failed');
-  }
+// ==================== TOGGLE CC ====================
+function toggleCC() {
+  ccEnabled = !ccEnabled;
+  document.getElementById('ccField').style.display = ccEnabled ? 'block' : 'none';
+  document.getElementById('ccBtn').style.background = ccEnabled ? '#4f46e5' : '';
+  document.getElementById('ccBtn').style.color = ccEnabled ? 'white' : '';
 }
 
-// ============================================
-// FIXED: CLEAR ALL DATA (Now clears batch data too)
-// ============================================
-function clearAllData() {
-  if (confirm('Clear ALL data?\n\n✅ Total, Valid, Sent (Total) will reset to 0\n✅ Email list will be cleared\n✅ Subject/body reset to default\n✅ Batch progress cleared\n❌ Sent Today counter will NOT be cleared')) {
-    
-    // Clear email list
-    document.getElementById('list').value = '';
-    
-    // Reset subject/body
-    document.getElementById('subject').value = 'Opportunity for {company}';
-    document.getElementById('body').value = 'Hi {name},\n\nI noticed {company} is doing great work. I\'d love to discuss collaboration opportunities.\n\nLooking forward to connecting!';
-    
-    // Clear data arrays
-    emailData = [];
-    batches = [];           // ✅ Clear batch array
-    sentBatches = [];       // ✅ Clear sent batches array
-    
-    // Clear display
-    document.getElementById('outputContainer').style.display = 'none';
-    document.getElementById('virtualScrollContent').innerHTML = '';
-    
-    // Clear batch controls if visible
-    const batchControls = document.getElementById('batchControls');
-    if (batchControls) {
-      batchControls.innerHTML = '';
-    }
-    
-    // Reset stats (except Sent Today)
-    stats.total = 0;
-    stats.valid = 0;
-    stats.sentTotal = 0;
-    
-    document.getElementById('totalEmails').textContent = '0';
-    document.getElementById('validEmails').textContent = '0';
-    document.getElementById('emailsSentTotal').textContent = '0';
-    
-    document.getElementById('countAll').textContent = '0';
-    document.getElementById('countSent').textContent = '0';
-    document.getElementById('countPending').textContent = '0';
-    
-    // Clear sent emails from storage
-    const currentListHash = localStorage.getItem(STORAGE_KEYS.CURRENT_LIST_HASH);
-    if (currentListHash) {
-      const allSentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST) || '{}');
-      delete allSentData[currentListHash];
-      localStorage.setItem(STORAGE_KEYS.SENT_EMAILS_BY_LIST, JSON.stringify(allSentData));
-    }
-    
-    // Clear batch data from storage
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_LIST_HASH);
-    localStorage.removeItem(STORAGE_KEYS.SENT_BATCHES);  // ✅ Clear stored batches
-    
-    saveData();
-    updateSentStats(); // Preserves Sent Today
-    
-    showToast('✅ All data cleared (Sent Today preserved)');
-  }
-}
-
-function downloadCSV() {
-  if (emailData.length === 0) {
-    showToast('No data to export');
-    return;
-  }
-  
-  let csv = 'Email,Name,Company,Status\n';
-  emailData.forEach(email => {
-    csv += `"${email.email}","${email.name}","${email.company}","${email.sent ? 'Sent' : 'Pending'}"\n`;
-  });
-  
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `fatisco_${Date.now()}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-  
-  showToast('CSV downloaded');
-}
-
-// Scroll functions
+// ==================== SCROLL ====================
 function scrollToTop() {
-  document.getElementById('virtualScrollViewport').scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('emailScrollContainer').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function scrollToBottom() {
-  const viewport = document.getElementById('virtualScrollViewport');
-  viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
+  const c = document.getElementById('emailScrollContainer');
+  c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' });
 }
 
-// File input
+// ==================== UTILITIES ====================
+function exportCSV() {
+  let csv = 'Email,Name,Company,Sent\n';
+  emailRecords.forEach(r => {
+    csv += `"${r.email}","${r.name}","${r.company}",${sentEmails[r.email] ? 'Yes' : 'No'}\n`;
+  });
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fatisco_${Date.now()}.csv`;
+  a.click();
+  showToast('CSV exported');
+}
+
+function clearAll() {
+  if (confirm('Clear all?')) {
+    emailRecords = [];
+    sentEmails = {};
+    saveStorage();
+    renderEmails();
+    updateStats();
+    document.getElementById('emailInput').value = '';
+    showToast('Cleared');
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:8px 16px; border-radius:30px; font-size:13px; z-index:1000;';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1500);
+}
+
+// ==================== FILE UPLOAD ====================
+document.querySelector('.file-label').addEventListener('click', () => {
+  document.getElementById('fileInput').click();
+});
+
 document.getElementById('fileInput').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
   
   const reader = new FileReader();
-  reader.onload = function(e) {
-    document.getElementById('list').value = e.target.result;
-    updateStatsFromList();
-    saveData();
+  reader.onload = (e) => {
+    document.getElementById('emailInput').value = e.target.result;
+    processEmails();
     showToast(`Loaded ${file.name}`);
   };
   reader.readAsText(file);
 });
 
-// Auto-save
-let saveTimeout;
-function scheduleSave() {
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(() => saveData(), 1000);
-}
-
-document.getElementById('list').addEventListener('input', function() {
-  updateStatsFromList();
-  scheduleSave();
+// ==================== SCROLL BUTTON VISIBILITY ====================
+const container = document.getElementById('emailScrollContainer');
+container.addEventListener('scroll', () => {
+  const st = container.scrollTop;
+  const sh = container.scrollHeight;
+  const ch = container.clientHeight;
+  
+  document.getElementById('scrollTopBtn').classList.toggle('hidden', st < 50);
+  document.getElementById('scrollBottomBtn').classList.toggle('hidden', sh - st - ch < 50);
 });
 
-document.getElementById('subject').addEventListener('input', scheduleSave);
-document.getElementById('body').addEventListener('input', scheduleSave);
-document.getElementById('ccEmail').addEventListener('input', scheduleSave);
-
-// Scroll button visibility
-document.getElementById('virtualScrollViewport').addEventListener('scroll', function() {
-  const scrollTop = this.scrollTop;
-  const scrollHeight = this.scrollHeight;
-  const clientHeight = this.clientHeight;
-  
-  const topBtn = document.getElementById('scrollTopBtn');
-  const bottomBtn = document.getElementById('scrollBottomBtn');
-  
-  topBtn.style.display = scrollTop > 100 ? 'flex' : 'none';
-  bottomBtn.style.display = (scrollHeight - scrollTop - clientHeight) > 100 ? 'flex' : 'none';
-});
-
-// Midnight reset
-function checkMidnightReset() {
-  const now = Date.now();
-  const tomorrowMidnight = getTomorrowMidnight();
-  const timeUntilMidnight = tomorrowMidnight - now;
-  
-  setTimeout(() => {
-    updateSentStats();
-    checkMidnightReset();
-  }, timeUntilMidnight + 1000);
-}
-
-// Initialize
-window.addEventListener('load', function() {
-  loadAllData();
-  setInterval(updateSentStats, 60000);
-  checkMidnightReset();
-  
-  // Initialize batch mode UI if needed
-  if (batchMode) {
-    updateBatchModeUI();
+// ==================== BATCH MODE (HIDDEN) ====================
+document.querySelector('.logo').addEventListener('click', () => {
+  const panel = document.getElementById('batchPanel');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    panel.innerHTML = '<div style="background:#eef2ff; padding:16px; border-radius:12px;"><h4>📦 BATCH MODE</h4><p>Send 10 emails at once via BCC</p><button class="btn btn-primary" onclick="prepareBatches()">Prepare</button><div id="batchList"></div></div>';
+  } else {
+    panel.style.display = 'none';
   }
-  
-  console.log('FATISCO loaded - clean original design');
 });
+
+// ==================== INIT ====================
+loadStorage();
+renderEmails();
+updateStats();
+
+if (localStorage.getItem('fatisco_theme') === 'dark') {
+  document.body.classList.add('dark');
+}
 </script>
 </body>
 </html>
