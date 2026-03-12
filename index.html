@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fatisco · Fast Email</title>
+  <title>Fatisco · Email Automation</title>
   <style>
     /* ==================== FAST & MINIMAL ==================== */
     * {
@@ -155,11 +155,17 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
+      transition: all 0.2s;
     }
 
     .dark .file-label {
       background: #1e293b;
       border-color: #475569;
+    }
+
+    .file-label:hover {
+      border-color: #4f46e5;
+      background: #f1f5f9;
     }
 
     /* ==================== INPUTS ==================== */
@@ -197,6 +203,7 @@
       background: white;
       border: 1px solid #d1d9e6;
       flex: 1 1 auto;
+      transition: all 0.2s;
     }
 
     .dark .btn {
@@ -209,6 +216,10 @@
       background: #4f46e5;
       color: white;
       border: none;
+    }
+
+    .btn-primary:hover {
+      background: #4338ca;
     }
 
     .btn-danger {
@@ -269,17 +280,19 @@
       padding: 6px;
     }
 
-    /* SUPER COMPACT EMAIL ITEMS */
+    /* EMAIL CARDS - CLICKABLE */
     .email-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 10px;
+      padding: 10px 12px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
       margin-bottom: 4px;
-      font-size: 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
     .dark .email-item {
@@ -287,10 +300,17 @@
       border-color: #334155;
     }
 
+    .email-item:hover {
+      border-color: #4f46e5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
     .email-item.sent {
       background: #f0fdf4;
       border-color: #bbf7d0;
       opacity: 0.8;
+      cursor: not-allowed;
     }
 
     .dark .email-item.sent {
@@ -298,16 +318,22 @@
       border-color: #047857;
     }
 
+    .email-item.sent:hover {
+      border-color: #bbf7d0;
+      transform: none;
+      box-shadow: none;
+    }
+
     .email-number {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: #4f46e5;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       flex-shrink: 0;
     }
@@ -321,7 +347,7 @@
       min-width: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .email-addr {
@@ -329,7 +355,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 140px;
+      max-width: 160px;
     }
 
     .email-name {
@@ -338,47 +364,20 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 80px;
+      max-width: 100px;
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
+      margin-left: 4px;
     }
 
     .status-dot.sent { background: #22c55e; }
     .status-dot.pending { background: #f59e0b; }
 
-    .email-actions {
-      display: flex;
-      gap: 4px;
-    }
-
-    .action-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: none;
-      background: white;
-      border: 1px solid #e2e8f0;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .dark .action-btn {
-      background: #1e293b;
-      border-color: #475569;
-      color: #e2e8f0;
-    }
-
-    .action-btn:hover {
-      background: #4f46e5;
-      color: white;
-    }
+    /* NO BUTTONS ON CARDS - just the card itself */
 
     /* ==================== SCROLL BUTTONS ==================== */
     .scroll-buttons {
@@ -400,6 +399,15 @@
       font-size: 18px;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(79,70,229,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .scroll-btn:hover {
+      background: #4338ca;
+      transform: scale(1.05);
     }
 
     .scroll-btn.hidden {
@@ -425,6 +433,27 @@
       border-color: #334155;
     }
 
+    /* ==================== TOAST ==================== */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
     /* ==================== RESPONSIVE ==================== */
     @media (max-width: 600px) {
       .stats-grid {
@@ -438,7 +467,7 @@
       }
       
       .email-addr, .email-name {
-        max-width: 100px;
+        max-width: 120px;
       }
     }
   </style>
@@ -497,14 +526,14 @@ jane@startup.io,Jane Smith,Startup Inc</textarea>
     </div>
   </div>
 
-  <!-- Composer Card -->
+  <!-- Composer Card - PERSISTS -->
   <div class="card">
     <div class="card-header">
       <span>✉️</span> Composer
     </div>
     
     <input type="text" id="subject" placeholder="Subject" value="Opportunity for {company}">
-    <textarea id="body" rows="2" placeholder="Body...">Hi {name}, I noticed {company}...</textarea>
+    <textarea id="body" rows="2" placeholder="Body...">Hi {name}, I noticed {company} is doing great work. I'd love to connect.</textarea>
     
     <div style="display: flex; gap: 8px; margin: 8px 0;">
       <button class="btn" id="ccBtn" onclick="toggleCC()" style="padding: 6px 12px;">📧 CC</button>
@@ -528,7 +557,7 @@ jane@startup.io,Jane Smith,Startup Inc</textarea>
     </button>
   </div>
 
-  <!-- Scrollable Email List (COMPACT) -->
+  <!-- Scrollable Email List -->
   <div class="email-scroll-container" id="emailScrollContainer">
     <div class="email-list" id="emailList"></div>
   </div>
@@ -548,12 +577,78 @@ jane@startup.io,Jane Smith,Startup Inc</textarea>
   <span>Built by Fatai Ajani · fatisco © 2026</span>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
 <script>
-// ==================== FAST CORE ====================
+// ==================== DATA ====================
 let emailRecords = [];
 let sentEmails = {}; // {email: timestamp}
 let currentFilter = 'all';
 let ccEnabled = false;
+
+// ==================== PERSISTENT STORAGE ====================
+function loadAllData() {
+  try {
+    // Load email list
+    const savedList = localStorage.getItem('fatisco_email_list');
+    if (savedList) {
+      document.getElementById('emailInput').value = savedList;
+    }
+    
+    // Load subject and body
+    const savedSubject = localStorage.getItem('fatisco_subject');
+    if (savedSubject) {
+      document.getElementById('subject').value = savedSubject;
+    }
+    
+    const savedBody = localStorage.getItem('fatisco_body');
+    if (savedBody) {
+      document.getElementById('body').value = savedBody;
+    }
+    
+    // Load CC state
+    const savedCC = localStorage.getItem('fatisco_cc_enabled');
+    if (savedCC === 'true') {
+      ccEnabled = true;
+      document.getElementById('ccField').style.display = 'block';
+      document.getElementById('ccBtn').style.background = '#4f46e5';
+      document.getElementById('ccBtn').style.color = 'white';
+    }
+    
+    const savedCCEmail = localStorage.getItem('fatisco_cc_email');
+    if (savedCCEmail) {
+      document.getElementById('ccEmail').value = savedCCEmail;
+    }
+    
+    // Load sent emails
+    const savedSent = localStorage.getItem('fatisco_sent_emails');
+    if (savedSent) {
+      sentEmails = JSON.parse(savedSent);
+    }
+    
+    // Load email records
+    const savedRecords = localStorage.getItem('fatisco_records');
+    if (savedRecords) {
+      emailRecords = JSON.parse(savedRecords);
+    }
+    
+  } catch (e) {
+    console.log('Error loading data:', e);
+  }
+}
+
+function saveAllData() {
+  try {
+    localStorage.setItem('fatisco_email_list', document.getElementById('emailInput').value);
+    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
+    localStorage.setItem('fatisco_body', document.getElementById('body').value);
+    localStorage.setItem('fatisco_cc_enabled', ccEnabled);
+    localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
+    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    localStorage.setItem('fatisco_records', JSON.stringify(emailRecords));
+  } catch (e) {}
+}
 
 // ==================== 24H TRACKING ====================
 function getTodayMidnight() {
@@ -567,26 +662,26 @@ function getHoursSinceMidnight() {
   return Math.floor((now - midnight) / (1000 * 60 * 60));
 }
 
-// ==================== STORAGE ====================
-function loadStorage() {
-  try {
-    const saved = localStorage.getItem('fatisco_fast');
-    if (saved) {
-      const data = JSON.parse(saved);
-      emailRecords = data.records || [];
-      sentEmails = data.sent || {};
-    }
-  } catch (e) {}
+// Update sent stats (24h counter - NEVER CLEARED, only resets at midnight)
+function updateSentStats() {
+  const now = Date.now();
+  const oneDayAgo = now - (24 * 60 * 60 * 1000);
+  const midnight = getTodayMidnight();
+  
+  // Count sent in last 24h
+  let sent24h = 0;
+  Object.values(sentEmails).forEach(ts => {
+    if (ts > oneDayAgo) sent24h++;
+  });
+  
+  const sentTotal = Object.keys(sentEmails).length;
+  
+  document.getElementById('statSent24h').textContent = sent24h;
+  document.getElementById('statSentTotal').textContent = sentTotal;
+  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
 }
 
-function saveStorage() {
-  localStorage.setItem('fatisco_fast', JSON.stringify({
-    records: emailRecords,
-    sent: sentEmails
-  }));
-}
-
-// ==================== PROCESS EMAILS (NO SCORING - INSTANT) ====================
+// ==================== PROCESS EMAILS ====================
 function processEmails() {
   const raw = document.getElementById('emailInput').value;
   const lines = raw.split('\n').filter(l => l.trim());
@@ -608,13 +703,13 @@ function processEmails() {
     });
   });
   
-  saveStorage();
+  saveAllData();
   renderEmails();
   updateStats();
   showToast(`Loaded ${emailRecords.length} emails`);
 }
 
-// ==================== RENDER COMPACT EMAILS ====================
+// ==================== RENDER EMAILS ====================
 function renderEmails() {
   let filtered = emailRecords;
   
@@ -630,35 +725,40 @@ function renderEmails() {
     const sent = !!sentEmails[r.email];
     
     html += `
-      <div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}">
+      <div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}" data-name="${r.name}" data-company="${r.company}">
         <div class="email-number">${index + 1}</div>
         <div class="email-details">
           <span class="email-addr">${r.email}</span>
           <span class="email-name">${r.name}</span>
         </div>
         <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
-        <div class="email-actions">
-          <button class="action-btn" onclick="sendEmail('${r.email}', '${r.name}', '${r.company}', event)">✉️</button>
-          ${!sent ? `<button class="action-btn" onclick="markSent('${r.email}', event)">✓</button>` : ''}
-        </div>
       </div>
     `;
   });
   
   document.getElementById('emailList').innerHTML = html || '<div style="padding: 20px; text-align: center;">No emails</div>';
   updateFilterCounts();
+  
+  // Add click handlers to email cards
+  document.querySelectorAll('.email-item').forEach(card => {
+    card.addEventListener('click', handleEmailClick);
+  });
 }
 
-// ==================== SEND (NO DOUBLE SEND) ====================
-function sendEmail(email, name, company, event) {
-  event.stopPropagation();
+// ==================== HANDLE EMAIL CLICK (SEND) ====================
+function handleEmailClick(event) {
+  const card = event.currentTarget;
+  const email = card.dataset.email;
+  const name = card.dataset.name;
+  const company = card.dataset.company;
   
-  // STRICT CHECK: Cannot resend
+  // STRICT: Cannot resend if already sent
   if (sentEmails[email]) {
     showToast('⚠️ Already sent');
     return;
   }
   
+  // Generate personalized subject and body
   const subject = document.getElementById('subject').value
     .replace(/{name}/g, name)
     .replace(/{company}/g, company);
@@ -667,6 +767,7 @@ function sendEmail(email, name, company, event) {
     .replace(/{name}/g, name)
     .replace(/{company}/g, company);
   
+  // Build mailto link
   let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   
   if (ccEnabled) {
@@ -674,22 +775,26 @@ function sendEmail(email, name, company, event) {
     if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
   }
   
+  // Open email client
   window.open(mailto, '_blank');
   
   // Mark as sent with timestamp
-  markSent(email, event);
-}
-
-function markSent(email, event) {
-  if (event) event.stopPropagation();
+  sentEmails[email] = Date.now();
   
-  // STRICT: Cannot remark if already sent
-  if (sentEmails[email]) return;
+  // Update UI
+  card.classList.add('sent');
+  card.querySelector('.status-dot').classList.remove('pending');
+  card.querySelector('.status-dot').classList.add('sent');
   
-  sentEmails[email] = Date.now(); // Store timestamp
-  saveStorage();
-  renderEmails();
+  // Update stats
+  updateSentStats();
+  updateFilterCounts();
   updateStats();
+  
+  // Save
+  saveAllData();
+  
+  showToast(`✉️ Sent to ${name}`);
 }
 
 // ==================== FILTERS ====================
@@ -717,23 +822,12 @@ function updateFilterCounts() {
 // ==================== STATS ====================
 function updateStats() {
   const total = emailRecords.length;
-  const valid = emailRecords.length; // All emails considered valid (no scoring)
-  const now = Date.now();
-  const oneDayAgo = now - (24 * 60 * 60 * 1000);
-  
-  // Count sent in last 24h
-  let sent24h = 0;
-  Object.values(sentEmails).forEach(ts => {
-    if (ts > oneDayAgo) sent24h++;
-  });
-  
-  const sentTotal = Object.keys(sentEmails).length;
+  const valid = emailRecords.length; // All emails considered valid
   
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statValid').textContent = valid;
-  document.getElementById('statSent24h').textContent = sent24h;
-  document.getElementById('statSentTotal').textContent = sentTotal;
-  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
+  
+  updateSentStats(); // Updates 24h and total sent
 }
 
 // ==================== TOGGLE CC ====================
@@ -742,6 +836,7 @@ function toggleCC() {
   document.getElementById('ccField').style.display = ccEnabled ? 'block' : 'none';
   document.getElementById('ccBtn').style.background = ccEnabled ? '#4f46e5' : '';
   document.getElementById('ccBtn').style.color = ccEnabled ? 'white' : '';
+  saveAllData();
 }
 
 // ==================== SCROLL ====================
@@ -770,14 +865,34 @@ function exportCSV() {
 }
 
 function clearAll() {
-  if (confirm('Clear all?')) {
+  if (confirm('Clear all data?\n\n✅ Email list will be cleared\n✅ Subject/Body reset to default\n✅ Sent totals will reset\n❌ Sent (24h) counter will NOT be cleared (only resets at midnight)')) {
+    
+    // Clear email list
+    document.getElementById('emailInput').value = '';
+    
+    // Reset subject/body to defaults
+    document.getElementById('subject').value = 'Opportunity for {company}';
+    document.getElementById('body').value = 'Hi {name}, I noticed {company} is doing great work. I\'d love to connect.';
+    
+    // Clear CC
+    ccEnabled = false;
+    document.getElementById('ccField').style.display = 'none';
+    document.getElementById('ccBtn').style.background = '';
+    document.getElementById('ccBtn').style.color = '';
+    document.getElementById('ccEmail').value = '';
+    
+    // Clear data
     emailRecords = [];
     sentEmails = {};
-    saveStorage();
+    
+    // Save (this preserves 24h counter because it's calculated, not stored)
+    saveAllData();
+    
+    // Update UI
     renderEmails();
     updateStats();
-    document.getElementById('emailInput').value = '';
-    showToast('Cleared');
+    
+    showToast('✅ All data cleared');
   }
 }
 
@@ -787,15 +902,17 @@ function toggleTheme() {
 }
 
 function showToast(msg) {
-  const t = document.createElement('div');
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:8px 16px; border-radius:30px; font-size:13px; z-index:1000;';
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 1500);
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
 }
 
-// ==================== FILE UPLOAD ====================
-document.querySelector('.file-label').addEventListener('click', () => {
+// ==================== FILE UPLOAD (FIXED - WORKS FIRST TIME) ====================
+document.querySelector('.file-label').addEventListener('click', function(e) {
+  e.preventDefault();
   document.getElementById('fileInput').click();
 });
 
@@ -804,12 +921,15 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
   if (!file) return;
   
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = function(e) {
     document.getElementById('emailInput').value = e.target.result;
-    processEmails();
+    processEmails(); // This automatically generates and saves
     showToast(`Loaded ${file.name}`);
   };
   reader.readAsText(file);
+  
+  // Reset file input so same file can be uploaded again if needed
+  this.value = '';
 });
 
 // ==================== SCROLL BUTTON VISIBILITY ====================
@@ -823,6 +943,12 @@ container.addEventListener('scroll', () => {
   document.getElementById('scrollBottomBtn').classList.toggle('hidden', sh - st - ch < 50);
 });
 
+// ==================== AUTO-SAVE ON INPUT ====================
+document.getElementById('emailInput').addEventListener('input', saveAllData);
+document.getElementById('subject').addEventListener('input', saveAllData);
+document.getElementById('body').addEventListener('input', saveAllData);
+document.getElementById('ccEmail').addEventListener('input', saveAllData);
+
 // ==================== BATCH MODE (HIDDEN) ====================
 document.querySelector('.logo').addEventListener('click', () => {
   const panel = document.getElementById('batchPanel');
@@ -834,14 +960,31 @@ document.querySelector('.logo').addEventListener('click', () => {
   }
 });
 
+// ==================== MIDNIGHT RESET CHECK ====================
+function checkMidnightReset() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const timeUntilMidnight = midnight - now;
+  
+  setTimeout(() => {
+    updateSentStats(); // This will recalculate 24h count
+    checkMidnightReset();
+  }, timeUntilMidnight + 1000);
+}
+
 // ==================== INIT ====================
-loadStorage();
+loadAllData();
 renderEmails();
 updateStats();
+checkMidnightReset();
 
+// Load theme
 if (localStorage.getItem('fatisco_theme') === 'dark') {
   document.body.classList.add('dark');
 }
+
+// Update 24h counter every minute
+setInterval(updateSentStats, 60000);
 </script>
 </body>
 </html>
