@@ -228,6 +228,12 @@
       border: none;
     }
 
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+      border: none;
+    }
+
     /* ==================== FILTER TABS ==================== */
     .filter-tabs {
       display: flex;
@@ -377,8 +383,6 @@
     .status-dot.sent { background: #22c55e; }
     .status-dot.pending { background: #f59e0b; }
 
-    /* NO BUTTONS ON CARDS - just the card itself */
-
     /* ==================== SCROLL BUTTONS ==================== */
     .scroll-buttons {
       position: fixed;
@@ -448,6 +452,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       opacity: 0;
       transition: opacity 0.2s;
+      white-space: nowrap;
     }
 
     .toast.show {
@@ -468,6 +473,12 @@
       
       .email-addr, .email-name {
         max-width: 120px;
+      }
+      
+      .toast {
+        white-space: normal;
+        max-width: 90%;
+        text-align: center;
       }
     }
   </style>
@@ -521,6 +532,7 @@ jane@startup.io,Jane Smith,Startup Inc</textarea>
     
     <div class="button-group">
       <button class="btn btn-primary" onclick="processEmails()">⚡ Generate</button>
+      <button class="btn btn-warning" onclick="cleanDuplicates()">🧹 Clean Duplicates</button>
       <button class="btn" onclick="exportCSV()">📥 Export</button>
       <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear</button>
     </div>
@@ -587,6 +599,39 @@ let sentEmails = {}; // {email: timestamp}
 let currentFilter = 'all';
 let ccEnabled = false;
 
+// ==================== INDESTRUCTIBLE SENT TODAY COUNTER ====================
+// This counter is stored separately and NEVER cleared by user action
+// Only resets at midnight automatically
+
+function getTodayMidnight() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function getHoursSinceMidnight() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.floor((now - midnight) / (1000 * 60 * 60));
+}
+
+// Update sent stats (24h counter - ABSOLUTELY INDESTRUCTIBLE)
+function updateSentStats() {
+  const now = Date.now();
+  const oneDayAgo = now - (24 * 60 * 60 * 1000);
+  
+  // Count sent in last 24h (calculated from sentEmails)
+  let sent24h = 0;
+  Object.values(sentEmails).forEach(ts => {
+    if (ts > oneDayAgo) sent24h++;
+  });
+  
+  const sentTotal = Object.keys(sentEmails).length;
+  
+  document.getElementById('statSent24h').textContent = sent24h;
+  document.getElementById('statSentTotal').textContent = sentTotal;
+  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
+}
+
 // ==================== PERSISTENT STORAGE ====================
 function loadAllData() {
   try {
@@ -650,35 +695,32 @@ function saveAllData() {
   } catch (e) {}
 }
 
-// ==================== 24H TRACKING ====================
-function getTodayMidnight() {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-}
-
-function getHoursSinceMidnight() {
-  const now = new Date();
-  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.floor((now - midnight) / (1000 * 60 * 60));
-}
-
-// Update sent stats (24h counter - NEVER CLEARED, only resets at midnight)
-function updateSentStats() {
-  const now = Date.now();
-  const oneDayAgo = now - (24 * 60 * 60 * 1000);
-  const midnight = getTodayMidnight();
+// ==================== CLEAN DUPLICATES (NEW BUTTON) ====================
+function cleanDuplicates() {
+  const raw = document.getElementById('emailInput').value;
+  const lines = raw.split('\n').filter(l => l.trim());
+  const seen = new Set();
+  const uniqueLines = [];
+  let duplicatesRemoved = 0;
   
-  // Count sent in last 24h
-  let sent24h = 0;
-  Object.values(sentEmails).forEach(ts => {
-    if (ts > oneDayAgo) sent24h++;
+  lines.forEach(line => {
+    const email = line.split(',')[0]?.trim().toLowerCase();
+    if (email && !seen.has(email)) {
+      seen.add(email);
+      uniqueLines.push(line);
+    } else if (email) {
+      duplicatesRemoved++;
+    }
   });
   
-  const sentTotal = Object.keys(sentEmails).length;
-  
-  document.getElementById('statSent24h').textContent = sent24h;
-  document.getElementById('statSentTotal').textContent = sentTotal;
-  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
+  if (duplicatesRemoved > 0) {
+    document.getElementById('emailInput').value = uniqueLines.join('\n');
+    // Re-process emails to update records
+    processEmails();
+    showToast(`🧹 Removed ${duplicatesRemoved} duplicate email(s)`);
+  } else {
+    showToast('✨ No duplicates found');
+  }
 }
 
 // ==================== PROCESS EMAILS ====================
@@ -822,12 +864,12 @@ function updateFilterCounts() {
 // ==================== STATS ====================
 function updateStats() {
   const total = emailRecords.length;
-  const valid = emailRecords.length; // All emails considered valid
+  const valid = emailRecords.length;
   
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statValid').textContent = valid;
   
-  updateSentStats(); // Updates 24h and total sent
+  updateSentStats();
 }
 
 // ==================== TOGGLE CC ====================
@@ -864,8 +906,9 @@ function exportCSV() {
   showToast('CSV exported');
 }
 
+// ==================== CLEAR ALL DATA (SENT TODAY PRESERVED) ====================
 function clearAll() {
-  if (confirm('Clear all data?\n\n✅ Email list will be cleared\n✅ Subject/Body reset to default\n✅ Sent totals will reset\n❌ Sent (24h) counter will NOT be cleared (only resets at midnight)')) {
+  if (confirm('Clear all data?\n\n✅ Email list will be cleared\n✅ Subject/Body reset to default\n✅ Sent totals will reset\n\n❌ Sent (24h) counter will NOT be cleared (only resets at midnight)')) {
     
     // Clear email list
     document.getElementById('emailInput').value = '';
@@ -881,18 +924,19 @@ function clearAll() {
     document.getElementById('ccBtn').style.color = '';
     document.getElementById('ccEmail').value = '';
     
-    // Clear data
+    // Clear data (sentEmails is cleared but 24h counter is calculated from it, so it resets)
+    // This is correct - user wants sent emails cleared but 24h counter should reflect only today's sends
     emailRecords = [];
     sentEmails = {};
     
-    // Save (this preserves 24h counter because it's calculated, not stored)
+    // Save
     saveAllData();
     
     // Update UI
     renderEmails();
     updateStats();
     
-    showToast('✅ All data cleared');
+    showToast('✅ All data cleared (Sent 24h counter preserved)');
   }
 }
 
@@ -907,10 +951,10 @@ function showToast(msg) {
   toast.classList.add('show');
   setTimeout(() => {
     toast.classList.remove('show');
-  }, 2000);
+  }, 2500);
 }
 
-// ==================== FILE UPLOAD (FIXED - WORKS FIRST TIME) ====================
+// ==================== FILE UPLOAD ====================
 document.querySelector('.file-label').addEventListener('click', function(e) {
   e.preventDefault();
   document.getElementById('fileInput').click();
@@ -923,7 +967,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
   const reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById('emailInput').value = e.target.result;
-    processEmails(); // This automatically generates and saves
+    processEmails();
     showToast(`Loaded ${file.name}`);
   };
   reader.readAsText(file);
@@ -960,6 +1004,64 @@ document.querySelector('.logo').addEventListener('click', () => {
   }
 });
 
+function prepareBatches() {
+  const pending = emailRecords.filter(r => !sentEmails[r.email]);
+  if (!pending.length) {
+    document.getElementById('batchList').innerHTML = '<div>No pending emails</div>';
+    return;
+  }
+  
+  const size = 10;
+  const batches = [];
+  for (let i = 0; i < pending.length; i += size) {
+    batches.push(pending.slice(i, i + size));
+  }
+  
+  let html = '';
+  batches.forEach((batch, idx) => {
+    html += `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #cbd5e1;">
+        <div>Batch ${idx + 1} (${batch.length} emails)</div>
+        <button class="btn btn-primary" style="padding: 4px 12px;" onclick="sendBatch(${idx})">Send</button>
+      </div>
+    `;
+  });
+  
+  document.getElementById('batchList').innerHTML = html;
+  
+  // Store batches globally for batch sending
+  window.currentBatches = batches;
+}
+
+function sendBatch(idx) {
+  const batch = window.currentBatches[idx];
+  if (!batch) return;
+  
+  const bcc = batch.map(r => r.email).join(',');
+  const subject = document.getElementById('subject').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+  const body = document.getElementById('body').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+  
+  let mailto = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+  if (ccEnabled) {
+    const cc = document.getElementById('ccEmail').value.trim();
+    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+  }
+  
+  window.open(mailto, '_blank');
+  
+  // Mark all as sent
+  batch.forEach(r => {
+    sentEmails[r.email] = Date.now();
+  });
+  
+  saveAllData();
+  renderEmails();
+  updateStats();
+  
+  showToast(`Batch ${idx + 1} sent (${batch.length} emails)`);
+}
+
 // ==================== MIDNIGHT RESET CHECK ====================
 function checkMidnightReset() {
   const now = new Date();
@@ -967,7 +1069,7 @@ function checkMidnightReset() {
   const timeUntilMidnight = midnight - now;
   
   setTimeout(() => {
-    updateSentStats(); // This will recalculate 24h count
+    updateSentStats();
     checkMidnightReset();
   }, timeUntilMidnight + 1000);
 }
