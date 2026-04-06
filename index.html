@@ -363,7 +363,6 @@
     .status-dot.sent { background: #22c55e; }
     .status-dot.pending { background: #f59e0b; }
 
-    /* Batch Panel - fixed dark mode visibility */
     .batch-panel {
       background: #eef2ff;
       border-radius: 16px;
@@ -574,9 +573,10 @@
 <div id="toast" class="toast"></div>
 
 <script>
-  // ==================== PERMANENT DATA ====================
-  let emailRecords = [];        // current email list (cleared by "Clear")
-  let sentEmails = {};          // PERMANENT: email -> timestamp (NEVER cleared by user)
+  // ==================== DATA ====================
+  let emailRecords = [];              // current email list (cleared by "Clear")
+  let sent24hTimestamps = {};         // PERMANENT: email -> timestamp (NEVER cleared by user)
+  let sentTotalCount = 0;             // CLEARABLE: total emails sent since last clear
 
   let currentFilter = 'all';
   let ccEnabled = false;
@@ -593,19 +593,21 @@
     return Math.floor((now - midnight) / (1000 * 60 * 60));
   }
 
-  // Updates only the "Sent (24h)" and "Sent (Total)" displays from permanent sentEmails
-  function updateSentStats() {
+  // Updates ONLY the "Sent (24h)" display from sent24hTimestamps
+  function updateSent24hStats() {
     const now = Date.now();
-    const todayMidnight = getTodayMidnight();
-    let sentToday = 0;
-    let sentTotal = 0;
-    for (let ts of Object.values(sentEmails)) {
-      sentTotal++;
-      if (ts >= todayMidnight) sentToday++;
+    const oneDayAgo = now - (24 * 60 * 60 * 1000);
+    let sent24h = 0;
+    for (let ts of Object.values(sent24hTimestamps)) {
+      if (ts > oneDayAgo) sent24h++;
     }
-    document.getElementById('statSent24h').textContent = sentToday;
-    document.getElementById('statSentTotal').textContent = sentTotal;
+    document.getElementById('statSent24h').textContent = sent24h;
     document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
+  }
+
+  // Updates "Sent (Total)" from sentTotalCount
+  function updateSentTotalStats() {
+    document.getElementById('statSentTotal').textContent = sentTotalCount;
   }
 
   // Total & Valid counts (only from current emailRecords)
@@ -616,7 +618,7 @@
 
   function updateFilterCounts() {
     const total = emailRecords.length;
-    const sent = emailRecords.filter(r => sentEmails[r.email]).length;
+    const sent = emailRecords.filter(r => sent24hTimestamps[r.email]).length;
     const pending = total - sent;
     document.getElementById('countAll').textContent = total;
     document.getElementById('countSent').textContent = sent;
@@ -641,8 +643,10 @@
       }
       const savedCCEmail = localStorage.getItem('fatisco_cc_email');
       if (savedCCEmail) document.getElementById('ccEmail').value = savedCCEmail;
-      const savedSent = localStorage.getItem('fatisco_sent_emails');
-      if (savedSent) sentEmails = JSON.parse(savedSent);
+      const savedTimestamps = localStorage.getItem('fatisco_sent24h');
+      if (savedTimestamps) sent24hTimestamps = JSON.parse(savedTimestamps);
+      const savedTotal = localStorage.getItem('fatisco_sent_total');
+      if (savedTotal) sentTotalCount = parseInt(savedTotal, 10) || 0;
       const savedRecords = localStorage.getItem('fatisco_records');
       if (savedRecords) emailRecords = JSON.parse(savedRecords);
     } catch(e) {}
@@ -654,7 +658,8 @@
     localStorage.setItem('fatisco_body', document.getElementById('body').value);
     localStorage.setItem('fatisco_cc_enabled', ccEnabled);
     localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
-    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    localStorage.setItem('fatisco_sent24h', JSON.stringify(sent24hTimestamps));
+    localStorage.setItem('fatisco_sent_total', sentTotalCount);
     localStorage.setItem('fatisco_records', JSON.stringify(emailRecords));
   }
 
@@ -678,17 +683,18 @@
     saveAllData();
     renderEmails();
     updateListStats();
-    updateSentStats();
+    updateSent24hStats();
+    updateSentTotalStats();
     showToast(`Loaded ${emailRecords.length} emails`);
   }
 
   function renderEmails() {
     let filtered = emailRecords;
-    if (currentFilter === 'sent') filtered = emailRecords.filter(r => sentEmails[r.email]);
-    else if (currentFilter === 'pending') filtered = emailRecords.filter(r => !sentEmails[r.email]);
+    if (currentFilter === 'sent') filtered = emailRecords.filter(r => sent24hTimestamps[r.email]);
+    else if (currentFilter === 'pending') filtered = emailRecords.filter(r => !sent24hTimestamps[r.email]);
     let html = '';
     filtered.forEach((r, idx) => {
-      const sent = !!sentEmails[r.email];
+      const sent = !!sent24hTimestamps[r.email];
       html += `<div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}" data-name="${r.name}" data-company="${r.company}">
         <div class="email-number">${idx+1}</div>
         <div class="email-details">
@@ -709,7 +715,7 @@
     const email = card.dataset.email;
     const name = card.dataset.name;
     const company = card.dataset.company;
-    if (sentEmails[email]) {
+    if (sent24hTimestamps[email]) {
       showToast('⚠️ Already sent');
       return;
     }
@@ -721,12 +727,18 @@
       if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
     }
     window.open(mailto, '_blank');
-    // Mark as sent with current timestamp
-    sentEmails[email] = Date.now();
+    
+    // Update both counters
+    const now = Date.now();
+    sent24hTimestamps[email] = now;    // PERMANENT for 24h counter
+    sentTotalCount++;                   // CLEARABLE total counter
+    
     card.classList.add('sent');
     card.querySelector('.status-dot').classList.remove('pending');
     card.querySelector('.status-dot').classList.add('sent');
-    updateSentStats();
+    
+    updateSent24hStats();
+    updateSentTotalStats();
     updateFilterCounts();
     updateListStats();
     saveAllData();
@@ -754,16 +766,18 @@
     } else showToast('✨ No duplicates');
   }
 
-  // ==================== CLEAR (ONLY resets email list + records, leaves sentEmails untouched) ====================
+  // ==================== CLEAR (resets email list + records + Sent Total) ====================
   function clearAllEditableData() {
-    if (confirm('Clear email list and reset current view?\n\n✅ Email list cleared\n✅ Current records reset\n❌ Sent history (24h + Total) stays FOREVER')) {
+    if (confirm('Clear email list and reset current view?\n\n✅ Email list cleared\n✅ Current records reset\n✅ Sent (Total) reset to 0\n❌ Sent (24h) history stays FOREVER')) {
       document.getElementById('emailInput').value = '';
       emailRecords = [];
+      sentTotalCount = 0;        // ← THIS IS THE FIX: reset total counter
       saveAllData();
       renderEmails();
       updateListStats();
-      updateSentStats();
-      showToast('📭 Email list cleared (sent history untouched)');
+      updateSent24hStats();
+      updateSentTotalStats();
+      showToast('📭 Email list cleared (Sent Total reset, 24h history untouched)');
     }
   }
 
@@ -787,7 +801,7 @@
   // ==================== EXPORT ====================
   function exportCSV() {
     let csv = 'Email,Name,Company,Sent\n';
-    emailRecords.forEach(r => csv += `"${r.email}","${r.name}","${r.company}",${sentEmails[r.email] ? 'Yes' : 'No'}\n`);
+    emailRecords.forEach(r => csv += `"${r.email}","${r.name}","${r.company}",${sent24hTimestamps[r.email] ? 'Yes' : 'No'}\n`);
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -799,7 +813,7 @@
   // ==================== BATCH MODE (Hidden trigger on logo) ====================
   let currentBatches = [];
   function prepareBatches() {
-    const pending = emailRecords.filter(r => !sentEmails[r.email]);
+    const pending = emailRecords.filter(r => !sent24hTimestamps[r.email]);
     if (!pending.length) {
       document.getElementById('batchList').innerHTML = '<div class="batch-item">No pending emails</div>';
       return;
@@ -836,11 +850,15 @@
     window.open(mailto, '_blank');
     const now = Date.now();
     for (let r of batch) {
-      if (!sentEmails[r.email]) sentEmails[r.email] = now;
+      if (!sent24hTimestamps[r.email]) {
+        sent24hTimestamps[r.email] = now;
+        sentTotalCount++;
+      }
     }
     saveAllData();
     renderEmails();
-    updateSentStats();
+    updateSent24hStats();
+    updateSentTotalStats();
     updateListStats();
     updateFilterCounts();
     prepareBatches();  // refresh batch list
@@ -913,13 +931,13 @@
   document.getElementById('body')?.addEventListener('input', saveAllData);
   document.getElementById('ccEmail')?.addEventListener('input', saveAllData);
 
-  // Midnight reset check (only for display, sentEmails timestamps are never erased)
+  // Midnight reset check (only for display, sent24hTimestamps are never erased)
   function scheduleMidnightReset() {
     const now = new Date();
     const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     const msToMidnight = midnight - now;
     setTimeout(() => {
-      updateSentStats();  // This will show 0 for today if no new sends after midnight
+      updateSent24hStats();  // This will show 0 for today if no new sends after midnight
       scheduleMidnightReset();
     }, msToMidnight + 1000);
   }
@@ -928,10 +946,11 @@
   loadAllData();
   renderEmails();
   updateListStats();
-  updateSentStats();
+  updateSent24hStats();
+  updateSentTotalStats();
   scheduleMidnightReset();
   if (localStorage.getItem('fatisco_theme') === 'dark') document.body.classList.add('dark');
-  setInterval(updateSentStats, 60000);
+  setInterval(updateSent24hStats, 60000);
 </script>
 </body>
 </html>
