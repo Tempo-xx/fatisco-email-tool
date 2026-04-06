@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fatisco · Permanent Email Log</title>
+  <title>FATISCO · Email Automation</title>
   <style>
     * {
       margin: 0;
@@ -51,6 +51,7 @@
     .logo-text {
       font-size: 20px;
       font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
     .theme-toggle {
@@ -362,6 +363,66 @@
     .status-dot.sent { background: #22c55e; }
     .status-dot.pending { background: #f59e0b; }
 
+    /* Batch Panel - fixed dark mode visibility */
+    .batch-panel {
+      background: #eef2ff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+      border: 1px solid #cbd5e1;
+    }
+    .dark .batch-panel {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+    .batch-panel .batch-title {
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .batch-size-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .batch-size-input {
+      width: 80px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      text-align: center;
+    }
+    .dark .batch-size-input {
+      background: #0f172a;
+      border-color: #475569;
+      color: white;
+    }
+    .batch-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 12px;
+    }
+    .batch-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .dark .batch-item {
+      border-bottom-color: #334155;
+    }
+    .batch-email-list {
+      font-size: 12px;
+      color: #475569;
+    }
+    .dark .batch-email-list {
+      color: #94a3b8;
+    }
+
     .scroll-buttons {
       position: fixed;
       right: 15px;
@@ -433,7 +494,7 @@
 <div class="header">
   <div class="header-content">
     <div class="logo" id="fatiscoLogo">
-      <span class="logo-text">⚡ fatisco</span>
+      <span class="logo-text">FATISCO</span>
     </div>
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
   </div>
@@ -473,7 +534,7 @@
       <button class="btn btn-primary" onclick="processEmails()">⚡ Generate</button>
       <button class="btn btn-warning" onclick="cleanDuplicates()">🧹 Clean Duplicates</button>
       <button class="btn" onclick="exportCSV()">📥 Export</button>
-      <button class="btn btn-danger" onclick="clearOnlyEmailList()">🗑️ Clear List</button>
+      <button class="btn btn-danger" onclick="clearAllEditableData()">🗑️ Clear</button>
     </div>
   </div>
 
@@ -500,7 +561,8 @@
     <div class="email-list" id="emailList"></div>
   </div>
 
-  <div id="batchPanel" style="display: none; margin-top: 16px;"></div>
+  <!-- Batch Panel (hidden) -->
+  <div id="batchPanel" style="display: none;"></div>
 </div>
 
 <div class="scroll-buttons">
@@ -508,316 +570,368 @@
   <button class="scroll-btn" id="scrollBottomBtn" onclick="scrollToBottom()">↓</button>
 </div>
 
-<div class="footer">Built by Fatai Ajani · fatisco © 2026</div>
+<div class="footer">Built by Fatai Ajani · FATISCO © 2026</div>
 <div id="toast" class="toast"></div>
 
 <script>
-// ==================== PERMANENT STORAGE ====================
-let emailRecords = [];        // current email list (can be cleared)
-let sentEmails = {};          // PERMANENT: email -> timestamp (NEVER cleared)
+  // ==================== PERMANENT DATA ====================
+  let emailRecords = [];        // current email list (cleared by "Clear")
+  let sentEmails = {};          // PERMANENT: email -> timestamp (NEVER cleared by user)
 
-let currentFilter = 'all';
-let ccEnabled = false;
+  let currentFilter = 'all';
+  let ccEnabled = false;
 
-function getTodayMidnight() {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-}
-
-function getHoursSinceMidnight() {
-  const now = new Date();
-  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.floor((now - midnight) / (1000 * 60 * 60));
-}
-
-function updateSentStats() {
-  const now = Date.now();
-  const oneDayAgo = now - (24 * 60 * 60 * 1000);
-  let sent24h = 0;
-  for (let ts of Object.values(sentEmails)) {
-    if (ts > oneDayAgo) sent24h++;
+  // ==================== HELPER FUNCTIONS ====================
+  function getTodayMidnight() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   }
-  const sentTotal = Object.keys(sentEmails).length;
-  document.getElementById('statSent24h').textContent = sent24h;
-  document.getElementById('statSentTotal').textContent = sentTotal;
-  document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
-}
 
-function loadAllData() {
-  try {
-    const savedList = localStorage.getItem('fatisco_email_list');
-    if (savedList) document.getElementById('emailInput').value = savedList;
-    const savedSubject = localStorage.getItem('fatisco_subject');
-    if (savedSubject) document.getElementById('subject').value = savedSubject;
-    const savedBody = localStorage.getItem('fatisco_body');
-    if (savedBody) document.getElementById('body').value = savedBody;
-    const savedCC = localStorage.getItem('fatisco_cc_enabled');
-    if (savedCC === 'true') {
-      ccEnabled = true;
-      document.getElementById('ccField').style.display = 'block';
-      document.getElementById('ccBtn').style.background = '#4f46e5';
-      document.getElementById('ccBtn').style.color = 'white';
+  function getHoursSinceMidnight() {
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.floor((now - midnight) / (1000 * 60 * 60));
+  }
+
+  // Updates only the "Sent (24h)" and "Sent (Total)" displays from permanent sentEmails
+  function updateSentStats() {
+    const now = Date.now();
+    const todayMidnight = getTodayMidnight();
+    let sentToday = 0;
+    let sentTotal = 0;
+    for (let ts of Object.values(sentEmails)) {
+      sentTotal++;
+      if (ts >= todayMidnight) sentToday++;
     }
-    const savedCCEmail = localStorage.getItem('fatisco_cc_email');
-    if (savedCCEmail) document.getElementById('ccEmail').value = savedCCEmail;
-    const savedSent = localStorage.getItem('fatisco_sent_emails');
-    if (savedSent) sentEmails = JSON.parse(savedSent);
-    const savedRecords = localStorage.getItem('fatisco_records');
-    if (savedRecords) emailRecords = JSON.parse(savedRecords);
-  } catch(e) {}
-}
-
-function saveAllData() {
-  localStorage.setItem('fatisco_email_list', document.getElementById('emailInput').value);
-  localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
-  localStorage.setItem('fatisco_body', document.getElementById('body').value);
-  localStorage.setItem('fatisco_cc_enabled', ccEnabled);
-  localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
-  localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
-  localStorage.setItem('fatisco_records', JSON.stringify(emailRecords));
-}
-
-function processEmails() {
-  const raw = document.getElementById('emailInput').value;
-  const lines = raw.split('\n').filter(l => l.trim());
-  emailRecords = [];
-  for (let line of lines) {
-    const parts = line.split(',').map(p => p.trim());
-    const email = parts[0];
-    if (!email || !email.includes('@')) continue;
-    const name = parts[1] || email.split('@')[0];
-    const company = parts[2] || email.split('@')[1]?.split('.')[0] || '';
-    emailRecords.push({
-      email,
-      name: name.charAt(0).toUpperCase() + name.slice(1),
-      company: company.charAt(0).toUpperCase() + company.slice(1)
-    });
+    document.getElementById('statSent24h').textContent = sentToday;
+    document.getElementById('statSentTotal').textContent = sentTotal;
+    document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
   }
-  saveAllData();
-  renderEmails();
-  updateStats();
-  showToast(`Loaded ${emailRecords.length} emails`);
-}
 
-function renderEmails() {
-  let filtered = emailRecords;
-  if (currentFilter === 'sent') filtered = emailRecords.filter(r => sentEmails[r.email]);
-  else if (currentFilter === 'pending') filtered = emailRecords.filter(r => !sentEmails[r.email]);
-  let html = '';
-  filtered.forEach((r, idx) => {
-    const sent = !!sentEmails[r.email];
-    html += `<div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}" data-name="${r.name}" data-company="${r.company}">
-      <div class="email-number">${idx+1}</div>
-      <div class="email-details">
-        <span class="email-addr">${r.email}</span>
-        <span class="email-name">${r.name}</span>
-      </div>
-      <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
-    </div>`;
-  });
-  document.getElementById('emailList').innerHTML = html || '<div style="padding:20px;text-align:center;">No emails</div>';
-  document.querySelectorAll('.email-item').forEach(card => card.addEventListener('click', handleEmailClick));
-  updateFilterCounts();
-}
-
-function handleEmailClick(e) {
-  const card = e.currentTarget;
-  const email = card.dataset.email;
-  const name = card.dataset.name;
-  const company = card.dataset.company;
-  if (sentEmails[email]) {
-    showToast('⚠️ Already sent');
-    return;
+  // Total & Valid counts (only from current emailRecords)
+  function updateListStats() {
+    document.getElementById('statTotal').textContent = emailRecords.length;
+    document.getElementById('statValid').textContent = emailRecords.length;
   }
-  const subject = document.getElementById('subject').value.replace(/{name}/g, name).replace(/{company}/g, company);
-  const body = document.getElementById('body').value.replace(/{name}/g, name).replace(/{company}/g, company);
-  let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  if (ccEnabled) {
-    const cc = document.getElementById('ccEmail').value.trim();
-    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
-  }
-  window.open(mailto, '_blank');
-  sentEmails[email] = Date.now();
-  card.classList.add('sent');
-  card.querySelector('.status-dot').classList.remove('pending');
-  card.querySelector('.status-dot').classList.add('sent');
-  updateSentStats();
-  updateFilterCounts();
-  updateStats();
-  saveAllData();
-  showToast(`✉️ Sent to ${name}`);
-}
 
-function cleanDuplicates() {
-  const raw = document.getElementById('emailInput').value;
-  const lines = raw.split('\n').filter(l => l.trim());
-  const seen = new Set();
-  const unique = [];
-  let removed = 0;
-  for (let line of lines) {
-    const email = line.split(',')[0]?.trim().toLowerCase();
-    if (email && !seen.has(email)) {
-      seen.add(email);
-      unique.push(line);
-    } else if (email) removed++;
+  function updateFilterCounts() {
+    const total = emailRecords.length;
+    const sent = emailRecords.filter(r => sentEmails[r.email]).length;
+    const pending = total - sent;
+    document.getElementById('countAll').textContent = total;
+    document.getElementById('countSent').textContent = sent;
+    document.getElementById('countPending').textContent = pending;
   }
-  if (removed) {
-    document.getElementById('emailInput').value = unique.join('\n');
-    processEmails();
-    showToast(`🧹 Removed ${removed} duplicate(s)`);
-  } else showToast('✨ No duplicates');
-}
 
-// ==================== CLEAR ONLY THE EMAIL LIST (DO NOT TOUCH sentEmails) ====================
-function clearOnlyEmailList() {
-  if (confirm('Clear email list and reset current view?\n\n✅ Email list cleared\n✅ Current records reset\n❌ Sent history (24h + Total) stays FOREVER')) {
-    document.getElementById('emailInput').value = '';
+  // ==================== STORAGE (persistent) ====================
+  function loadAllData() {
+    try {
+      const savedList = localStorage.getItem('fatisco_email_list');
+      if (savedList) document.getElementById('emailInput').value = savedList;
+      const savedSubject = localStorage.getItem('fatisco_subject');
+      if (savedSubject) document.getElementById('subject').value = savedSubject;
+      const savedBody = localStorage.getItem('fatisco_body');
+      if (savedBody) document.getElementById('body').value = savedBody;
+      const savedCC = localStorage.getItem('fatisco_cc_enabled');
+      if (savedCC === 'true') {
+        ccEnabled = true;
+        document.getElementById('ccField').style.display = 'block';
+        document.getElementById('ccBtn').style.background = '#4f46e5';
+        document.getElementById('ccBtn').style.color = 'white';
+      }
+      const savedCCEmail = localStorage.getItem('fatisco_cc_email');
+      if (savedCCEmail) document.getElementById('ccEmail').value = savedCCEmail;
+      const savedSent = localStorage.getItem('fatisco_sent_emails');
+      if (savedSent) sentEmails = JSON.parse(savedSent);
+      const savedRecords = localStorage.getItem('fatisco_records');
+      if (savedRecords) emailRecords = JSON.parse(savedRecords);
+    } catch(e) {}
+  }
+
+  function saveAllData() {
+    localStorage.setItem('fatisco_email_list', document.getElementById('emailInput').value);
+    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
+    localStorage.setItem('fatisco_body', document.getElementById('body').value);
+    localStorage.setItem('fatisco_cc_enabled', ccEnabled);
+    localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
+    localStorage.setItem('fatisco_sent_emails', JSON.stringify(sentEmails));
+    localStorage.setItem('fatisco_records', JSON.stringify(emailRecords));
+  }
+
+  // ==================== PROCESS EMAILS ====================
+  function processEmails() {
+    const raw = document.getElementById('emailInput').value;
+    const lines = raw.split('\n').filter(l => l.trim());
     emailRecords = [];
+    for (let line of lines) {
+      const parts = line.split(',').map(p => p.trim());
+      const email = parts[0];
+      if (!email || !email.includes('@')) continue;
+      const name = parts[1] || email.split('@')[0];
+      const company = parts[2] || email.split('@')[1]?.split('.')[0] || '';
+      emailRecords.push({
+        email,
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        company: company.charAt(0).toUpperCase() + company.slice(1)
+      });
+    }
     saveAllData();
     renderEmails();
-    updateStats();
-    showToast('📭 Email list cleared (sent history untouched)');
+    updateListStats();
+    updateSentStats();
+    showToast(`Loaded ${emailRecords.length} emails`);
   }
-}
 
-function updateFilterCounts() {
-  const total = emailRecords.length;
-  const sent = emailRecords.filter(r => sentEmails[r.email]).length;
-  const pending = total - sent;
-  document.getElementById('countAll').textContent = total;
-  document.getElementById('countSent').textContent = sent;
-  document.getElementById('countPending').textContent = pending;
-}
+  function renderEmails() {
+    let filtered = emailRecords;
+    if (currentFilter === 'sent') filtered = emailRecords.filter(r => sentEmails[r.email]);
+    else if (currentFilter === 'pending') filtered = emailRecords.filter(r => !sentEmails[r.email]);
+    let html = '';
+    filtered.forEach((r, idx) => {
+      const sent = !!sentEmails[r.email];
+      html += `<div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}" data-name="${r.name}" data-company="${r.company}">
+        <div class="email-number">${idx+1}</div>
+        <div class="email-details">
+          <span class="email-addr">${r.email}</span>
+          <span class="email-name">${r.name}</span>
+        </div>
+        <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
+      </div>`;
+    });
+    document.getElementById('emailList').innerHTML = html || '<div style="padding:20px;text-align:center;">No emails</div>';
+    document.querySelectorAll('.email-item').forEach(card => card.addEventListener('click', handleEmailClick));
+    updateFilterCounts();
+  }
 
-function updateStats() {
-  document.getElementById('statTotal').textContent = emailRecords.length;
-  document.getElementById('statValid').textContent = emailRecords.length;
-  updateSentStats();
-}
+  // ==================== SEND EMAIL ====================
+  function handleEmailClick(e) {
+    const card = e.currentTarget;
+    const email = card.dataset.email;
+    const name = card.dataset.name;
+    const company = card.dataset.company;
+    if (sentEmails[email]) {
+      showToast('⚠️ Already sent');
+      return;
+    }
+    const subject = document.getElementById('subject').value.replace(/{name}/g, name).replace(/{company}/g, company);
+    const body = document.getElementById('body').value.replace(/{name}/g, name).replace(/{company}/g, company);
+    let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (ccEnabled) {
+      const cc = document.getElementById('ccEmail').value.trim();
+      if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+    }
+    window.open(mailto, '_blank');
+    // Mark as sent with current timestamp
+    sentEmails[email] = Date.now();
+    card.classList.add('sent');
+    card.querySelector('.status-dot').classList.remove('pending');
+    card.querySelector('.status-dot').classList.add('sent');
+    updateSentStats();
+    updateFilterCounts();
+    updateListStats();
+    saveAllData();
+    showToast(`✉️ Sent to ${name}`);
+  }
 
-function filterEmails(filter) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-  renderEmails();
-}
+  // ==================== CLEAN DUPLICATES ====================
+  function cleanDuplicates() {
+    const raw = document.getElementById('emailInput').value;
+    const lines = raw.split('\n').filter(l => l.trim());
+    const seen = new Set();
+    const unique = [];
+    let removed = 0;
+    for (let line of lines) {
+      const email = line.split(',')[0]?.trim().toLowerCase();
+      if (email && !seen.has(email)) {
+        seen.add(email);
+        unique.push(line);
+      } else if (email) removed++;
+    }
+    if (removed) {
+      document.getElementById('emailInput').value = unique.join('\n');
+      processEmails();
+      showToast(`🧹 Removed ${removed} duplicate(s)`);
+    } else showToast('✨ No duplicates');
+  }
 
-function toggleCC() {
-  ccEnabled = !ccEnabled;
-  document.getElementById('ccField').style.display = ccEnabled ? 'block' : 'none';
-  document.getElementById('ccBtn').style.background = ccEnabled ? '#4f46e5' : '';
-  document.getElementById('ccBtn').style.color = ccEnabled ? 'white' : '';
-  saveAllData();
-}
+  // ==================== CLEAR (ONLY resets email list + records, leaves sentEmails untouched) ====================
+  function clearAllEditableData() {
+    if (confirm('Clear email list and reset current view?\n\n✅ Email list cleared\n✅ Current records reset\n❌ Sent history (24h + Total) stays FOREVER')) {
+      document.getElementById('emailInput').value = '';
+      emailRecords = [];
+      saveAllData();
+      renderEmails();
+      updateListStats();
+      updateSentStats();
+      showToast('📭 Email list cleared (sent history untouched)');
+    }
+  }
 
-function exportCSV() {
-  let csv = 'Email,Name,Company,Sent\n';
-  emailRecords.forEach(r => csv += `"${r.email}","${r.name}","${r.company}",${sentEmails[r.email] ? 'Yes' : 'No'}\n`);
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `fatisco_${Date.now()}.csv`;
-  a.click();
-  showToast('CSV exported');
-}
+  // ==================== FILTERS ====================
+  function filterEmails(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    renderEmails();
+  }
 
-function toggleTheme() {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-}
+  // ==================== CC TOGGLE ====================
+  function toggleCC() {
+    ccEnabled = !ccEnabled;
+    document.getElementById('ccField').style.display = ccEnabled ? 'block' : 'none';
+    document.getElementById('ccBtn').style.background = ccEnabled ? '#4f46e5' : '';
+    document.getElementById('ccBtn').style.color = ccEnabled ? 'white' : '';
+    saveAllData();
+  }
 
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-}
+  // ==================== EXPORT ====================
+  function exportCSV() {
+    let csv = 'Email,Name,Company,Sent\n';
+    emailRecords.forEach(r => csv += `"${r.email}","${r.name}","${r.company}",${sentEmails[r.email] ? 'Yes' : 'No'}\n`);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `fatisco_${Date.now()}.csv`;
+    a.click();
+    showToast('CSV exported');
+  }
 
-document.querySelector('.file-label')?.addEventListener('click', () => document.getElementById('fileInput').click());
-document.getElementById('fileInput')?.addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('emailInput').value = e.target.result;
-    processEmails();
-    showToast(`Loaded ${file.name}`);
-  };
-  reader.readAsText(file);
-  this.value = '';
-});
+  // ==================== BATCH MODE (Hidden trigger on logo) ====================
+  let currentBatches = [];
+  function prepareBatches() {
+    const pending = emailRecords.filter(r => !sentEmails[r.email]);
+    if (!pending.length) {
+      document.getElementById('batchList').innerHTML = '<div class="batch-item">No pending emails</div>';
+      return;
+    }
+    const batchSize = parseInt(document.getElementById('batchSizeInput')?.value || '10', 10);
+    const size = Math.max(1, batchSize);
+    const batches = [];
+    for (let i = 0; i < pending.length; i += size) {
+      batches.push(pending.slice(i, i + size));
+    }
+    currentBatches = batches;
+    let html = '';
+    batches.forEach((batch, idx) => {
+      const emailPreview = batch.map(e => e.email).slice(0, 2).join(', ') + (batch.length > 2 ? ` +${batch.length-2} more` : '');
+      html += `<div class="batch-item">
+        <div><strong>Batch ${idx+1}</strong> (${batch.length} emails)<br><span class="batch-email-list">${emailPreview}</span></div>
+        <button class="btn btn-primary" style="padding:4px 12px;" onclick="sendBatch(${idx})">Send</button>
+      </div>`;
+    });
+    document.getElementById('batchList').innerHTML = html;
+  }
 
-document.getElementById('emailInput')?.addEventListener('input', saveAllData);
-document.getElementById('subject')?.addEventListener('input', saveAllData);
-document.getElementById('body')?.addEventListener('input', saveAllData);
-document.getElementById('ccEmail')?.addEventListener('input', saveAllData);
+  function sendBatch(idx) {
+    const batch = currentBatches[idx];
+    if (!batch) return;
+    const bcc = batch.map(r => r.email).join(',');
+    const subject = document.getElementById('subject').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+    const body = document.getElementById('body').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+    let mailto = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (ccEnabled) {
+      const cc = document.getElementById('ccEmail').value.trim();
+      if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+    }
+    window.open(mailto, '_blank');
+    const now = Date.now();
+    for (let r of batch) {
+      if (!sentEmails[r.email]) sentEmails[r.email] = now;
+    }
+    saveAllData();
+    renderEmails();
+    updateSentStats();
+    updateListStats();
+    updateFilterCounts();
+    prepareBatches();  // refresh batch list
+    showToast(`Batch ${idx+1} sent (${batch.length} emails)`);
+  }
 
-const scrollContainer = document.getElementById('emailScrollContainer');
-scrollContainer?.addEventListener('scroll', () => {
-  const st = scrollContainer.scrollTop, sh = scrollContainer.scrollHeight, ch = scrollContainer.clientHeight;
-  document.getElementById('scrollTopBtn').classList.toggle('hidden', st < 50);
-  document.getElementById('scrollBottomBtn').classList.toggle('hidden', sh - st - ch < 50);
-});
-
-function scrollToTop() { scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' }); }
-function scrollToBottom() { scrollContainer?.scrollTo({ top: scrollContainer.scrollHeight, behavior: 'smooth' }); }
-
-document.querySelector('.logo')?.addEventListener('click', () => {
-  const panel = document.getElementById('batchPanel');
-  if (panel.style.display === 'none') {
-    panel.style.display = 'block';
-    panel.innerHTML = '<div style="background:#eef2ff;padding:16px;border-radius:12px;"><h4>📦 BATCH MODE</h4><p>Send 10 emails at once via BCC</p><button class="btn btn-primary" onclick="prepareBatches()">Prepare</button><div id="batchList"></div></div>';
-  } else panel.style.display = 'none';
-});
-
-function prepareBatches() {
-  const pending = emailRecords.filter(r => !sentEmails[r.email]);
-  if (!pending.length) { document.getElementById('batchList').innerHTML = '<div>No pending emails</div>'; return; }
-  const size = 10, batches = [];
-  for (let i = 0; i < pending.length; i += size) batches.push(pending.slice(i, i + size));
-  let html = '';
-  batches.forEach((batch, idx) => {
-    html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #cbd5e1;">
-      <div>Batch ${idx+1} (${batch.length} emails)</div>
-      <button class="btn btn-primary" style="padding:4px 12px;" onclick="sendBatch(${idx})">Send</button>
-    </div>`;
+  // Toggle batch panel (hidden trigger on logo)
+  document.getElementById('fatiscoLogo').addEventListener('click', () => {
+    let panel = document.getElementById('batchPanel');
+    if (panel.style.display === 'none') {
+      panel.style.display = 'block';
+      panel.innerHTML = `<div class="batch-panel">
+        <div class="batch-title">📦 BATCH MODE (BCC)</div>
+        <div class="batch-size-row">
+          <span>Emails per batch:</span>
+          <input type="number" id="batchSizeInput" class="batch-size-input" value="10" min="1" max="50" step="1">
+          <button class="btn btn-primary" style="padding:6px 12px;" onclick="prepareBatches()">Prepare Batches</button>
+        </div>
+        <div id="batchList" class="batch-list"></div>
+      </div>`;
+      if (emailRecords.length) prepareBatches();
+    } else {
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+    }
   });
-  document.getElementById('batchList').innerHTML = html;
-  window.currentBatches = batches;
-}
 
-function sendBatch(idx) {
-  const batch = window.currentBatches[idx];
-  if (!batch) return;
-  const bcc = batch.map(r => r.email).join(',');
-  const subject = document.getElementById('subject').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
-  const body = document.getElementById('body').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
-  let mailto = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  if (ccEnabled) {
-    const cc = document.getElementById('ccEmail').value.trim();
-    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+  // ==================== SCROLL & UI ====================
+  const scrollContainer = document.getElementById('emailScrollContainer');
+  if (scrollContainer) {
+    scrollContainer.addEventListener('scroll', () => {
+      const st = scrollContainer.scrollTop, sh = scrollContainer.scrollHeight, ch = scrollContainer.clientHeight;
+      document.getElementById('scrollTopBtn').classList.toggle('hidden', st < 50);
+      document.getElementById('scrollBottomBtn').classList.toggle('hidden', sh - st - ch < 50);
+    });
   }
-  window.open(mailto, '_blank');
-  const now = Date.now();
-  for (let r of batch) sentEmails[r.email] = now;
-  saveAllData();
+  function scrollToTop() { scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function scrollToBottom() { scrollContainer?.scrollTo({ top: scrollContainer.scrollHeight, behavior: 'smooth' }); }
+
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // File upload
+  document.querySelector('.file-label')?.addEventListener('click', () => document.getElementById('fileInput').click());
+  document.getElementById('fileInput')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('emailInput').value = e.target.result;
+      processEmails();
+      showToast(`Loaded ${file.name}`);
+    };
+    reader.readAsText(file);
+    this.value = '';
+  });
+
+  // Auto-save inputs
+  document.getElementById('emailInput')?.addEventListener('input', saveAllData);
+  document.getElementById('subject')?.addEventListener('input', saveAllData);
+  document.getElementById('body')?.addEventListener('input', saveAllData);
+  document.getElementById('ccEmail')?.addEventListener('input', saveAllData);
+
+  // Midnight reset check (only for display, sentEmails timestamps are never erased)
+  function scheduleMidnightReset() {
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msToMidnight = midnight - now;
+    setTimeout(() => {
+      updateSentStats();  // This will show 0 for today if no new sends after midnight
+      scheduleMidnightReset();
+    }, msToMidnight + 1000);
+  }
+
+  // ==================== INIT ====================
+  loadAllData();
   renderEmails();
-  updateStats();
-  showToast(`Batch ${idx+1} sent (${batch.length} emails)`);
-}
-
-function checkMidnightReset() {
-  const now = new Date();
-  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  setTimeout(() => { updateSentStats(); checkMidnightReset(); }, midnight - now + 1000);
-}
-
-loadAllData();
-renderEmails();
-updateStats();
-checkMidnightReset();
-if (localStorage.getItem('fatisco_theme') === 'dark') document.body.classList.add('dark');
-setInterval(updateSentStats, 60000);
+  updateListStats();
+  updateSentStats();
+  scheduleMidnightReset();
+  if (localStorage.getItem('fatisco_theme') === 'dark') document.body.classList.add('dark');
+  setInterval(updateSentStats, 60000);
 </script>
 </body>
 </html>
