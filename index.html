@@ -4,72 +4,171 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FATISCO · Email Automation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      background: #f5f7fa;
-      color: #1e293b;
-      line-height: 1.4;
-      padding-bottom: 70px;
+    :root {
+      --bg: #f0ede8;
+      --surface: #ffffff;
+      --surface2: #f7f5f2;
+      --border: #e2ddd8;
+      --text: #1a1714;
+      --text2: #6b6560;
+      --accent: #d4470c;
+      --accent2: #f5a623;
+      --green: #1a7a4a;
+      --green-bg: #e8f7ef;
+      --green-border: #a8dfc0;
+      --red: #c0392b;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font-mono: 'Space Mono', monospace;
+      --font: 'DM Sans', sans-serif;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     body.dark {
-      background: #0f172a;
-      color: #e2e8f0;
+      --bg: #111018;
+      --surface: #1c1b24;
+      --surface2: #15141c;
+      --border: #2e2c3a;
+      --text: #f0ede8;
+      --text2: #8b8698;
+      --shadow: 0 2px 12px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
     }
 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding-bottom: 72px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ===== HEADER ===== */
     .header {
-      background: #4f46e5;
-      padding: 12px 16px;
+      background: var(--text);
+      padding: 0 16px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 100;
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      z-index: 200;
     }
 
     .logo {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--bg);
+      cursor: pointer;
+      letter-spacing: 2px;
+      user-select: none;
       display: flex;
       align-items: center;
       gap: 8px;
-      color: white;
-      cursor: pointer;
+      transition: var(--transition);
     }
 
-    .logo-text {
-      font-size: 20px;
+    .logo:active { opacity: 0.7; }
+
+    .logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-pill {
+      background: var(--accent);
+      color: white;
+      font-family: var(--font-mono);
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: var(--transition);
+      pointer-events: none;
     }
 
-    .theme-toggle {
-      background: rgba(255,255,255,0.2);
+    .mode-pill.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .theme-btn {
+      background: rgba(255,255,255,0.12);
       border: none;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 13px;
+      color: var(--bg);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      font-size: 16px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
     }
 
+    .theme-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ===== VIEWS ===== */
+    .view-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .view {
+      width: 100%;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.38s ease;
+    }
+
+    .view.hidden-left {
+      position: absolute;
+      top: 0; left: 0;
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .view.hidden-right {
+      position: absolute;
+      top: 0; left: 0;
+      transform: translateX(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ===== CONTAINER ===== */
     .container {
-      max-width: 1200px;
+      max-width: 700px;
       margin: 0 auto;
-      padding: 12px;
+      padding: 16px 12px;
     }
 
+    /* ===== STATS ===== */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -78,879 +177,1207 @@
     }
 
     .stat-card {
-      background: white;
-      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 12px 8px;
       text-align: center;
-      border: 1px solid #e9eef2;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
     }
 
-    .dark .stat-card {
-      background: #1e293b;
-      border-color: #334155;
-    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 
     .stat-label {
-      font-size: 10px;
+      font-size: 9px;
+      font-family: var(--font-mono);
       text-transform: uppercase;
-      color: #64748b;
+      letter-spacing: 1px;
+      color: var(--text2);
       margin-bottom: 4px;
     }
 
     .stat-number {
-      font-size: 22px;
-      font-weight: 800;
-      color: #4f46e5;
+      font-size: 24px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      line-height: 1;
     }
 
-    .stat-small {
-      font-size: 10px;
-      color: #64748b;
-      margin-top: 2px;
+    .stat-sub {
+      font-size: 9px;
+      color: var(--text2);
+      margin-top: 3px;
+      font-family: var(--font-mono);
     }
 
+    .stat-card.permanent .stat-label::after {
+      content: ' 🔒';
+    }
+
+    /* ===== CARD ===== */
     .card {
-      background: white;
-      border-radius: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid #e9eef2;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
     }
 
-    .dark .card {
-      background: #1e293b;
-      border-color: #334155;
-    }
-
-    .card-header {
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      font-weight: 600;
+      gap: 6px;
     }
 
-    .file-upload {
-      margin-bottom: 12px;
+    .card-title span { font-size: 14px; }
+
+    /* ===== INPUTS ===== */
+    textarea, input[type="text"], input[type="email"], input[type="number"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: var(--font);
+      background: var(--surface2);
+      color: var(--text);
+      margin-bottom: 10px;
+      transition: var(--transition);
+      resize: none;
+      outline: none;
     }
 
-    .file-input {
-      display: none;
+    textarea:focus, input:focus {
+      border-color: var(--accent);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(212,71,12,0.1);
     }
 
+    textarea { resize: vertical; }
+
+    /* ===== FILE UPLOAD ===== */
     .file-label {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       padding: 12px;
-      background: #f8fafc;
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
+      background: var(--surface2);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 10px;
+      transition: var(--transition);
     }
 
-    .dark .file-label {
-      background: #1e293b;
-      border-color: #475569;
-    }
+    .file-label:hover { border-color: var(--accent); color: var(--accent); }
+    input[type="file"] { display: none; }
 
-    .file-label:hover {
-      border-color: #4f46e5;
-    }
-
-    textarea, input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d1d9e6;
-      border-radius: 12px;
-      font-size: 14px;
-      background: white;
-      margin-bottom: 12px;
-    }
-
-    .dark textarea, .dark input {
-      background: #0f172a;
-      border-color: #334155;
-      color: #e2e8f0;
-    }
-
-    .button-group {
+    /* ===== BUTTONS ===== */
+    .btn-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 8px 0;
     }
 
     .btn {
-      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
       border-radius: 30px;
       font-size: 13px;
       font-weight: 600;
-      border: none;
+      font-family: var(--font);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
       cursor: pointer;
-      background: white;
-      border: 1px solid #d1d9e6;
+      transition: var(--transition);
+      white-space: nowrap;
       flex: 1 1 auto;
+      justify-content: center;
     }
 
-    .dark .btn {
-      background: #1e293b;
-      border-color: #475569;
-      color: #e2e8f0;
-    }
+    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn:active { transform: translateY(0); }
 
-    .btn-primary {
-      background: #4f46e5;
-      color: white;
-      border: none;
+    .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn-primary:hover { background: #b83a09; }
+    .btn-warn { background: var(--accent2); color: white; border-color: var(--accent2); }
+    .btn-warn:hover { background: #e09510; }
+    .btn-danger { background: var(--red); color: white; border-color: var(--red); }
+    .btn-danger:hover { background: #a93226; }
+    .btn-green { background: var(--green); color: white; border-color: var(--green); }
+    .btn-back {
+      background: transparent;
+      border-color: rgba(255,255,255,0.3);
+      color: var(--bg);
+      flex: 0 0 auto;
+      padding: 6px 14px;
+      font-size: 12px;
     }
+    .btn-back:hover { background: rgba(255,255,255,0.1); }
 
-    .btn-primary:hover {
-      background: #4338ca;
-    }
+    .btn-sm { padding: 6px 12px; font-size: 12px; flex: 0 0 auto; }
 
-    .btn-warning {
-      background: #f59e0b;
-      color: white;
-      border: none;
-    }
+    .btn.active-cc { background: var(--accent); color: white; border-color: var(--accent); }
 
-    .btn-danger {
-      background: #ef4444;
-      color: white;
-      border: none;
-    }
-
+    /* ===== FILTERS ===== */
     .filter-tabs {
       display: flex;
       gap: 6px;
-      margin: 16px 0 12px;
+      margin: 14px 0 10px;
     }
 
     .filter-btn {
       padding: 6px 14px;
       border-radius: 30px;
-      background: #f1f5f9;
-      border: 1px solid #d1d9e6;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
       font-size: 12px;
       font-weight: 600;
-      color: #475569;
+      color: var(--text2);
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
+      transition: var(--transition);
     }
 
     .filter-btn.active {
-      background: #4f46e5;
-      color: white;
-      border-color: #4f46e5;
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
     }
 
     .filter-count {
-      background: rgba(0,0,0,0.1);
-      padding: 2px 6px;
+      background: currentColor;
+      color: var(--surface);
+      padding: 1px 6px;
       border-radius: 20px;
       font-size: 10px;
+      opacity: 0.7;
     }
 
-    .email-scroll-container {
-      background: white;
-      border-radius: 16px;
-      border: 1px solid #e9eef2;
-      max-height: 400px;
+    .filter-btn.active .filter-count { opacity: 1; }
+
+    /* ===== EMAIL LIST ===== */
+    .email-scroll {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-height: 380px;
       overflow-y: auto;
+      box-shadow: var(--shadow);
     }
 
-    .dark .email-scroll-container {
-      background: #1e293b;
-      border-color: #334155;
-    }
-
-    .email-list {
-      padding: 6px;
-    }
+    .email-list { padding: 6px; }
 
     .email-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       padding: 10px 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
       border-radius: 10px;
-      margin-bottom: 4px;
-      font-size: 13px;
+      margin-bottom: 5px;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: var(--transition);
+      animation: slideIn 0.2s ease forwards;
     }
 
-    .dark .email-item {
-      background: #0f172a;
-      border-color: #334155;
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .email-item:hover {
-      border-color: #4f46e5;
-      transform: translateY(-1px);
-    }
+    .email-item:hover:not(.sent) { border-color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow); }
 
     .email-item.sent {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      opacity: 0.8;
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      opacity: 0.75;
       cursor: not-allowed;
     }
 
-    .dark .email-item.sent {
-      background: #064e3b;
-      border-color: #047857;
-    }
-
-    .email-number {
-      width: 26px;
-      height: 26px;
+    .email-num {
+      width: 28px; height: 28px;
       border-radius: 50%;
-      background: #4f46e5;
+      background: var(--accent);
       color: white;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
       flex-shrink: 0;
     }
 
-    .email-item.sent .email-number {
-      background: #10b981;
-    }
+    .email-item.sent .email-num { background: var(--green); }
 
-    .email-details {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .email-info { flex: 1; min-width: 0; }
 
     .email-addr {
-      font-weight: 500;
+      font-size: 13px;
+      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 160px;
     }
 
-    .email-name {
-      color: #64748b;
+    .email-meta {
       font-size: 11px;
+      color: var(--text2);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100px;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       border-radius: 50%;
-      margin-left: 4px;
+      flex-shrink: 0;
     }
 
-    .status-dot.sent { background: #22c55e; }
-    .status-dot.pending { background: #f59e0b; }
+    .status-dot.sent { background: var(--green); }
+    .status-dot.pending { background: var(--accent2); }
 
-    .batch-panel {
-      background: #eef2ff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 16px;
-      border: 1px solid #cbd5e1;
-    }
-    .dark .batch-panel {
-      background: #1e293b;
-      border-color: #475569;
-      color: #e2e8f0;
-    }
-    .batch-panel .batch-title {
-      font-weight: 700;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    .batch-size-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .batch-size-input {
-      width: 80px;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
+    .empty-state {
+      padding: 40px 20px;
       text-align: center;
-    }
-    .dark .batch-size-input {
-      background: #0f172a;
-      border-color: #475569;
-      color: white;
-    }
-    .batch-list {
-      max-height: 200px;
-      overflow-y: auto;
-      margin-top: 12px;
-    }
-    .batch-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #cbd5e1;
-    }
-    .dark .batch-item {
-      border-bottom-color: #334155;
-    }
-    .batch-email-list {
-      font-size: 12px;
-      color: #475569;
-    }
-    .dark .batch-email-list {
-      color: #94a3b8;
+      color: var(--text2);
+      font-size: 14px;
     }
 
-    .scroll-buttons {
+    .empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+    /* ===== SCROLL BUTTONS ===== */
+    .scroll-btns {
       position: fixed;
-      right: 15px;
-      bottom: 90px;
+      right: 14px;
+      bottom: 86px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      z-index: 150;
     }
 
     .scroll-btn {
-      width: 44px;
-      height: 44px;
+      width: 40px; height: 40px;
       border-radius: 50%;
-      background: #4f46e5;
-      color: white;
+      background: var(--text);
+      color: var(--bg);
       border: none;
-      font-size: 18px;
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .scroll-btn.hidden {
-      display: none;
+    .scroll-btn.visible { opacity: 1; pointer-events: auto; }
+    .scroll-btn:hover { transform: scale(1.1); }
+
+    /* ===== BATCH VIEW ===== */
+    #batchView .container { padding-top: 20px; }
+
+    .batch-header-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
+    .batch-header-info h2 {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--bg);
+    }
+
+    .batch-header-info p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      font-family: var(--font-mono);
+    }
+
+    .batch-controls {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow);
+    }
+
+    .batch-controls label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      white-space: nowrap;
+    }
+
+    .batch-size-input {
+      width: 72px !important;
+      text-align: center;
+      margin-bottom: 0 !important;
+      font-family: var(--font-mono) !important;
+      font-weight: 700;
+    }
+
+    .batch-summary {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text2);
+      margin-left: auto;
+    }
+
+    .batch-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin: 20px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .batch-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .batch-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      animation: slideIn 0.25s ease forwards;
+    }
+
+    .batch-card.completed {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+    }
+
+    .batch-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .batch-card-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .batch-card-count {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    .batch-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    .batch-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .batch-card.completed .batch-progress-fill { background: var(--green); }
+
+    .batch-email-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .batch-chip {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .batch-chip.sent-chip {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+
+    .batch-chip.more-chip {
+      background: var(--surface2);
+      color: var(--text2);
+      font-style: italic;
+    }
+
+    .completed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--green);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ===== FOOTER ===== */
     .footer {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      padding: 12px;
-      border-top: 1px solid #e2e8f0;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 10px;
       text-align: center;
       font-size: 11px;
-      color: #64748b;
+      font-family: var(--font-mono);
+      color: var(--text2);
+      z-index: 100;
     }
 
-    .dark .footer {
-      background: #1e293b;
-      border-color: #334155;
-    }
-
+    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 80px;
       left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 8px 16px;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 20px;
       border-radius: 30px;
       font-size: 13px;
+      font-weight: 500;
       z-index: 1000;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.2s;
       white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+      box-shadow: var(--shadow-lg);
     }
 
     .toast.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== CC FIELD ===== */
+    .cc-field { display: none; }
+
+    /* ===== VALIDATION WARNING ===== */
+    .field-warning {
+      border-color: var(--red) !important;
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.15) !important;
     }
   </style>
 </head>
-<body class="light">
+<body>
 
+<!-- ===== HEADER ===== -->
 <div class="header">
-  <div class="header-content">
-    <div class="logo" id="fatiscoLogo">
-      <span class="logo-text">FATISCO</span>
-    </div>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <div class="logo" id="logoBtn">
+    <div class="logo-dot"></div>
+    FATISCO
+  </div>
+  <div class="header-right">
+    <span class="mode-pill" id="modePill">BATCH</span>
+    <button class="btn btn-back" id="backBtn" style="display:none;" onclick="switchToNormal()">← Back</button>
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
   </div>
 </div>
 
-<div class="container">
-  <!-- Stats -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Total</div>
-      <div class="stat-number" id="statTotal">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Valid</div>
-      <div class="stat-number" id="statValid">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Sent (24h)</div>
-      <div class="stat-number" id="statSent24h">0</div>
-      <div class="stat-small" id="timeSinceMidnight"></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Sent (Total)</div>
-      <div class="stat-number" id="statSentTotal">0</div>
+<!-- ===== VIEW WRAPPER ===== -->
+<div class="view-wrapper" id="viewWrapper">
+
+  <!-- ===== NORMAL VIEW ===== -->
+  <div class="view" id="normalView">
+    <div class="container">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total</div>
+          <div class="stat-number" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Valid</div>
+          <div class="stat-number" id="statValid">0</div>
+        </div>
+        <div class="stat-card permanent">
+          <div class="stat-label">Sent 24H</div>
+          <div class="stat-number" id="statSent24h">0</div>
+          <div class="stat-sub" id="stat24hSub">0h today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Sent Total</div>
+          <div class="stat-number" id="statSentTotal">0</div>
+        </div>
+      </div>
+
+      <!-- Email List Input -->
+      <div class="card">
+        <div class="card-title"><span>📧</span> Email List</div>
+        <input type="file" id="fileInput" accept=".csv,.txt">
+        <label class="file-label" for="fileInput">📁 Upload CSV / TXT file</label>
+        <textarea id="emailInput" rows="3" placeholder="Paste emails here: email,name,company (one per line)"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="processEmails()">⚡ Generate</button>
+          <button class="btn btn-warn" onclick="cleanDuplicates()">🧹 Deduplicate</button>
+          <button class="btn" onclick="exportCSV()">📥 Export</button>
+          <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear</button>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="card">
+        <div class="card-title"><span>✉️</span> Composer</div>
+        <input type="text" id="subject" placeholder="Subject — use {name}, {company}" value="Opportunity for {company}">
+        <textarea id="body" rows="3" placeholder="Body — use {name}, {company}...">Hi {name}, I noticed {company} is doing great work. I'd love to connect.</textarea>
+        <div class="btn-row" style="margin-bottom:8px;">
+          <button class="btn btn-sm" id="ccBtn" onclick="toggleCC()">📧 Add CC</button>
+        </div>
+        <div class="cc-field" id="ccField">
+          <input type="email" id="ccEmail" placeholder="cc@example.com">
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="filterEmails('all', this)">All <span class="filter-count" id="cntAll">0</span></button>
+        <button class="filter-btn" onclick="filterEmails('pending', this)">🟡 Pending <span class="filter-count" id="cntPending">0</span></button>
+        <button class="filter-btn" onclick="filterEmails('sent', this)">✅ Sent <span class="filter-count" id="cntSent">0</span></button>
+      </div>
+
+      <!-- Email scroll list -->
+      <div class="email-scroll" id="emailScroll">
+        <div class="email-list" id="emailList">
+          <div class="empty-state"><div class="empty-icon">📭</div>No emails yet. Add some above!</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Input Card -->
-  <div class="card">
-    <div class="card-header"><span>📧</span> Email List</div>
-    <div class="file-upload">
-      <input type="file" id="fileInput" class="file-input" accept=".csv,.txt">
-      <label for="fileInput" class="file-label">📁 Upload CSV/TXT</label>
+  <!-- ===== BATCH VIEW ===== -->
+  <div class="view hidden-right" id="batchView">
+    <div class="container">
+
+      <!-- Batch Controls -->
+      <div class="batch-controls">
+        <label>Emails per batch:</label>
+        <input type="number" class="batch-size-input" id="batchSize" value="10" min="1" max="100">
+        <button class="btn btn-primary btn-sm" onclick="prepareBatches()">🔄 Recalculate</button>
+        <span class="batch-summary" id="batchSummary">—</span>
+      </div>
+
+      <!-- Pending Batches -->
+      <div id="pendingBatchSection">
+        <div class="batch-section-label">Pending Batches</div>
+        <div id="pendingBatchList"></div>
+      </div>
+
+      <!-- Completed Batches -->
+      <div id="completedBatchSection" style="display:none;">
+        <div class="batch-section-label">✅ Completed</div>
+        <div id="completedBatchList"></div>
+      </div>
+
     </div>
-    <textarea id="emailInput" rows="3" placeholder="email,name,company"></textarea>
-    <div class="button-group">
-      <button class="btn btn-primary" onclick="processEmails()">⚡ Generate</button>
-      <button class="btn btn-warning" onclick="cleanDuplicates()">🧹 Clean Duplicates</button>
-      <button class="btn" onclick="exportCSV()">📥 Export</button>
-      <button class="btn btn-danger" onclick="clearAllEditableData()">🗑️ Clear</button>
-    </div>
   </div>
 
-  <!-- Composer Card -->
-  <div class="card">
-    <div class="card-header"><span>✉️</span> Composer</div>
-    <input type="text" id="subject" placeholder="Subject" value="Opportunity for {company}">
-    <textarea id="body" rows="2" placeholder="Body...">Hi {name}, I noticed {company} is doing great work. I'd love to connect.</textarea>
-    <div style="display: flex; gap: 8px; margin: 8px 0;">
-      <button class="btn" id="ccBtn" onclick="toggleCC()" style="padding: 6px 12px;">📧 CC</button>
-    </div>
-    <div id="ccField" style="display: none;"><input type="email" id="ccEmail" placeholder="cc@example.com"></div>
-  </div>
-
-  <!-- Filters -->
-  <div class="filter-tabs">
-    <button class="filter-btn active" onclick="filterEmails('all')">All <span class="filter-count" id="countAll">0</span></button>
-    <button class="filter-btn" onclick="filterEmails('pending')">Pending <span class="filter-count" id="countPending">0</span></button>
-    <button class="filter-btn" onclick="filterEmails('sent')">Sent <span class="filter-count" id="countSent">0</span></button>
-  </div>
-
-  <!-- Email List -->
-  <div class="email-scroll-container" id="emailScrollContainer">
-    <div class="email-list" id="emailList"></div>
-  </div>
-
-  <!-- Batch Panel (hidden) -->
-  <div id="batchPanel" style="display: none;"></div>
 </div>
 
-<div class="scroll-buttons">
-  <button class="scroll-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
-  <button class="scroll-btn" id="scrollBottomBtn" onclick="scrollToBottom()">↓</button>
+<!-- Scroll buttons -->
+<div class="scroll-btns">
+  <button class="scroll-btn" id="scrollUp" onclick="scrollUp()">↑</button>
+  <button class="scroll-btn" id="scrollDown" onclick="scrollDown()">↓</button>
 </div>
 
 <div class="footer">Built by Fatai Ajani · FATISCO © 2026</div>
-<div id="toast" class="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-  // ==================== DATA ====================
-  let emailRecords = [];              // current email list (cleared by "Clear")
-  let sent24hTimestamps = {};         // PERMANENT: email -> timestamp (NEVER cleared by user)
-  let sentTotalCount = 0;             // CLEARABLE: total emails sent since last clear
+// =============================================
+//  STATE
+// =============================================
+let emailRecords = [];          // current list
+let sent24hTimestamps = {};     // PERMANENT — email → timestamp — NEVER user-cleared
+let sentTotalCount = 0;         // clearable total
+let currentFilter = 'all';
+let ccEnabled = false;
+let currentBatches = [];
+let inBatchMode = false;
 
-  let currentFilter = 'all';
-  let ccEnabled = false;
+// =============================================
+//  STORAGE
+// =============================================
+function save() {
+  try {
+    ls('fatisco_records', JSON.stringify(emailRecords));
+    ls('fatisco_24h', JSON.stringify(sent24hTimestamps));
+    ls('fatisco_total', sentTotalCount);
+    ls('fatisco_subject', id('subject').value);
+    ls('fatisco_body', id('body').value);
+    ls('fatisco_cc_on', ccEnabled);
+    ls('fatisco_cc_email', id('ccEmail').value);
+    ls('fatisco_batch_size', id('batchSize').value);
+  } catch(e) {}
+}
 
-  // ==================== HELPER FUNCTIONS ====================
-  function getTodayMidnight() {
-    const d = new Date();
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+function load() {
+  try {
+    const r = gl('fatisco_records'); if (r) emailRecords = JSON.parse(r);
+    const t = gl('fatisco_24h'); if (t) sent24hTimestamps = JSON.parse(t);
+    const n = gl('fatisco_total'); if (n !== null) sentTotalCount = parseInt(n, 10) || 0;
+    const s = gl('fatisco_subject'); if (s) id('subject').value = s;
+    const b = gl('fatisco_body'); if (b) id('body').value = b;
+    const cc = gl('fatisco_cc_on'); if (cc === 'true') { ccEnabled = true; applyCC(); }
+    const ce = gl('fatisco_cc_email'); if (ce) id('ccEmail').value = ce;
+    const bs = gl('fatisco_batch_size'); if (bs) id('batchSize').value = bs;
+    const el = gl('fatisco_emailInput'); if (el) id('emailInput').value = el;
+    const th = gl('fatisco_theme'); if (th === 'dark') document.body.classList.add('dark');
+  } catch(e) {}
+}
+
+function ls(k, v) { localStorage.setItem(k, v); }
+function gl(k) { return localStorage.getItem(k); }
+function id(i) { return document.getElementById(i); }
+
+// =============================================
+//  STATS & COUNTS
+// =============================================
+function isSent(email) { return !!sent24hTimestamps[email]; }
+
+function count24h() {
+  const cutoff = Date.now() - 86400000;
+  return Object.values(sent24hTimestamps).filter(ts => ts > cutoff).length;
+}
+
+function updateStats() {
+  id('statTotal').textContent = emailRecords.length;
+  id('statValid').textContent = emailRecords.length;
+  // 24H — derived from timestamps only, NEVER from user action
+  id('statSent24h').textContent = count24h();
+  const h = new Date().getHours();
+  id('stat24hSub').textContent = `${h}h elapsed`;
+  // Total — clearable
+  id('statSentTotal').textContent = sentTotalCount;
+
+  const sentCount = emailRecords.filter(r => isSent(r.email)).length;
+  const pendingCount = emailRecords.length - sentCount;
+  id('cntAll').textContent = emailRecords.length;
+  id('cntSent').textContent = sentCount;
+  id('cntPending').textContent = pendingCount;
+}
+
+// =============================================
+//  PROCESS EMAILS
+// =============================================
+function processEmails() {
+  const raw = id('emailInput').value;
+  ls('fatisco_emailInput', raw);
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  emailRecords = [];
+  for (const line of lines) {
+    const parts = line.split(',').map(p => p.trim());
+    const email = parts[0];
+    if (!email || !email.includes('@') || !email.includes('.')) continue;
+    const name = cap(parts[1] || email.split('@')[0]);
+    const company = cap(parts[2] || email.split('@')[1]?.split('.')[0] || '');
+    emailRecords.push({ email, name, company });
   }
-
-  function getHoursSinceMidnight() {
-    const now = new Date();
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    return Math.floor((now - midnight) / (1000 * 60 * 60));
-  }
-
-  // Updates ONLY the "Sent (24h)" display from sent24hTimestamps
-  function updateSent24hStats() {
-    const now = Date.now();
-    const oneDayAgo = now - (24 * 60 * 60 * 1000);
-    let sent24h = 0;
-    for (let ts of Object.values(sent24hTimestamps)) {
-      if (ts > oneDayAgo) sent24h++;
-    }
-    document.getElementById('statSent24h').textContent = sent24h;
-    document.getElementById('timeSinceMidnight').textContent = `${getHoursSinceMidnight()}h today`;
-  }
-
-  // Updates "Sent (Total)" from sentTotalCount
-  function updateSentTotalStats() {
-    document.getElementById('statSentTotal').textContent = sentTotalCount;
-  }
-
-  // Total & Valid counts (only from current emailRecords)
-  function updateListStats() {
-    document.getElementById('statTotal').textContent = emailRecords.length;
-    document.getElementById('statValid').textContent = emailRecords.length;
-  }
-
-  function updateFilterCounts() {
-    const total = emailRecords.length;
-    const sent = emailRecords.filter(r => sent24hTimestamps[r.email]).length;
-    const pending = total - sent;
-    document.getElementById('countAll').textContent = total;
-    document.getElementById('countSent').textContent = sent;
-    document.getElementById('countPending').textContent = pending;
-  }
-
-  // ==================== STORAGE (persistent) ====================
-  function loadAllData() {
-    try {
-      const savedList = localStorage.getItem('fatisco_email_list');
-      if (savedList) document.getElementById('emailInput').value = savedList;
-      const savedSubject = localStorage.getItem('fatisco_subject');
-      if (savedSubject) document.getElementById('subject').value = savedSubject;
-      const savedBody = localStorage.getItem('fatisco_body');
-      if (savedBody) document.getElementById('body').value = savedBody;
-      const savedCC = localStorage.getItem('fatisco_cc_enabled');
-      if (savedCC === 'true') {
-        ccEnabled = true;
-        document.getElementById('ccField').style.display = 'block';
-        document.getElementById('ccBtn').style.background = '#4f46e5';
-        document.getElementById('ccBtn').style.color = 'white';
-      }
-      const savedCCEmail = localStorage.getItem('fatisco_cc_email');
-      if (savedCCEmail) document.getElementById('ccEmail').value = savedCCEmail;
-      const savedTimestamps = localStorage.getItem('fatisco_sent24h');
-      if (savedTimestamps) sent24hTimestamps = JSON.parse(savedTimestamps);
-      const savedTotal = localStorage.getItem('fatisco_sent_total');
-      if (savedTotal) sentTotalCount = parseInt(savedTotal, 10) || 0;
-      const savedRecords = localStorage.getItem('fatisco_records');
-      if (savedRecords) emailRecords = JSON.parse(savedRecords);
-    } catch(e) {}
-  }
-
-  function saveAllData() {
-    localStorage.setItem('fatisco_email_list', document.getElementById('emailInput').value);
-    localStorage.setItem('fatisco_subject', document.getElementById('subject').value);
-    localStorage.setItem('fatisco_body', document.getElementById('body').value);
-    localStorage.setItem('fatisco_cc_enabled', ccEnabled);
-    localStorage.setItem('fatisco_cc_email', document.getElementById('ccEmail').value);
-    localStorage.setItem('fatisco_sent24h', JSON.stringify(sent24hTimestamps));
-    localStorage.setItem('fatisco_sent_total', sentTotalCount);
-    localStorage.setItem('fatisco_records', JSON.stringify(emailRecords));
-  }
-
-  // ==================== PROCESS EMAILS ====================
-  function processEmails() {
-    const raw = document.getElementById('emailInput').value;
-    const lines = raw.split('\n').filter(l => l.trim());
-    emailRecords = [];
-    for (let line of lines) {
-      const parts = line.split(',').map(p => p.trim());
-      const email = parts[0];
-      if (!email || !email.includes('@')) continue;
-      const name = parts[1] || email.split('@')[0];
-      const company = parts[2] || email.split('@')[1]?.split('.')[0] || '';
-      emailRecords.push({
-        email,
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        company: company.charAt(0).toUpperCase() + company.slice(1)
-      });
-    }
-    saveAllData();
-    renderEmails();
-    updateListStats();
-    updateSent24hStats();
-    updateSentTotalStats();
-    showToast(`Loaded ${emailRecords.length} emails`);
-  }
-
-  function renderEmails() {
-    let filtered = emailRecords;
-    if (currentFilter === 'sent') filtered = emailRecords.filter(r => sent24hTimestamps[r.email]);
-    else if (currentFilter === 'pending') filtered = emailRecords.filter(r => !sent24hTimestamps[r.email]);
-    let html = '';
-    filtered.forEach((r, idx) => {
-      const sent = !!sent24hTimestamps[r.email];
-      html += `<div class="email-item ${sent ? 'sent' : ''}" data-email="${r.email}" data-name="${r.name}" data-company="${r.company}">
-        <div class="email-number">${idx+1}</div>
-        <div class="email-details">
-          <span class="email-addr">${r.email}</span>
-          <span class="email-name">${r.name}</span>
-        </div>
-        <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
-      </div>`;
-    });
-    document.getElementById('emailList').innerHTML = html || '<div style="padding:20px;text-align:center;">No emails</div>';
-    document.querySelectorAll('.email-item').forEach(card => card.addEventListener('click', handleEmailClick));
-    updateFilterCounts();
-  }
-
-  // ==================== SEND EMAIL ====================
-  function handleEmailClick(e) {
-    const card = e.currentTarget;
-    const email = card.dataset.email;
-    const name = card.dataset.name;
-    const company = card.dataset.company;
-    if (sent24hTimestamps[email]) {
-      showToast('⚠️ Already sent');
-      return;
-    }
-    const subject = document.getElementById('subject').value.replace(/{name}/g, name).replace(/{company}/g, company);
-    const body = document.getElementById('body').value.replace(/{name}/g, name).replace(/{company}/g, company);
-    let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    if (ccEnabled) {
-      const cc = document.getElementById('ccEmail').value.trim();
-      if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
-    }
-    window.open(mailto, '_blank');
-    
-    // Update both counters
-    const now = Date.now();
-    sent24hTimestamps[email] = now;    // PERMANENT for 24h counter
-    sentTotalCount++;                   // CLEARABLE total counter
-    
-    card.classList.add('sent');
-    card.querySelector('.status-dot').classList.remove('pending');
-    card.querySelector('.status-dot').classList.add('sent');
-    
-    updateSent24hStats();
-    updateSentTotalStats();
-    updateFilterCounts();
-    updateListStats();
-    saveAllData();
-    showToast(`✉️ Sent to ${name}`);
-  }
-
-  // ==================== CLEAN DUPLICATES ====================
-  function cleanDuplicates() {
-    const raw = document.getElementById('emailInput').value;
-    const lines = raw.split('\n').filter(l => l.trim());
-    const seen = new Set();
-    const unique = [];
-    let removed = 0;
-    for (let line of lines) {
-      const email = line.split(',')[0]?.trim().toLowerCase();
-      if (email && !seen.has(email)) {
-        seen.add(email);
-        unique.push(line);
-      } else if (email) removed++;
-    }
-    if (removed) {
-      document.getElementById('emailInput').value = unique.join('\n');
-      processEmails();
-      showToast(`🧹 Removed ${removed} duplicate(s)`);
-    } else showToast('✨ No duplicates');
-  }
-
-  // ==================== CLEAR (resets email list + records + Sent Total) ====================
-  function clearAllEditableData() {
-    if (confirm('Clear email list and reset current view?\n\n✅ Email list cleared\n✅ Current records reset\n✅ Sent (Total) reset to 0\n❌ Sent (24h) history stays FOREVER')) {
-      document.getElementById('emailInput').value = '';
-      emailRecords = [];
-      sentTotalCount = 0;        // ← THIS IS THE FIX: reset total counter
-      saveAllData();
-      renderEmails();
-      updateListStats();
-      updateSent24hStats();
-      updateSentTotalStats();
-      showToast('📭 Email list cleared (Sent Total reset, 24h history untouched)');
-    }
-  }
-
-  // ==================== FILTERS ====================
-  function filterEmails(filter) {
-    currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    renderEmails();
-  }
-
-  // ==================== CC TOGGLE ====================
-  function toggleCC() {
-    ccEnabled = !ccEnabled;
-    document.getElementById('ccField').style.display = ccEnabled ? 'block' : 'none';
-    document.getElementById('ccBtn').style.background = ccEnabled ? '#4f46e5' : '';
-    document.getElementById('ccBtn').style.color = ccEnabled ? 'white' : '';
-    saveAllData();
-  }
-
-  // ==================== EXPORT ====================
-  function exportCSV() {
-    let csv = 'Email,Name,Company,Sent\n';
-    emailRecords.forEach(r => csv += `"${r.email}","${r.name}","${r.company}",${sent24hTimestamps[r.email] ? 'Yes' : 'No'}\n`);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `fatisco_${Date.now()}.csv`;
-    a.click();
-    showToast('CSV exported');
-  }
-
-  // ==================== BATCH MODE (Hidden trigger on logo) ====================
-  let currentBatches = [];
-  function prepareBatches() {
-    const pending = emailRecords.filter(r => !sent24hTimestamps[r.email]);
-    if (!pending.length) {
-      document.getElementById('batchList').innerHTML = '<div class="batch-item">No pending emails</div>';
-      return;
-    }
-    const batchSize = parseInt(document.getElementById('batchSizeInput')?.value || '10', 10);
-    const size = Math.max(1, batchSize);
-    const batches = [];
-    for (let i = 0; i < pending.length; i += size) {
-      batches.push(pending.slice(i, i + size));
-    }
-    currentBatches = batches;
-    let html = '';
-    batches.forEach((batch, idx) => {
-      const emailPreview = batch.map(e => e.email).slice(0, 2).join(', ') + (batch.length > 2 ? ` +${batch.length-2} more` : '');
-      html += `<div class="batch-item">
-        <div><strong>Batch ${idx+1}</strong> (${batch.length} emails)<br><span class="batch-email-list">${emailPreview}</span></div>
-        <button class="btn btn-primary" style="padding:4px 12px;" onclick="sendBatch(${idx})">Send</button>
-      </div>`;
-    });
-    document.getElementById('batchList').innerHTML = html;
-  }
-
-  function sendBatch(idx) {
-    const batch = currentBatches[idx];
-    if (!batch) return;
-    const bcc = batch.map(r => r.email).join(',');
-    const subject = document.getElementById('subject').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
-    const body = document.getElementById('body').value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
-    let mailto = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    if (ccEnabled) {
-      const cc = document.getElementById('ccEmail').value.trim();
-      if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
-    }
-    window.open(mailto, '_blank');
-    const now = Date.now();
-    for (let r of batch) {
-      if (!sent24hTimestamps[r.email]) {
-        sent24hTimestamps[r.email] = now;
-        sentTotalCount++;
-      }
-    }
-    saveAllData();
-    renderEmails();
-    updateSent24hStats();
-    updateSentTotalStats();
-    updateListStats();
-    updateFilterCounts();
-    prepareBatches();  // refresh batch list
-    showToast(`Batch ${idx+1} sent (${batch.length} emails)`);
-  }
-
-  // Toggle batch panel (hidden trigger on logo)
-  document.getElementById('fatiscoLogo').addEventListener('click', () => {
-    let panel = document.getElementById('batchPanel');
-    if (panel.style.display === 'none') {
-      panel.style.display = 'block';
-      panel.innerHTML = `<div class="batch-panel">
-        <div class="batch-title">📦 BATCH MODE (BCC)</div>
-        <div class="batch-size-row">
-          <span>Emails per batch:</span>
-          <input type="number" id="batchSizeInput" class="batch-size-input" value="10" min="1" max="50" step="1">
-          <button class="btn btn-primary" style="padding:6px 12px;" onclick="prepareBatches()">Prepare Batches</button>
-        </div>
-        <div id="batchList" class="batch-list"></div>
-      </div>`;
-      if (emailRecords.length) prepareBatches();
-    } else {
-      panel.style.display = 'none';
-      panel.innerHTML = '';
-    }
-  });
-
-  // ==================== SCROLL & UI ====================
-  const scrollContainer = document.getElementById('emailScrollContainer');
-  if (scrollContainer) {
-    scrollContainer.addEventListener('scroll', () => {
-      const st = scrollContainer.scrollTop, sh = scrollContainer.scrollHeight, ch = scrollContainer.clientHeight;
-      document.getElementById('scrollTopBtn').classList.toggle('hidden', st < 50);
-      document.getElementById('scrollBottomBtn').classList.toggle('hidden', sh - st - ch < 50);
-    });
-  }
-  function scrollToTop() { scrollContainer?.scrollTo({ top: 0, behavior: 'smooth' }); }
-  function scrollToBottom() { scrollContainer?.scrollTo({ top: scrollContainer.scrollHeight, behavior: 'smooth' }); }
-
-  function toggleTheme() {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-  }
-
-  // File upload
-  document.querySelector('.file-label')?.addEventListener('click', () => document.getElementById('fileInput').click());
-  document.getElementById('fileInput')?.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById('emailInput').value = e.target.result;
-      processEmails();
-      showToast(`Loaded ${file.name}`);
-    };
-    reader.readAsText(file);
-    this.value = '';
-  });
-
-  // Auto-save inputs
-  document.getElementById('emailInput')?.addEventListener('input', saveAllData);
-  document.getElementById('subject')?.addEventListener('input', saveAllData);
-  document.getElementById('body')?.addEventListener('input', saveAllData);
-  document.getElementById('ccEmail')?.addEventListener('input', saveAllData);
-
-  // Midnight reset check (only for display, sent24hTimestamps are never erased)
-  function scheduleMidnightReset() {
-    const now = new Date();
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const msToMidnight = midnight - now;
-    setTimeout(() => {
-      updateSent24hStats();  // This will show 0 for today if no new sends after midnight
-      scheduleMidnightReset();
-    }, msToMidnight + 1000);
-  }
-
-  // ==================== INIT ====================
-  loadAllData();
+  save();
   renderEmails();
-  updateListStats();
-  updateSent24hStats();
-  updateSentTotalStats();
-  scheduleMidnightReset();
-  if (localStorage.getItem('fatisco_theme') === 'dark') document.body.classList.add('dark');
-  setInterval(updateSent24hStats, 60000);
+  updateStats();
+  showToast(`⚡ Loaded ${emailRecords.length} email${emailRecords.length !== 1 ? 's' : ''}`);
+}
+
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+// =============================================
+//  RENDER EMAIL LIST
+// =============================================
+function renderEmails() {
+  let list = emailRecords;
+  if (currentFilter === 'sent') list = emailRecords.filter(r => isSent(r.email));
+  if (currentFilter === 'pending') list = emailRecords.filter(r => !isSent(r.email));
+
+  if (!list.length) {
+    const msgs = {
+      all: { icon: '📭', text: 'No emails yet. Add some above!' },
+      sent: { icon: '✅', text: 'No sent emails yet.' },
+      pending: { icon: '🟡', text: 'All emails have been sent!' }
+    };
+    const m = msgs[currentFilter];
+    id('emailList').innerHTML = `<div class="empty-state"><div class="empty-icon">${m.icon}</div>${m.text}</div>`;
+    updateScrollBtns();
+    return;
+  }
+
+  id('emailList').innerHTML = list.map((r, i) => {
+    const sent = isSent(r.email);
+    return `<div class="email-item${sent ? ' sent' : ''}" 
+      data-email="${r.email}" data-name="${r.name}" data-company="${r.company}"
+      onclick="handleEmailClick(this)">
+      <div class="email-num">${i + 1}</div>
+      <div class="email-info">
+        <div class="email-addr">${r.email}</div>
+        <div class="email-meta">${r.name}${r.company ? ' · ' + r.company : ''}</div>
+      </div>
+      <div class="status-dot ${sent ? 'sent' : 'pending'}"></div>
+    </div>`;
+  }).join('');
+
+  updateScrollBtns();
+  updateStats();
+}
+
+// =============================================
+//  SEND EMAIL (normal mode)
+// =============================================
+function handleEmailClick(el) {
+  if (el.classList.contains('sent')) { showToast('⚠️ Already sent to this contact'); return; }
+
+  const email = el.dataset.email;
+  const name = el.dataset.name;
+  const company = el.dataset.company;
+
+  const subjectEl = id('subject');
+  const bodyEl = id('body');
+
+  let valid = true;
+  if (!subjectEl.value.trim()) { subjectEl.classList.add('field-warning'); valid = false; }
+  else subjectEl.classList.remove('field-warning');
+  if (!bodyEl.value.trim()) { bodyEl.classList.add('field-warning'); valid = false; }
+  else bodyEl.classList.remove('field-warning');
+  if (!valid) { showToast('⚠️ Subject and body cannot be empty'); return; }
+
+  const subject = subjectEl.value.replace(/{name}/g, name).replace(/{company}/g, company);
+  const body = bodyEl.value.replace(/{name}/g, name).replace(/{company}/g, company);
+  let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if (ccEnabled) {
+    const cc = id('ccEmail').value.trim();
+    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+  }
+  window.open(mailto, '_blank');
+
+  markSent(email);
+  el.classList.add('sent');
+  el.querySelector('.status-dot').className = 'status-dot sent';
+  el.querySelector('.email-num').style.background = 'var(--green)';
+  updateStats();
+  save();
+  showToast(`✉️ Email opened for ${name}`);
+
+  // sync batch view if open
+  if (inBatchMode) syncBatchView();
+}
+
+// =============================================
+//  MARK SENT (shared logic)
+// =============================================
+function markSent(email) {
+  const wasAlreadySent = isSent(email);
+  sent24hTimestamps[email] = Date.now();
+  if (!wasAlreadySent) sentTotalCount++;
+}
+
+// =============================================
+//  FILTER
+// =============================================
+function filterEmails(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderEmails();
+}
+
+// =============================================
+//  CC TOGGLE
+// =============================================
+function toggleCC() {
+  ccEnabled = !ccEnabled;
+  applyCC();
+  save();
+}
+
+function applyCC() {
+  id('ccField').style.display = ccEnabled ? 'block' : 'none';
+  id('ccBtn').classList.toggle('active-cc', ccEnabled);
+  id('ccBtn').textContent = ccEnabled ? '📧 Remove CC' : '📧 Add CC';
+}
+
+// =============================================
+//  CLEAN DUPLICATES
+// =============================================
+function cleanDuplicates() {
+  const raw = id('emailInput').value;
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const seen = new Set();
+  const unique = [];
+  let removed = 0;
+  for (const line of lines) {
+    const email = line.split(',')[0]?.trim().toLowerCase();
+    if (email && !seen.has(email)) { seen.add(email); unique.push(line); }
+    else if (email) removed++;
+  }
+  if (removed) {
+    id('emailInput').value = unique.join('\n');
+    processEmails();
+    showToast(`🧹 Removed ${removed} duplicate${removed !== 1 ? 's' : ''}`);
+  } else {
+    showToast('✨ No duplicates found');
+  }
+}
+
+// =============================================
+//  EXPORT
+// =============================================
+function exportCSV() {
+  if (!emailRecords.length) { showToast('⚠️ Nothing to export — list is empty'); return; }
+  let csv = 'Email,Name,Company,Sent\n';
+  emailRecords.forEach(r => {
+    csv += `"${r.email}","${r.name}","${r.company}","${isSent(r.email) ? 'Yes' : 'No'}"\n`;
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `fatisco_export_${Date.now()}.csv`;
+  a.click();
+  showToast(`📥 Exported ${emailRecords.length} records`);
+}
+
+// =============================================
+//  CLEAR
+// =============================================
+function clearAll() {
+  if (!confirm(
+    'Clear email list?\n\n' +
+    '✅ Email list will be cleared\n' +
+    '✅ Sent (Total) resets to 0\n' +
+    '🔒 Sent (24H) is NEVER cleared — resets automatically at midnight'
+  )) return;
+
+  id('emailInput').value = '';
+  emailRecords = [];
+  sentTotalCount = 0;
+  // sent24hTimestamps is intentionally NOT touched
+  save();
+  renderEmails();
+  updateStats();
+  showToast('📭 List cleared · 24H history preserved');
+}
+
+// =============================================
+//  BATCH MODE
+// =============================================
+function switchToBatch() {
+  inBatchMode = true;
+  id('normalView').classList.remove('hidden-left');
+  id('normalView').classList.add('hidden-left');
+  id('batchView').classList.remove('hidden-right');
+  id('modePill').classList.add('visible');
+  id('backBtn').style.display = 'flex';
+  prepareBatches();
+  window.scrollTo(0, 0);
+}
+
+function switchToNormal() {
+  inBatchMode = false;
+  id('normalView').classList.remove('hidden-left');
+  id('batchView').classList.add('hidden-right');
+  id('modePill').classList.remove('visible');
+  id('backBtn').style.display = 'none';
+  renderEmails();
+  updateStats();
+}
+
+function prepareBatches() {
+  const pending = emailRecords.filter(r => !isSent(r.email));
+  const batchSize = Math.max(1, parseInt(id('batchSize').value, 10) || 10);
+  currentBatches = [];
+
+  for (let i = 0; i < emailRecords.length; i += batchSize) {
+    currentBatches.push(emailRecords.slice(i, i + batchSize));
+  }
+
+  id('batchSummary').textContent =
+    `${pending.length} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
+
+  renderBatches();
+}
+
+function renderBatches() {
+  const pendingCards = [];
+  const completedCards = [];
+
+  currentBatches.forEach((batch, idx) => {
+    const sentInBatch = batch.filter(r => isSent(r.email));
+    const totalInBatch = batch.length;
+    const allSent = sentInBatch.length === totalInBatch;
+    const pct = totalInBatch > 0 ? Math.round((sentInBatch.length / totalInBatch) * 100) : 0;
+
+    const chipsHtml = batch.slice(0, 4).map(r => {
+      const sent = isSent(r.email);
+      return `<span class="batch-chip ${sent ? 'sent-chip' : ''}">${r.email}</span>`;
+    }).join('') + (batch.length > 4 ? `<span class="batch-chip more-chip">+${batch.length - 4} more</span>` : '');
+
+    const card = `
+      <div class="batch-card ${allSent ? 'completed' : ''}" id="batchCard_${idx}">
+        <div class="batch-card-header">
+          <div>
+            <div class="batch-card-title">Batch ${idx + 1}</div>
+            <div class="batch-card-count">${sentInBatch.length} / ${totalInBatch} sent</div>
+          </div>
+          ${allSent
+            ? `<div class="completed-badge">✅ Done</div>`
+            : `<button class="btn btn-primary btn-sm" onclick="sendBatch(${idx})">✉️ Send Batch</button>`
+          }
+        </div>
+        <div class="batch-progress-bar">
+          <div class="batch-progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="batch-email-chips">${chipsHtml}</div>
+      </div>`;
+
+    if (allSent) completedCards.push(card);
+    else pendingCards.push(card);
+  });
+
+  id('pendingBatchList').innerHTML = pendingCards.join('') ||
+    `<div class="empty-state"><div class="empty-icon">🎉</div>All batches completed!</div>`;
+
+  const compSec = id('completedBatchSection');
+  if (completedCards.length > 0) {
+    compSec.style.display = 'block';
+    id('completedBatchList').innerHTML = completedCards.join('');
+  } else {
+    compSec.style.display = 'none';
+  }
+
+  id('batchSummary').textContent = (() => {
+    const pending = emailRecords.filter(r => !isSent(r.email)).length;
+    return `${pending} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
+  })();
+}
+
+function sendBatch(idx) {
+  const batch = currentBatches[idx];
+  if (!batch) return;
+
+  const pending = batch.filter(r => !isSent(r.email));
+  if (!pending.length) { showToast('⚠️ All emails in this batch already sent'); return; }
+
+  const subjectEl = id('subject');
+  const bodyEl = id('body');
+  if (!subjectEl.value.trim() || !bodyEl.value.trim()) {
+    showToast('⚠️ Go to normal mode and fill in Subject & Body first');
+    return;
+  }
+
+  const bcc = pending.map(r => r.email).join(',');
+  const subject = subjectEl.value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+  const body = bodyEl.value.replace(/{name}/g, '[NAME]').replace(/{company}/g, '[COMPANY]');
+  let mailto = `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if (ccEnabled) {
+    const cc = id('ccEmail').value.trim();
+    if (cc) mailto += `&cc=${encodeURIComponent(cc)}`;
+  }
+  window.open(mailto, '_blank');
+
+  const alreadySentCount = batch.filter(r => isSent(r.email)).length;
+  pending.forEach(r => markSent(r.email));
+
+  save();
+  renderBatches();
+  updateStats();
+
+  const newlySent = pending.length;
+  const skipped = alreadySentCount;
+  let msg = `✉️ Batch ${idx + 1}: ${newlySent} email${newlySent !== 1 ? 's' : ''} sent`;
+  if (skipped > 0) msg += ` · ${skipped} skipped (already sent)`;
+  showToast(msg);
+}
+
+// Sync batch view when normal mode sends an email
+function syncBatchView() {
+  if (inBatchMode) renderBatches();
+}
+
+// =============================================
+//  SCROLL
+// =============================================
+const emailScroll = document.getElementById('emailScroll');
+
+function updateScrollBtns() {
+  const st = emailScroll.scrollTop;
+  const sh = emailScroll.scrollHeight;
+  const ch = emailScroll.clientHeight;
+  id('scrollUp').classList.toggle('visible', st > 30);
+  id('scrollDown').classList.toggle('visible', sh - st - ch > 30);
+}
+
+emailScroll.addEventListener('scroll', updateScrollBtns);
+function scrollUp() { emailScroll.scrollTo({ top: 0, behavior: 'smooth' }); }
+function scrollDown() { emailScroll.scrollTo({ top: emailScroll.scrollHeight, behavior: 'smooth' }); }
+
+// =============================================
+//  THEME
+// =============================================
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  ls('fatisco_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+// =============================================
+//  TOAST
+// =============================================
+let toastTimer;
+function showToast(msg) {
+  const t = id('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// =============================================
+//  FILE UPLOAD (single listener, no double dialog)
+// =============================================
+id('fileInput').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    id('emailInput').value = e.target.result;
+    processEmails();
+    showToast(`📁 Loaded: ${file.name}`);
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+// =============================================
+//  LOGO TAP → BATCH MODE (secret trigger)
+// =============================================
+let logoTapCount = 0;
+let logoTapTimer;
+id('logoBtn').addEventListener('click', () => {
+  if (inBatchMode) return; // already in batch
+  logoTapCount++;
+  clearTimeout(logoTapTimer);
+  logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 600);
+  if (logoTapCount >= 2) {
+    logoTapCount = 0;
+    if (!emailRecords.length) { showToast('⚠️ Add emails first before using Batch Mode'); return; }
+    switchToBatch();
+  }
+});
+
+// =============================================
+//  AUTO-SAVE INPUTS
+// =============================================
+['subject', 'body', 'ccEmail'].forEach(i => {
+  id(i)?.addEventListener('input', save);
+});
+id('emailInput').addEventListener('input', () => {
+  ls('fatisco_emailInput', id('emailInput').value);
+});
+id('batchSize').addEventListener('change', () => {
+  save();
+  if (inBatchMode) prepareBatches();
+});
+
+// =============================================
+//  MIDNIGHT AUTO-RESET for 24H display
+// =============================================
+function scheduleMidnightRefresh() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const msUntil = midnight - now + 1000;
+  setTimeout(() => {
+    // Clean up timestamps older than 24h from the object to prevent unbounded growth
+    // But NEVER wipe all — only prune truly old ones
+    const cutoff = Date.now() - 86400000;
+    for (const [email, ts] of Object.entries(sent24hTimestamps)) {
+      if (ts < cutoff) delete sent24hTimestamps[email];
+    }
+    save();
+    updateStats();
+    renderEmails();
+    scheduleMidnightRefresh();
+  }, msUntil);
+}
+
+// Refresh 24h count every minute (handles rolling 24h window)
+setInterval(() => {
+  id('statSent24h').textContent = count24h();
+  const h = new Date().getHours();
+  id('stat24hSub').textContent = `${h}h elapsed`;
+}, 60000);
+
+// =============================================
+//  INIT
+// =============================================
+load();
+renderEmails();
+updateStats();
+scheduleMidnightRefresh();
 </script>
 </body>
 </html>
