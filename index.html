@@ -31,14 +31,16 @@
     }
 
     body.dark {
-      --bg: #111018;
-      --surface: #1c1b24;
-      --surface2: #15141c;
-      --border: #2e2c3a;
-      --text: #f0ede8;
-      --text2: #8b8698;
-      --shadow: 0 2px 12px rgba(0,0,0,0.3);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+      --bg: #0d0c12;
+      --surface: #131219;
+      --surface2: #0f0e15;
+      --border: #232130;
+      --text: #ede9e3;
+      --text2: #6e6a7a;
+      --green-bg: #0a1a10;
+      --green-border: #1a3d25;
+      --shadow: 0 2px 12px rgba(0,0,0,0.5);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
     }
 
     body {
@@ -756,8 +758,8 @@
           <div class="stat-number" id="statTotal">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Valid</div>
-          <div class="stat-number" id="statValid">0</div>
+          <div class="stat-label">Pending</div>
+          <div class="stat-number" id="statPending">0</div>
         </div>
         <div class="stat-card permanent">
           <div class="stat-label">Sent 24H</div>
@@ -910,17 +912,21 @@ function count24h() {
 }
 
 function updateStats() {
+  const sentCount = emailRecords.filter(r => isSent(r.email)).length;
+  const pendingCount = emailRecords.length - sentCount;
+
   id('statTotal').textContent = emailRecords.length;
-  id('statValid').textContent = emailRecords.length;
+  id('statPending').textContent = pendingCount;
+
   // 24H — derived from timestamps only, NEVER from user action
   id('statSent24h').textContent = count24h();
   const h = new Date().getHours();
   id('stat24hSub').textContent = `${h}h elapsed`;
+
   // Total — clearable
   id('statSentTotal').textContent = sentTotalCount;
 
-  const sentCount = emailRecords.filter(r => isSent(r.email)).length;
-  const pendingCount = emailRecords.length - sentCount;
+  // Filter counts — always real numbers
   id('cntAll').textContent = emailRecords.length;
   id('cntSent').textContent = sentCount;
   id('cntPending').textContent = pendingCount;
@@ -1001,12 +1007,16 @@ function handleEmailClick(el) {
   const subjectEl = id('subject');
   const bodyEl = id('body');
 
-  let valid = true;
-  if (!subjectEl.value.trim()) { subjectEl.classList.add('field-warning'); valid = false; }
-  else subjectEl.classList.remove('field-warning');
-  if (!bodyEl.value.trim()) { bodyEl.classList.add('field-warning'); valid = false; }
-  else bodyEl.classList.remove('field-warning');
-  if (!valid) { showToast('⚠️ Subject and body cannot be empty'); return; }
+  const subjectVal = subjectEl.value.trim();
+  const bodyVal = bodyEl.value.trim();
+  subjectEl.classList.remove('field-warning');
+  bodyEl.classList.remove('field-warning');
+  if (!subjectVal && !bodyVal) {
+    subjectEl.classList.add('field-warning');
+    bodyEl.classList.add('field-warning');
+    showToast('⚠️ Add a subject or body before sending');
+    return;
+  }
 
   const subject = subjectEl.value.replace(/{name}/g, name).replace(/{company}/g, company);
   const body = bodyEl.value.replace(/{name}/g, name).replace(/{company}/g, company);
@@ -1156,8 +1166,9 @@ function prepareBatches() {
     currentBatches.push(emailRecords.slice(i, i + batchSize));
   }
 
+  const totalSentAcrossAll = emailRecords.filter(r => isSent(r.email)).length;
   id('batchSummary').textContent =
-    `${pending.length} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
+    `${totalSentAcrossAll} sent · ${pending.length} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
 
   renderBatches();
 }
@@ -1212,7 +1223,8 @@ function renderBatches() {
 
   id('batchSummary').textContent = (() => {
     const pending = emailRecords.filter(r => !isSent(r.email)).length;
-    return `${pending} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
+    const sent = emailRecords.filter(r => isSent(r.email)).length;
+    return `${sent} sent · ${pending} pending · ${currentBatches.length} batch${currentBatches.length !== 1 ? 'es' : ''}`;
   })();
 }
 
@@ -1225,8 +1237,8 @@ function sendBatch(idx) {
 
   const subjectEl = id('subject');
   const bodyEl = id('body');
-  if (!subjectEl.value.trim() || !bodyEl.value.trim()) {
-    showToast('⚠️ Go to normal mode and fill in Subject & Body first');
+  if (!subjectEl.value.trim() && !bodyEl.value.trim()) {
+    showToast('⚠️ Add a subject or body in normal mode first');
     return;
   }
 
