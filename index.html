@@ -367,15 +367,22 @@
     }
 
     .filter-count {
-      background: currentColor;
-      color: var(--surface);
-      padding: 1px 6px;
+      background: var(--border);
+      color: var(--text);
+      padding: 2px 7px;
       border-radius: 20px;
       font-size: 10px;
-      opacity: 0.7;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+      display: inline-block;
     }
 
-    .filter-btn.active .filter-count { opacity: 1; }
+    .filter-btn.active .filter-count {
+      background: rgba(255,255,255,0.22);
+      color: var(--bg);
+    }
 
     /* ===== EMAIL LIST ===== */
     .email-scroll {
@@ -859,7 +866,9 @@
 //  STATE
 // =============================================
 let emailRecords = [];          // current list
-let sent24hTimestamps = {};     // PERMANENT — email → timestamp — NEVER user-cleared
+// sentByDate: { "YYYY-MM-DD": { email: true, ... }, ... }
+// Grows across days, NEVER user-cleared. Resets visually at midnight automatically.
+let sentByDate = {};
 let sentTotalCount = 0;         // clearable total
 let currentFilter = 'all';
 let ccEnabled = false;
@@ -872,7 +881,7 @@ let inBatchMode = false;
 function save() {
   try {
     ls('fatisco_records', JSON.stringify(emailRecords));
-    ls('fatisco_24h', JSON.stringify(sent24hTimestamps));
+    ls('fatisco_sentByDate', JSON.stringify(sentByDate));
     ls('fatisco_total', sentTotalCount);
     ls('fatisco_subject', id('subject').value);
     ls('fatisco_body', id('body').value);
@@ -885,7 +894,15 @@ function save() {
 function load() {
   try {
     const r = gl('fatisco_records'); if (r) emailRecords = JSON.parse(r);
-    const t = gl('fatisco_24h'); if (t) sent24hTimestamps = JSON.parse(t);
+    const sd = gl('fatisco_sentByDate'); if (sd) sentByDate = JSON.parse(sd);
+    // Migrate old format (sent24hTimestamps) if present
+    const old = gl('fatisco_24h');
+    if (old && !sd) {
+      const oldData = JSON.parse(old);
+      const today = localDateKey();
+      sentByDate[today] = sentByDate[today] || {};
+      for (const email of Object.keys(oldData)) sentByDate[today][email] = true;
+    }
     const n = gl('fatisco_total'); if (n !== null) sentTotalCount = parseInt(n, 10) || 0;
     const s = gl('fatisco_subject'); if (s) id('subject').value = s;
     const b = gl('fatisco_body'); if (b) id('body').value = b;
@@ -904,11 +921,21 @@ function id(i) { return document.getElementById(i); }
 // =============================================
 //  STATS & COUNTS
 // =============================================
-function isSent(email) { return !!sent24hTimestamps[email]; }
+// Returns "YYYY-MM-DD" for the device's local today
+function localDateKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
+// An email is "sent" if it appears in ANY day's record (controls green dot / pending status)
+function isSent(email) {
+  return Object.values(sentByDate).some(dayMap => dayMap[email]);
+}
+
+// 24H count = only emails sent on TODAY's local date
 function count24h() {
-  const cutoff = Date.now() - 86400000;
-  return Object.values(sent24hTimestamps).filter(ts => ts > cutoff).length;
+  const today = localDateKey();
+  return Object.keys(sentByDate[today] || {}).length;
 }
 
 function updateStats() {
@@ -1044,7 +1071,9 @@ function handleEmailClick(el) {
 // =============================================
 function markSent(email) {
   const wasAlreadySent = isSent(email);
-  sent24hTimestamps[email] = Date.now();
+  const today = localDateKey();
+  if (!sentByDate[today]) sentByDate[today] = {};
+  sentByDate[today][email] = true;
   if (!wasAlreadySent) sentTotalCount++;
 }
 
@@ -1126,7 +1155,7 @@ function clearAll() {
   id('emailInput').value = '';
   emailRecords = [];
   sentTotalCount = 0;
-  // sent24hTimestamps is intentionally NOT touched
+  // sentByDate is intentionally NOT touched — permanent across days
   save();
   renderEmails();
   updateStats();
@@ -1357,26 +1386,23 @@ id('batchSize').addEventListener('change', () => {
 
 // =============================================
 //  MIDNIGHT AUTO-RESET for 24H display
+//  Uses device local clock. At midnight, today's
+//  date key changes so count24h() returns 0.
+//  sentByDate keeps all past days — never user-cleared.
 // =============================================
 function scheduleMidnightRefresh() {
   const now = new Date();
   const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const msUntil = midnight - now + 1000;
+  const msUntil = midnight - now + 500; // half-second buffer past midnight
   setTimeout(() => {
-    // Clean up timestamps older than 24h from the object to prevent unbounded growth
-    // But NEVER wipe all — only prune truly old ones
-    const cutoff = Date.now() - 86400000;
-    for (const [email, ts] of Object.entries(sent24hTimestamps)) {
-      if (ts < cutoff) delete sent24hTimestamps[email];
-    }
-    save();
+    // New day — count24h() will now read the new date key, which has no entries yet → shows 0
     updateStats();
     renderEmails();
-    scheduleMidnightRefresh();
+    scheduleMidnightRefresh(); // reschedule for next midnight
   }, msUntil);
 }
 
-// Refresh 24h count every minute (handles rolling 24h window)
+// Update 24H display every minute in case device clock ticks past midnight while app is open
 setInterval(() => {
   id('statSent24h').textContent = count24h();
   const h = new Date().getHours();
