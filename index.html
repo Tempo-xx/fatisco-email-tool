@@ -1410,8 +1410,15 @@ setInterval(() => {
 }, 60000);
 
 // =============================================
-//  INIT
+//  INIT — one-time data reset for fresh start
+//  Uses a version flag so it only runs ONCE,
+//  never again on subsequent reloads.
 // =============================================
+const CURRENT_VERSION = 'v3';
+if (localStorage.getItem('fatisco_version') !== CURRENT_VERSION) {
+  localStorage.clear();
+  localStorage.setItem('fatisco_version', CURRENT_VERSION);
+}
 load();
 renderEmails();
 updateStats();
